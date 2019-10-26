@@ -29,6 +29,29 @@ public:
     int64_t hash1(int64_t value);
     bool fit_cache(int i);
     void split(stack *Stack);
+    void quickshort(int start,int end){
+        if(start==end) return;
+        int pi=partition(start,end);
+        quickshort(start,pi-1);
+        quickshort((pi+1,end));
+    }
+    int partition(int start,int end){
+        int pivot=P[end];
+        int i=start-1,temp;
+
+        for(int j=low; j<=end; j++){
+            if(R[j]<p){
+                temp=R[i];
+                R[i]=R[j];
+                R[j]=temp;
+                i++;
+            }
+        }
+        temp=R[i+1];
+        R[i+1]=R[end];
+        R[end]=temp;
+        return i+1;
+    }
 };
 
 #endif
