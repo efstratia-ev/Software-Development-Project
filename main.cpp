@@ -8,6 +8,21 @@
 
 using namespace std;
 
+list *finalResults(mytuple *array1,mytuple *array2, int64_t size1,int64_t size2){
+    list *resultList=new list();
+    int64_t start=0,j;
+    for(int64_t i=0; i<size1; i++){
+        for(j=start; j<size2; j++){
+            if(array1[i].value==array2[j].value)
+                resultList->add(array1[i].index,array2[j].index);
+            else if(array1[i].value<array2[j].value)
+                break;
+        }
+        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
+    }
+    return resultList;
+}
+
 void SortMergeJoin(hashtable *H){
     stack *Stack=new stack();
     Stack->push(H);
@@ -56,9 +71,12 @@ int main(int argc, char *argv[]) {
     H2.initializePsum();
     H2.reorderR();
     SortMergeJoin(&H2);
+    list *resultList=finalResults(array1,array2,count1,count2);
+    resultList->print();
     delete[] array1;
     delete[] array2;
     delete[] _array1;
     delete[] _array2;
+    delete resultList;
     return 0;
 }
