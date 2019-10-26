@@ -52,3 +52,29 @@ void hashtable::split(stack *Stack) {
     }
 }
 
+void hashtable::quickshort(int start, int end) {
+    if(start==end) return;
+    int pi=partition(start,end);
+    quickshort(start,pi-1);
+    quickshort(pi+1,end);
+}
+
+int hashtable::partition(int start, int end) {
+    mytuple pivot=R[end];
+    int i=start-1;
+    mytuple temp;
+
+    for(int j=start; j<=end; j++){
+        if(R[j].value<pivot.value){
+            temp=R[i];
+            R[i]=R[j];
+            R[j]=temp;
+            i++;
+        }
+    }
+    temp=R[i+1];
+    R[i+1]=R[end];
+    R[end]=temp;
+    return i+1;
+}
+
