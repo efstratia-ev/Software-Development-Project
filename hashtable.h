@@ -20,17 +20,18 @@ class hashtable{
     int64_t Hist[N]={0};
     int64_t Psum[N]={0};
     mytuple *_R;
-    int byte;
+    int64_t byte;
 public:
-    hashtable(int64_t o,int64_t s,mytuple *r,mytuple *_r,int b);
+    hashtable(int64_t o,int64_t s,mytuple *r,mytuple *_r,int64_t b);
     void initializeHist();
     void initializePsum();
     void reorderR();
     int64_t hash1(int64_t value);
-    bool fit_cache(int i);
+    bool fit_cache(int64_t i);
     void split(stack *Stack);
-    void quickshort(int start,int end);
-    int partition(int start,int end);
+    void quickshort(int64_t start,int64_t end);
+    int64_t partition(int64_t start,int64_t end);
+    void print();
 };
 
 #endif

@@ -15,7 +15,9 @@ void SortMergeJoin(hashtable *H){
     while(Stack->notEmpty()){
         currentHash=Stack->pop();
         currentHash->split(Stack);
+        if(currentHash!=H) delete currentHash;
     }
+    delete Stack;
 }
 
 int main(int argc, char *argv[]) {
@@ -48,5 +50,15 @@ int main(int argc, char *argv[]) {
     H1.initializeHist();
     H1.initializePsum();
     H1.reorderR();
+    SortMergeJoin(&H1);
+    hashtable H2(0,count2,array2,_array2,1);
+    H2.initializeHist();
+    H2.initializePsum();
+    H2.reorderR();
+    SortMergeJoin(&H2);
+    delete[] array1;
+    delete[] array2;
+    delete[] _array1;
+    delete[] _array2;
     return 0;
 }
