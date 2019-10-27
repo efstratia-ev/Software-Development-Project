@@ -20,7 +20,7 @@ void radix::sort() {
         currentRadix=Stack->pop();
         currentRadix->group();
         currentRadix->split(Stack);
-        if(currentRadix!=this) delete currentRadix;
+        //if(currentRadix!=this) delete currentRadix;
     }
     delete Stack;
 
@@ -68,7 +68,7 @@ uint64_t radix::hash(uint64_t value) {
 
 
 bool radix::fitsCache(uint64_t i) {
-    return Hist[i]*sizeof(uint64_t)<5;
+    return Hist[i]*sizeof(uint64_t)<64000;
 }
 
 void radix::split(stack *Stack) {

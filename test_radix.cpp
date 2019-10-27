@@ -13,7 +13,9 @@ using namespace std;
 
 
 bool isSorted(mytuple *arr,int len)  {
+   //cout << "start" << endl;
     for (int i =1; i < len; i++) {
+       //cout << arr[i].value << endl;
         if (arr[i].value < arr[i-1].value)
             return false;
     }
@@ -82,8 +84,6 @@ void testFile(string filename) {
     _array2=new mytuple[count2];
     (new radix(0,count1,array1,_array1))->sort();
     (new radix(0,count2,array2,_array2))->sort();
-    CU_ASSERT(isSorted(_array1,count1) == true);
-    CU_ASSERT(isSorted(_array2,count2) == true);
     CU_ASSERT(isSorted(array1,count1) == true);
     CU_ASSERT(isSorted(array2,count2) == true);
 }
