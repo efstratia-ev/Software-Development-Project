@@ -24,7 +24,7 @@ list *finalresults(mytuple *array1,mytuple *array2, uint64_t size1,uint64_t size
 }
 
 int main(int argc, char *argv[]) {
-    /*int count1=0,count2=0;
+    uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
     int n=25;
     string filename;
@@ -61,5 +61,4 @@ int main(int argc, char *argv[]) {
     delete[] _array2;
     delete resultlist;
     return 0;
-    */
 }
