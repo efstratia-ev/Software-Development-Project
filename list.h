@@ -2,12 +2,12 @@ class listNode{
     char *buffer;
     char *current;
     listNode *next;
-    int64_t count;
-    int64_t max;
+    uint64_t count;
+    uint64_t max;
 public:
     listNode();
     bool isFull();
-    void add(int64_t rowID1,int64_t rowID2);
+    void add(uint64_t rowID1,uint64_t rowID2);
     listNode *createNext();
     void print();
     listNode *getnext();
@@ -19,7 +19,7 @@ class list{
     listNode *current;
 public:
     list();
-    void add(int64_t rowID1,int64_t rowID2);
+    void add(uint64_t rowID1,uint64_t rowID2);
     void print();
     ~list();
 };

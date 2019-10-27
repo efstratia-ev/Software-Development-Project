@@ -8,18 +8,18 @@ listNode::listNode() {
     if(buffer==NULL){
         std::cout<<"error"<<std::endl;
     }
-    max=(1024*1024)/(2* sizeof(int64_t));  //max size of results in the buffer
+    max=(1024*1024)/(2* sizeof(uint64_t));  //max size of results in the buffer
     count=0;   //current number of results in the buffer
     current=buffer;
     next=NULL;
 }
 
-void listNode::add(int64_t rowID1, int64_t rowID2) {  //add new result
+void listNode::add(uint64_t rowID1, uint64_t rowID2) {  //add new result
     count++;
-    memcpy(current,&rowID1, sizeof(int64_t));
-    current+= sizeof(int64_t);
-    memcpy(current,&rowID2, sizeof(int64_t));
-    if(count!=max) current+= sizeof(int64_t);
+    memcpy(current,&rowID1, sizeof(uint64_t));
+    current+= sizeof(uint64_t);
+    memcpy(current,&rowID2, sizeof(uint64_t));
+    if(count!=max) current+= sizeof(uint64_t);
 }
 
 bool listNode::isFull() {
@@ -33,14 +33,14 @@ listNode *listNode::createNext() {  //new list node
 }
 
 void listNode::print() { //print the results
-    int64_t temp;
+    uint64_t temp;
     char *current_item=buffer;
-    for(int64_t i=0; i<count; i++){
-        memcpy(&temp,current_item, sizeof(int64_t));
-        current_item+= sizeof(int64_t);
+    for(uint64_t i=0; i<count; i++){
+        memcpy(&temp,current_item, sizeof(uint64_t));
+        current_item+= sizeof(uint64_t);
         std::cout<<temp<<" ";
-        memcpy(&temp,current_item, sizeof(int64_t));
-        current_item+= sizeof(int64_t);
+        memcpy(&temp,current_item, sizeof(uint64_t));
+        current_item+= sizeof(uint64_t);
         std::cout<<temp<<std::endl;
     }
 }
@@ -59,7 +59,7 @@ list::list() {
     current=start;
 }
 
-void list::add(int64_t rowID1, int64_t rowID2) {
+void list::add(uint64_t rowID1, uint64_t rowID2) {
     if(current->isFull())
         current=current->createNext();  //new list node
     current->add(rowID1,rowID2);  //add the result

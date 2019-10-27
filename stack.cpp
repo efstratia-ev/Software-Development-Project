@@ -1,12 +1,12 @@
 #include "stack.h"
 
-stack_node::stack_node(hashtable *h, stack_node *nd) {
-    Hash=h;
+stack_node::stack_node(radix *h, stack_node *nd) {
+    Radix=h;
     next=nd;
 }
 
-hashtable *stack_node::getHash() const {
-    return Hash;
+radix *stack_node::getRadix() const {
+    return Radix;
 }
 
 stack_node *stack_node::getNext() const {
@@ -17,16 +17,16 @@ stack::stack() {
     Stack=NULL;
 }
 
-void stack::push(hashtable *H) {
+void stack::push(radix *H) {
     Stack=new stack_node(H,Stack);
 }
 
-hashtable *stack::pop() {
+radix *stack::pop() {
     stack_node *temp=Stack;
     Stack=Stack->getNext();
-    hashtable *Hash=temp->getHash();
+    radix *Radix=temp->getRadix();
     delete temp;
-    return Hash;
+    return Radix;
 }
 
 bool stack::notEmpty() {

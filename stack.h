@@ -2,17 +2,17 @@
 #define STACK_H
 
 #include <cstdio>
-#include "hashtable.h"
+#include "radix.h"
 
-class hashtable;
+class radix;
 
 class stack_node {
-    hashtable *Hash;
+    radix *Radix;
     stack_node *next;
 public:
-    stack_node(hashtable *h,stack_node *nd);
+    stack_node(radix *h,stack_node *nd);
 
-    hashtable *getHash() const;
+    radix *getRadix() const;
 
     stack_node *getNext() const;
 
@@ -22,8 +22,8 @@ class stack{
     stack_node *Stack;
 public:
     stack();
-    void push(hashtable *H);
-    hashtable * pop();
+    void push(radix *H);
+    radix * pop();
     bool notEmpty();
 };
 #endif //STACK_H

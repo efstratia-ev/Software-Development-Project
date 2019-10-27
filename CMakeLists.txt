@@ -2,13 +2,23 @@ cmake_minimum_required(VERSION 3.15)
 project(Project2019)
 
 set(CMAKE_CXX_STANDARD 14)
+link_libraries(cunit)
 
 include_directories(.)
 add_executable(Project2019
-        hashtable.cpp
-        hashtable.h
-        inpoutFunctions.cpp
-        inpoutFunctionsLibrary.h
+        radix.cpp
+        radix.h
+        inputFunctions.cpp
+        inputFunctions.h
         list.cpp
         list.h
         main.cpp stack.cpp stack.h)
+
+add_executable(test_radix
+        radix.cpp
+        radix.h
+        inputFunctions.cpp
+        inputFunctions.h
+        list.cpp
+        list.h
+        test_radix.cpp stack.cpp stack.h)
