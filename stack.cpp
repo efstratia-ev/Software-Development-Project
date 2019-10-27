@@ -15,10 +15,12 @@ stack_node *stack_node::getNext() const {
 
 stack::stack() {
     Stack=NULL;
+    size=0;
 }
 
-void stack::push(radix *H) {
-    Stack=new stack_node(H,Stack);
+void stack::push(radix *R) {
+    size++;
+    Stack=new stack_node(R,Stack);
 }
 
 radix *stack::pop() {
@@ -26,9 +28,14 @@ radix *stack::pop() {
     Stack=Stack->getNext();
     radix *Radix=temp->getRadix();
     delete temp;
+    size--;
     return Radix;
 }
 
 bool stack::notEmpty() {
     return !(Stack==NULL);
+}
+
+bool stack::isEmpty() {
+    return Stack==NULL;
 }

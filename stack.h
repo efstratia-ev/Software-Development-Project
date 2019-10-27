@@ -20,10 +20,12 @@ public:
 
 class stack{
     stack_node *Stack;
+    int size;
 public:
     stack();
     void push(radix *H);
     radix * pop();
     bool notEmpty();
+    bool isEmpty();
 };
 #endif //STACK_H
