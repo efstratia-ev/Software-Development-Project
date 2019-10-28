@@ -1,3 +1,6 @@
+#ifndef LIST
+#define LIST
+#include <cinttypes>
 class listNode{
     char *buffer;
     char *current;
@@ -23,3 +26,5 @@ public:
     void print();
     ~list();
 };
+
+#endif

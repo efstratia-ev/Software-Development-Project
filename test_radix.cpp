@@ -7,6 +7,7 @@
 #include "radix.h"
 #include "stack.h"
 #include "inputFunctions.h"
+#include "sort.h"
 
 static FILE* temp_file = NULL;
 using namespace std;
@@ -15,7 +16,7 @@ using namespace std;
 bool isSorted(mytuple *arr,int len)  {
    //cout << "start" << endl;
     for (int i =1; i < len; i++) {
-       //cout << arr[i].value << endl;
+       cout << arr[i].value << endl;
         if (arr[i].value < arr[i-1].value)
             return false;
     }
@@ -82,16 +83,16 @@ void testFile(string filename) {
     }
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
-    (new radix(0,count1,array1,_array1))->sort();
-    (new radix(0,count2,array2,_array2))->sort();
+    sort(new radix(0,count1,array1,_array1));
+    sort(new radix(0,count2,array2,_array2));
     CU_ASSERT(isSorted(array1,count1) == true);
     CU_ASSERT(isSorted(array2,count2) == true);
 }
 
 void testFiles() {
-    testFile("../test.txt");
+    testFile("../text.txt");
     testFile("../radix_test3.txt");
-    testFile("../radix_test2.txt");
+   // testFile("../radix_test2.txt");
 }
 
 int init_suite1(void)

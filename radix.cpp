@@ -12,19 +12,7 @@ radix::radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte){
     this->byte=byte;
 }
 
-void radix::sort() {
-    stack *Stack=new stack();
-    Stack->push(this);
-    radix *currentRadix;
-    while(Stack->notEmpty()){
-        currentRadix=Stack->pop();
-        currentRadix->group();
-        currentRadix->split(Stack);
-        //if(currentRadix!=this) delete currentRadix;
-    }
-    delete Stack;
 
-}
 
 //just a wrapper
 void radix::group() {
@@ -68,12 +56,13 @@ uint64_t radix::hash(uint64_t value) {
 
 
 bool radix::fitsCache(uint64_t i) {
-    return Hist[i]*sizeof(uint64_t)<64000;
+    return Hist[i]*sizeof(uint64_t)<L1size;
 }
 
-void radix::split(stack *Stack) {
+void radix:: split(stack *Stack) {
     for(int64_t i=0; i<N; i++){
-        if(fitsCache(i) || byte==7){
+        if(Hist[i]==0 || byte==8) continue;
+        if(fitsCache(i)){
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
             for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
                R[j]=_R[j];
