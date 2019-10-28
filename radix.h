@@ -5,7 +5,7 @@
 #include "list.h"
 #include "stack.h"
 #define N 256
-#define L1size 10
+#define L1size 64000
 
 class stack;
 
@@ -18,8 +18,8 @@ class radix{
     uint64_t offset;
     uint64_t size;
     mytuple *R;
-    uint32_t Hist[N]={0};
-    uint32_t Psum[N]={0};
+    uint32_t Hist[N];
+    uint32_t Psum[N];
     mytuple *_R;
     int byte;
 public:

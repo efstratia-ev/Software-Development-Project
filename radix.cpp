@@ -16,29 +16,31 @@ radix::radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte){
 
 //just a wrapper
 void radix::group() {
+
     histogram();
     prefixSum();
     reorderR();
 }
 
 void radix::histogram() {
-    memset(Hist, 0, N);
-    for(int64_t i=0; i<size; i++) Hist[hash(R[i].value)]++;
+    for (int i = 0; i < N; i++)
+        Hist[i] = 0;
+    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(R[i].value)]++;
 }
 
 void radix::prefixSum() {
-    memset(Psum, 0, N);
-    for(int64_t i=1; i<N; i++) Psum[i]=Hist[i-1]+Psum[i-1];
+    for (int i = 0; i < N; i++)
+        Psum[i] = 0;
+    Psum[0]=offset;
+    for(uint64_t i=1; i<N; i++) Psum[i]=Hist[i-1]+Psum[i-1];
 
 }
 
 void radix::reorderR() {
     uint32_t index,counter[N];
-    //memset sets 4 bytes - not 8. so counter is of type *uint
-    //memset(counter, 0, N); 
     for (int i = 0; i < N; i++)
         counter[i] = 0;
-    for(int64_t i=offset; i<size; i++){
+    for(uint64_t i=offset; i<offset+size; i++){
         index=hash(R[i].value);
         _R[Psum[index]+counter[index]]=R[i];
         counter[index]++;
@@ -60,14 +62,17 @@ bool radix::fitsCache(uint64_t i) {
 }
 
 void radix:: split(stack *Stack) {
-    for(int64_t i=0; i<N; i++){
-        if(Hist[i]==0 || byte==8) continue;
+    for(uint64_t i=0; i<N; i++){
+        if(byte==8) continue;
         if(fitsCache(i)){
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
             for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
                R[j]=_R[j];
         }
-        else Stack->push(new radix(Psum[i],Hist[i],_R,R,byte+1));
+        else{
+            if(Hist[i]==0) continue;
+            Stack->push(new radix(Psum[i],Hist[i],_R,R,byte+1));
+        }
     }
 }
 
@@ -98,7 +103,7 @@ int radix::partition(int start, int end) {
 }
 
 void radix::print() {
-    for(int64_t i=0; i<size; i++){
+    for(uint64_t i=0; i<size; i++){
         cout<<R[i].value<<"\t"<<_R[i].value<<endl;
     }
 }

@@ -16,7 +16,7 @@ using namespace std;
 bool isSorted(mytuple *arr,int len)  {
    //cout << "start" << endl;
     for (int i =1; i < len; i++) {
-       cout << arr[i].value << endl;
+      // cout << arr[i].value << endl;
         if (arr[i].value < arr[i-1].value)
             return false;
     }
@@ -64,7 +64,7 @@ void test_FilequickSort(string filename) {
 }
 
 void test_qSort() {
-   test_FilequickSort("../radix_test3.txt");
+ //  test_FilequickSort("../radix_test3.txt");
    test_FilequickSort("../radix_test2.txt");
 }
 
