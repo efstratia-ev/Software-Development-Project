@@ -26,35 +26,28 @@ bool isSorted(mytuple *arr,int len)  {
 void test_Group() {
     uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
-    string filename = "../test.txt";
-    if(!getArraySize(filename,count1,count2)) {
-        cout<<"Could not open file.\n";
+    string filename1 = "../trelA";
+    string filename2 = "../trelB";
+    if(!getArraysSize(filename1,filename2,count1,count2))
         exit(-1);
-    }
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makearrays(filename,array1,array2)) {
-        cout<<"Could not open file.\n";
+    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
         exit(-1);
-    }
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
     (new radix(0,count1,array1,_array1))->group();
 }
 
-void test_FilequickSort(string filename) {
+void test_FilequickSort(string filename1,string filename2) {
     uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
-    if(!getArraySize(filename,count1,count2)) {
-        cout<<"Could not open file.\n";
+    if(!getArraysSize(filename1,filename2,count1,count2))
         exit(-1);
-    }
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makearrays(filename,array1,array2)) {
-        cout<<"Could not open file.\n";
+    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
         exit(-1);
-    }
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
     (new radix(0,count1,array1,_array1))->quicksort(0,count1);
@@ -64,23 +57,20 @@ void test_FilequickSort(string filename) {
 }
 
 void test_qSort() {
- //  test_FilequickSort("../radix_test3.txt");
-   test_FilequickSort("../radix_test2.txt");
+    test_FilequickSort("../trelA", "../trelB");
+    test_FilequickSort("../srelA", "../srelB");
+    //test_FilequickSort("../mrelA", "../mrelB");
 }
 
-void testFile(string filename) {
+void testFile(string filename1,string filename2) {
     uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
-    if(!getArraySize(filename,count1,count2)) {
-        cout<<"Could not open file.\n";
+    if(!getArraysSize(filename1,filename2,count1,count2))
         exit(-1);
-    }
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makearrays(filename,array1,array2)) {
-        cout<<"Could not open file.\n";
+    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
         exit(-1);
-    }
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
     sort(new radix(0,count1,array1,_array1));
@@ -90,9 +80,10 @@ void testFile(string filename) {
 }
 
 void testFiles() {
-    testFile("../text.txt");
-    testFile("../radix_test3.txt");
-   // testFile("../radix_test2.txt");
+    testFile("../trelA","../trelB");
+    testFile("../srelA","../srelB");
+    //testFile("../mrelA","../mrelB");
+
 }
 
 int init_suite1(void)
