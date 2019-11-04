@@ -9,5 +9,7 @@ list *finalresults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t si
 
 void sort(radix *r);
 
+int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size2);
+
 
 #endif

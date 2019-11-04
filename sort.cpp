@@ -21,10 +21,24 @@ void sort(radix *r) {
     radix *currentRadix;
     while(Stack->notEmpty()){
         currentRadix=Stack->pop();
-        currentRadix->group();
+        currentRadix->group();  //make histogram+prefixSum and reorder array
         currentRadix->split(Stack);
         if(currentRadix!=r) delete currentRadix;
     }
     delete Stack;
 
+}
+
+int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size2) {
+    uint64_t start=0,j;
+    int count=0;
+    for(uint64_t i=0; i<size1; i++){
+        for(j=start; j<size2; j++){
+            if(array1[i].value==array2[j].value) count++;
+            else if(array1[i].value<array2[j].value)
+                break;
+        }
+        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
+    }
+    return count;
 }

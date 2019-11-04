@@ -49,6 +49,12 @@ listNode *listNode::getnext() {
     return next;
 }
 
+uint64_t listNode::getcount(){
+    return count;
+
+}
+
+
 listNode::~listNode() {
     free(buffer);
     if(next) delete next;
@@ -72,6 +78,17 @@ void list::print(){
         current=current->getnext();
     }
 }
+
+void list::printSize(){
+    current=start;
+    int count=0;
+    while(current){
+        count+=current->getcount();
+        current=current->getnext();
+    }
+    cout<<"Number of results is :"<<count<<"\n";
+}
+
 
 list::~list() {
     delete start;

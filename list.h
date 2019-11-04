@@ -10,6 +10,7 @@ class listNode{
 public:
     listNode();
     bool isFull();
+    uint64_t getcount();
     void add(uint64_t rowID1,uint64_t rowID2);
     listNode *createNext();
     void print();
@@ -24,6 +25,7 @@ public:
     list();
     void add(uint64_t rowID1,uint64_t rowID2);
     void print();
+    void printSize();
     ~list();
 };
 

@@ -40,7 +40,7 @@ void radix::reorderR() {
     uint32_t index,counter[N];
     for (int i = 0; i < N; i++)
         counter[i] = 0;
-    for(uint64_t i=offset; i<offset+size; i++){
+    for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
         index=hash(R[i].value);
         _R[Psum[index]+counter[index]]=R[i];
         counter[index]++;
@@ -48,7 +48,7 @@ void radix::reorderR() {
 }
 
 
-uint64_t radix::hash(uint64_t value) {
+uint64_t radix::hash(uint64_t value) { //keeps only 1 byte each time
     uint64_t shift=(8-byte)*8;
     value=value>>shift;
     value=value & 0xFF;
@@ -64,14 +64,14 @@ bool radix::fitsCache(uint64_t i) {
 void radix:: split(stack *Stack) {
     for(uint64_t i=0; i<N; i++){
         if(byte==8) continue;
-        if(fitsCache(i)){
+        if(fitsCache(i)){  //if no more hash is needed
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
             for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
                R[j]=_R[j];
         }
         else{
             if(Hist[i]==0) continue;
-            Stack->push(new radix(Psum[i],Hist[i],_R,R,byte+1));
+            Stack->push(new radix(Psum[i],Hist[i],_R,R,byte+1)); //hash again
         }
     }
 }
