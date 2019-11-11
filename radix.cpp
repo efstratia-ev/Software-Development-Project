@@ -64,10 +64,14 @@ bool radix::fitsCache(uint64_t i) {
 void radix:: split(stack *Stack) {
     for(uint64_t i=0; i<N; i++){
         if(byte==8) continue;
-        if(fitsCache(i)){  //if no more hash is needed
+        //if no more hash is needed
+        if(fitsCache(i)){  
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
-            for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
-               R[j]=_R[j];
+            //copy only if we wrote to _R
+            if ((byte %2) == 1) {
+                for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
+                    R[j]=_R[j];
+            }
         }
         else{
             if(Hist[i]==0) continue;
