@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,count1,filename2,array2,count2)) //get array's data
+    if(!makeArrays(filename1,array1,filename2,array2)) //get array's data
         exit(-1);
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
     radix r2(0,count2,array2,_array2,1);
     sort(&r2);
     list *resultlist=finalresults(array1,array2,count1,count2);
-    //resultlist->print();
-    resultlist->printSize();
+    resultlist->print();
+    //resultlist->printSize();
     //cout<<countResults(array1,array2,count1,count2)<<"\n"; //without saving results to list
     delete[] array1;
     delete[] array2;

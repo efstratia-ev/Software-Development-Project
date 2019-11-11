@@ -6,11 +6,11 @@ list *finalresults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t si
     uint64_t start=0,j;
     for(uint64_t i=0; i<size1; i++){
         for(j=start; j<size2; j++){
-            if(array1[i].value==array2[j].value) resultlist->add(array1[i].index,array2[j].index);
-            else if(array1[i].value<array2[j].value)
+            if(array1[i].key==array2[j].key) resultlist->add(array1[i].value,array2[j].value);
+            else if(array1[i].key<array2[j].key)
                 break;
         }
-        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
+        if(i!=size1-1 && array1[i].key!=array1[i+1].key)  start=j;
     }
     return resultlist;
 }
@@ -34,11 +34,11 @@ int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size
     int count=0;
     for(uint64_t i=0; i<size1; i++){
         for(j=start; j<size2; j++){
-            if(array1[i].value==array2[j].value) count++;
-            else if(array1[i].value<array2[j].value)
+            if(array1[i].key==array2[j].key) count++;
+            else if(array1[i].key<array2[j].key)
                 break;
         }
-        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
+        if(i!=size1-1 && array1[i].key!=array1[i+1].key)  start=j;
     }
     return count;
 }

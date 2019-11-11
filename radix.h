@@ -11,6 +11,7 @@ class stack;
 
 struct mytuple{
     uint64_t index;
+    uint64_t key;
     uint64_t value;
 };
 

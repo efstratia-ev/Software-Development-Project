@@ -17,7 +17,7 @@ bool isSorted(mytuple *arr,int len)  {
    //cout << "start" << endl;
     for (int i =1; i < len; i++) {
       // cout << arr[i].value << endl;
-        if (arr[i].value < arr[i-1].value)
+        if (arr[i].key < arr[i-1].key)
             return false;
     }
     return true;
@@ -26,13 +26,13 @@ bool isSorted(mytuple *arr,int len)  {
 void test_Group() {
     uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
-    string filename1 = "../trelA";
-    string filename2 = "../trelB";
+    string filename1 = "Datasets-joinoperator/comma/tiny/relA";
+    string filename2 = "Datasets-joinoperator/comma/tiny/relB";
     if(!getArraysSize(filename1,filename2,count1,count2))
         exit(-1);
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
+    if(!makeArrays(filename1,array1,filename2,array2))
         exit(-1);
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
@@ -46,7 +46,7 @@ void test_FilequickSort(string filename1,string filename2) {
         exit(-1);
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
+    if(!makeArrays(filename1,array1,filename2,array2))
         exit(-1);
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
@@ -57,8 +57,8 @@ void test_FilequickSort(string filename1,string filename2) {
 }
 
 void test_qSort() {
-    test_FilequickSort("../trelA", "../trelB");
-    test_FilequickSort("../srelA", "../srelB");
+    test_FilequickSort("Datasets-joinoperator/comma/tiny/relA","Datasets-joinoperator/comma/tiny/relB");
+    test_FilequickSort("Datasets-joinoperator/comma/small/relA","Datasets-joinoperator/comma/small/relB");
     //test_FilequickSort("../mrelA", "../mrelB");
 }
 
@@ -69,7 +69,7 @@ void testFile(string filename1,string filename2) {
         exit(-1);
     array1=new mytuple[count1];
     array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,count1,filename2,array2,count2))
+    if(!makeArrays(filename1,array1,filename2,array2))
         exit(-1);
     _array1=new mytuple[count1];
     _array2=new mytuple[count2];
@@ -80,8 +80,8 @@ void testFile(string filename1,string filename2) {
 }
 
 void testFiles() {
-    testFile("../trelA","../trelB");
-    testFile("../srelA","../srelB");
+    testFile("Datasets-joinoperator/comma/tiny/relA","Datasets-joinoperator/comma/tiny/relB");
+    testFile("Datasets-joinoperator/comma/small/relA","Datasets-joinoperator/comma/small/relB");
     //testFile("../mrelA","../mrelB");
 
 }

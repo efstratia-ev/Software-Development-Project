@@ -25,7 +25,7 @@ void radix::group() {
 void radix::histogram() {
     for (int i = 0; i < N; i++)
         Hist[i] = 0;
-    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(R[i].value)]++;
+    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(R[i].key)]++;
 }
 
 void radix::prefixSum() {
@@ -41,7 +41,7 @@ void radix::reorderR() {
     for (int i = 0; i < N; i++)
         counter[i] = 0;
     for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
-        index=hash(R[i].value);
+        index=hash(R[i].key);
         _R[Psum[index]+counter[index]]=R[i];
         counter[index]++;
     }
@@ -93,7 +93,7 @@ int radix::partition(int start, int end) {
     mytuple temp;
 
     for(int j=start; j<end; j++){
-        if(_R[j].value<pivot.value){
+        if(_R[j].key<pivot.key){
             i++;
             temp=_R[i];
             _R[i]=_R[j];
@@ -108,7 +108,7 @@ int radix::partition(int start, int end) {
 
 void radix::print() {
     for(uint64_t i=0; i<size; i++){
-        cout<<R[i].value<<"\t"<<_R[i].value<<endl;
+        cout<<R[i].key<<"\t"<<_R[i].key<<endl;
     }
 }
 

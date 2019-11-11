@@ -38,7 +38,7 @@ void listNode::print() { //print the results
     for(uint64_t i=0; i<count; i++){
         memcpy(&temp,current_item, sizeof(uint64_t));
         current_item+= sizeof(uint64_t);
-        std::cout<<temp<<" ";
+        std::cout<<temp<<",";
         memcpy(&temp,current_item, sizeof(uint64_t));
         current_item+= sizeof(uint64_t);
         std::cout<<temp<<std::endl;
