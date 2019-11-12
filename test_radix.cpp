@@ -26,8 +26,8 @@ bool isSorted(mytuple *arr,int len)  {
 void test_Group() {
     uint64_t count1=0,count2=0;
     struct mytuple *array1,*array2,*_array1,*_array2;
-    string filename1 = "Datasets-joinoperator/comma/tiny/relA";
-    string filename2 = "Datasets-joinoperator/comma/tiny/relB";
+    string filename1 = "../Datasets/tiny/relA";
+    string filename2 = "../Datasets/tiny/relB";
     if(!getArraysSize(filename1,filename2,count1,count2))
         exit(-1);
     array1=new mytuple[count1];
@@ -57,9 +57,8 @@ void test_FilequickSort(string filename1,string filename2) {
 }
 
 void test_qSort() {
-    test_FilequickSort("Datasets-joinoperator/comma/tiny/relA","Datasets-joinoperator/comma/tiny/relB");
-    test_FilequickSort("Datasets-joinoperator/comma/small/relA","Datasets-joinoperator/comma/small/relB");
-    //test_FilequickSort("../mrelA", "../mrelB");
+    test_FilequickSort("../Datasets/tiny/relA","../Datasets/tiny/relB");
+    test_FilequickSort("../Datasets/small/relA","../Datasets/small/relB");
 }
 
 void testFile(string filename1,string filename2) {
@@ -80,8 +79,8 @@ void testFile(string filename1,string filename2) {
 }
 
 void testFiles() {
-    testFile("Datasets-joinoperator/comma/tiny/relA","Datasets-joinoperator/comma/tiny/relB");
-    testFile("Datasets-joinoperator/comma/small/relA","Datasets-joinoperator/comma/small/relB");
+    testFile("../Datasets/tiny/relA","../Datasets/tiny/relB");
+    testFile("../Datasets/small/relA","../Datasets/small/relB");
     //testFile("../mrelA","../mrelB");
 
 }
