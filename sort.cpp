@@ -1,16 +1,26 @@
 #include <iostream>
 #include "sort.h"
 using namespace std;
-list *finalresults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size2) {
+list *join(array *array1,array *array2) {
     list *resultlist=new list();
-    uint64_t start=0,j;
-    for(uint64_t i=0; i<size1; i++){
-        for(j=start; j<size2; j++){
-            if(array1[i].key==array2[j].key) resultlist->add(array1[i].value,array2[j].value);
-            else if(array1[i].key<array2[j].key)
-                break;
+    uint64_t i=0,j=0;
+    while(i<array1->Size && j<array2->Size){
+        if(array1->Array[i].key>array2->Array[j].key){
+            j+=array2->countKeys(j);
+            continue;
         }
-        if(i!=size1-1 && array1[i].key!=array1[i+1].key)  start=j;
+        if(array1->Array[i].key<array2->Array[j].key){
+            i+=array1->countKeys(i);
+            continue;
+        }
+        uint64_t maxi=i+array1->countKeys(i),maxj=j+array2->countKeys(j);
+        for(uint64_t x=i; x<maxi; x++){
+            for(uint64_t y=j; y<maxj; y++){
+                resultlist->add(array1->Array[i].value,array2->Array[j].value);
+            }
+        }
+        i+=maxi;
+        j=+maxj;
     }
     return resultlist;
 }

@@ -1,6 +1,7 @@
 #ifndef RADIX_H
 #define RADIX_H
 
+#include "array.h"
 #include <cinttypes>
 #include "list.h"
 #include "stack.h"
@@ -9,11 +10,6 @@
 
 class stack;
 
-struct mytuple{
-    uint64_t index;
-    uint64_t key;
-    uint64_t value;
-};
 
 class radix{
     uint64_t offset;

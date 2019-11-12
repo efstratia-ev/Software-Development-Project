@@ -33,7 +33,7 @@ int getArraysSize(string filename1,string filename2,uint64_t & count1,uint64_t &
     return 1;
 }
 
-int makeArray(string filename,mytuple * array1){  //makes the array
+int makeArray(string filename,array * array1){  //makes the array
     int c=0;
     ifstream myReadFile;
     myReadFile.open(filename);
@@ -41,9 +41,9 @@ int makeArray(string filename,mytuple * array1){  //makes the array
     char ch;
     if (myReadFile.is_open()) {
         while (myReadFile>>output1>>ch>>output2 && ch == ','){
-            array1[c].index=c;
-            array1[c].key = output1;
-            array1[c++].value = output2;
+            array1->Array[c].index=c;
+            array1->Array[c].key = output1;
+            array1->Array[c++].value = output2;
         }
         myReadFile.close();
         return 1;
@@ -51,7 +51,7 @@ int makeArray(string filename,mytuple * array1){  //makes the array
     return 0;
 }
 
-int makeArrays(string filename1,mytuple * array1,string filename2,mytuple * array2){
+int makeArrays(string filename1,array * array1,string filename2,array * array2){
     if(!makeArray(filename1,array1)) {
         cout<<"could not open file.\n";
         return 0;

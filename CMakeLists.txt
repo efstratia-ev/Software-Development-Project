@@ -12,7 +12,7 @@ add_executable(Project2019
         inputFunctions.h
         list.cpp
         list.h
-        main.cpp stack.cpp stack.h sort.cpp sort.h)
+        main.cpp stack.cpp stack.h sort.cpp sort.h array.cpp array.h)
 
 add_executable(test_radix
         radix.cpp
