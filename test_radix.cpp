@@ -13,11 +13,11 @@ static FILE* temp_file = NULL;
 using namespace std;
 
 
-bool isSorted(mytuple *arr,int len)  {
+bool isSorted(array *arr)  {
    //cout << "start" << endl;
-    for (int i =1; i < len; i++) {
+    for (int i =1; i < arr->Size; i++) {
       // cout << arr[i].value << endl;
-        if (arr[i].key < arr[i-1].key)
+        if (arr->Array[i].key < arr->Array[i-1].key)
             return false;
     }
     return true;
@@ -25,35 +25,35 @@ bool isSorted(mytuple *arr,int len)  {
 
 void test_Group() {
     uint64_t count1=0,count2=0;
-    struct mytuple *array1,*array2,*_array1,*_array2;
+    struct array *array1,*array2,*_array1,*_array2;
     string filename1 = "../Datasets/tiny/relA";
     string filename2 = "../Datasets/tiny/relB";
-    if(!getArraysSize(filename1,filename2,count1,count2))
+    if(!getArraysSize(filename1,filename2,count1,count2)) //find array's size
         exit(-1);
-    array1=new mytuple[count1];
-    array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,filename2,array2))
+    array1=new array(count1);
+    array2=new array(count2);
+    if(!makeArrays(filename1,array1,filename2,array2)) //get array's data
         exit(-1);
-    _array1=new mytuple[count1];
-    _array2=new mytuple[count2];
-    (new radix(0,count1,array1,_array1))->group();
+    _array1=new array(count1);
+    _array2=new array(count2);
+    (new radix(0,count1,array1->Array,_array1->Array))->group();
 }
 
 void test_FilequickSort(string filename1,string filename2) {
     uint64_t count1=0,count2=0;
-    struct mytuple *array1,*array2,*_array1,*_array2;
-    if(!getArraysSize(filename1,filename2,count1,count2))
+    struct array *array1,*array2,*_array1,*_array2;
+    if(!getArraysSize(filename1,filename2,count1,count2)) //find array's size
         exit(-1);
-    array1=new mytuple[count1];
-    array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,filename2,array2))
+    array1=new array(count1);
+    array2=new array(count2);
+    if(!makeArrays(filename1,array1,filename2,array2)) //get array's data
         exit(-1);
-    _array1=new mytuple[count1];
-    _array2=new mytuple[count2];
-    (new radix(0,count1,array1,_array1))->quicksort(0,count1);
-    (new radix(0,count2,array2,_array2))->quicksort(0,count2);
-    CU_ASSERT(isSorted(array1,count1) == true);
-    CU_ASSERT(isSorted(array2,count2) == true);
+    _array1=new array(count1);
+    _array2=new array(count2);
+    (new radix(0,count1,array1->Array,_array1->Array))->quicksort(0,count1);
+    (new radix(0,count2,array2->Array,_array2->Array))->quicksort(0,count2);
+    CU_ASSERT(isSorted(array1) == true);
+    CU_ASSERT(isSorted(array2) == true);
 }
 
 void test_qSort() {
@@ -63,19 +63,19 @@ void test_qSort() {
 
 void testFile(string filename1,string filename2) {
     uint64_t count1=0,count2=0;
-    struct mytuple *array1,*array2,*_array1,*_array2;
-    if(!getArraysSize(filename1,filename2,count1,count2))
+    struct array *array1,*array2,*_array1,*_array2;
+    if(!getArraysSize(filename1,filename2,count1,count2)) //find array's size
         exit(-1);
-    array1=new mytuple[count1];
-    array2=new mytuple[count2];
-    if(!makeArrays(filename1,array1,filename2,array2))
+    array1=new array(count1);
+    array2=new array(count2);
+    if(!makeArrays(filename1,array1,filename2,array2)) //get array's data
         exit(-1);
-    _array1=new mytuple[count1];
-    _array2=new mytuple[count2];
-    sort(new radix(0,count1,array1,_array1));
-    sort(new radix(0,count2,array2,_array2));
-    CU_ASSERT(isSorted(array1,count1) == true);
-    CU_ASSERT(isSorted(array2,count2) == true);
+    _array1=new array(count1);
+    _array2=new array(count2);
+    sort(new radix(0,count1,array1->Array,_array1->Array));
+    sort(new radix(0,count2,array2->Array,_array2->Array));
+    CU_ASSERT(isSorted(array1) == true);
+    CU_ASSERT(isSorted(array2) == true);
 }
 
 void testFiles() {

@@ -16,7 +16,7 @@ list *join(array *array1,array *array2) {
         uint64_t maxi=i+array1->countKeys(i),maxj=j+array2->countKeys(j);
         for(uint64_t x=i; x<maxi; x++){
             for(uint64_t y=j; y<maxj; y++){
-                resultlist->add(array1->Array[i].value,array2->Array[j].value);
+                resultlist->add(array1->Array[x].value,array2->Array[y].value);
             }
         }
         i+=maxi;
