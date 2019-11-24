@@ -10,15 +10,11 @@ add_executable(Project2019
         radix.h
         inputFunctions.cpp
         inputFunctions.h
-        list.cpp
-        list.h
-        main.cpp stack.cpp stack.h sort.cpp sort.h array.cpp array.h)
+        main.cpp stack.cpp stack.h sort.cpp sort.h array.cpp array.h list.cpp list.h ResultsArray.cpp ResultsArray.h)
 
 add_executable(test_radix
         radix.cpp
         radix.h
         inputFunctions.cpp
         inputFunctions.h
-        list.cpp
-        list.h
         test_radix.cpp stack.cpp stack.h sort.cpp sort.h)
