@@ -1,2 +1,4 @@
 /build/*
 *.json
+workloads/medium/*
+*tar.gz
