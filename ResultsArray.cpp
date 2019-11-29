@@ -1,26 +1,26 @@
 #include "ResultsArray.h"
 
-ResultsArray::ResultsArray(int s, int r) {
+ResultsArray::ResultsArray(uint64_t s, uint64_t r) {
     size=s;
     rowIDs=r;
-    Array=new int*[size];
+    Array=new uint64_t*[size];
 }
 
 void ResultsArray::set_currentColumn(int column) {
     currentColumn=column;
 }
 
-int ResultsArray::get_value(int i) {
+uint64_t ResultsArray::get_value(uint64_t i) {
     return Array[i][currentColumn];
 }
 
-void ResultsArray::insert_row(int i, int *row) {
+void ResultsArray::insert_row(uint64_t i, uint64_t *row) {
     Array[i]=row;
 }
 
 void ResultsArray::update_array(list *results,int id) {
-    int new_size=results->get_size();
-    int **new_array=new int*[new_size];
+    uint64_t new_size=results->get_size();
+    uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
     int *new_arrayID=new int[rowIDs+1];
     int n=-1;
@@ -39,16 +39,16 @@ void ResultsArray::update_array(list *results,int id) {
         }
 
     }
-    for(int i=0; i<new_size; i++){
-        new_array[i]=new int[rowIDs+1];
+    for(uint64_t i=0; i<new_size; i++){
+        new_array[i]=new uint64_t[rowIDs+1];
         rows=results->pop();
-        for(int j=0; j<rowIDs; j++){
+        for(uint64_t j=0; j<rowIDs; j++){
             new_array[i][j]=Array[rows->rowid1][j];
         }
         new_array[arrayIDs[i]][n]=rows->rowid2;
         delete rows;
     }
-    for(int i=0; i<size; i++)delete[] Array[i];
+    for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
     size=new_size;
     rowIDs+=1;
@@ -57,8 +57,8 @@ void ResultsArray::update_array(list *results,int id) {
 }
 
 void ResultsArray::update_array(list *results, ResultsArray *array2) {
-    int new_size=results->get_size();
-    int **new_array=new int*[new_size];
+    uint64_t new_size=results->get_size();
+    uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
     int *new_arrayID=new int[rowIDs+1];
     int n=-1;
@@ -77,16 +77,16 @@ void ResultsArray::update_array(list *results, ResultsArray *array2) {
         }
 
     }
-    for(int i=0; i<new_size; i++){
-        new_array[i]=new int[rowIDs+1];
+    for(uint64_t i=0; i<new_size; i++){
+        new_array[i]=new uint64_t[rowIDs+1];
         rows=results->pop();
-        for(int j=0; j<rowIDs; j++){
+        for(uint64_t j=0; j<rowIDs; j++){
             new_array[i][j]=Array[rows->rowid1][j];
         }
         new_array[arrayIDs[i]][n]=array2->Array[rows->rowid2][0];
         delete rows;
     }
-    for(int i=0; i<size; i++)delete[] Array[i];
+    for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
     size=new_size;
     rowIDs+=1;
@@ -95,11 +95,12 @@ void ResultsArray::update_array(list *results, ResultsArray *array2) {
 }
 
 void ResultsArray::create_array(list *results,int id) {
-    int size=results->get_size();
-    int **Array=new int*[size];
-    arrayIDs=new int[1];
-    arrayIDs[0]=id;
-    for(int i=0; i<size; i++){
-        Array[i]=new int[1];
-        Array[i][0]=results->pop_element();
+    uint64_t size = results->get_size();
+    Array = new uint64_t *[size];
+    arrayIDs = new int[1];
+    arrayIDs[0] = id;
+    for (uint64_t i = 0; i < size; i++) {
+        Array[i] = new uint64_t[1];
+        Array[i][0] = results->pop_element();
     }
+}

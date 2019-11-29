@@ -114,7 +114,7 @@ void list::print(){
 
 void list::printSize(){
     current=start;
-    int count=0;
+    uint64_t count=0;
     while(current){
         count+=current->getcount();
         current=current->getnext();
@@ -127,7 +127,7 @@ list::~list() {
     delete start;
 }
 
-int list::get_size() {
+uint64_t list::get_size() {
     return size;
 }
 

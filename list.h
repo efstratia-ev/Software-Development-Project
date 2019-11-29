@@ -41,7 +41,7 @@ public:
     void print();
     void printSize();
     ~list();
-    int get_size();
+    uint64_t get_size();
     void restart_current();
     rowids* pop();
     uint64_t pop_element();

@@ -5,16 +5,16 @@
 #include "list.h"
 
 class ResultsArray {
-    int size;
+    uint64_t size;
     int rowIDs;
-    int **Array;
+    uint64_t **Array;
     int *arrayIDs;
     int currentColumn;
 public:
-    ResultsArray(int s,int r);
+    ResultsArray(uint64_t s,uint64_t r);
     void set_currentColumn(int column);
-    int get_value(int i);
-    void insert_row(int i,int *row);
+    uint64_t get_value(uint64_t i);
+    void insert_row(uint64_t i,uint64_t *row);
     void update_array(list *results,int id);
     void update_array(list *results,ResultsArray *array2);
     void create_array(list *results,int id);
