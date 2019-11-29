@@ -8,14 +8,14 @@ listNode::listNode() {
     if(buffer==NULL){
         std::cout<<"error"<<std::endl;
     }
-    max=(1024*1024)/(2* sizeof(uint64_t));  //max size of results in the buffer
+    max=(1024*1024)/( sizeof(uint64_t));  //max size of results in the buffer
     count=0;   //current number of results in the buffer
     current=buffer;
     next=NULL;
 }
 
 void listNode::add(uint64_t rowID1, uint64_t rowID2) {  //add new result
-    count++;
+    count+=2;
     memcpy(current,&rowID1, sizeof(uint64_t));
     current+= sizeof(uint64_t);
     memcpy(current,&rowID2, sizeof(uint64_t));
@@ -60,12 +60,45 @@ listNode::~listNode() {
     if(next) delete next;
 }
 
+rowids* listNode::pop() {
+    if(count==0) return NULL;
+    count-=2;
+    uint64_t temp1,temp2;
+    memcpy(&temp1,current, sizeof(uint64_t));
+    current+= sizeof(uint64_t);
+    memcpy(&temp2,current, sizeof(uint64_t));
+    current+= sizeof(uint64_t);
+    rowids *first=new rowids(temp1,temp2);
+    return first;
+}
+
+void listNode::add(uint64_t rowID) {
+    count++;
+    memcpy(current,&rowID, sizeof(uint64_t));
+    if(count!=max) current+= sizeof(uint64_t);
+}
+
+uint64_t listNode::pop_element() {
+    if(count==0) return NULL;
+    count--;
+    uint64_t temp;
+    memcpy(&temp,current, sizeof(uint64_t));
+    current+= sizeof(uint64_t);
+    return temp;
+}
+
+void listNode::restart_current() {
+    current=buffer;
+}
+
 list::list() {
+    size=0;
     start=new listNode();
     current=start;
 }
 
 void list::add(uint64_t rowID1, uint64_t rowID2) {
+    size++;
     if(current->isFull())
         current=current->createNext();  //new list node
     current->add(rowID1,rowID2);  //add the result
@@ -92,4 +125,31 @@ void list::printSize(){
 
 list::~list() {
     delete start;
+}
+
+int list::get_size() {
+    return size;
+}
+
+void list::restart_current() {
+    current=start;
+    while(current){
+        current->restart_current();
+        current=current->getnext();
+    }
+    current=start;
+}
+
+rowids *list::pop() {
+    rowids *temp=current->pop();
+    if(temp) return temp;
+    current=current->getnext();
+    return current->pop();
+}
+
+uint64_t list::pop_element() {
+    uint64_t  temp=current->pop_element();
+    if(temp) return temp;
+    current=current->getnext();
+    return current->pop_element();
 }
