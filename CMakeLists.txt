@@ -18,3 +18,9 @@ add_executable(test_radix
         inputFunctions.cpp
         inputFunctions.h
         test_radix.cpp stack.cpp stack.h sort.cpp sort.h)
+
+add_executable(test_relations
+        test_relations.cpp
+        relation.h
+        relations.h
+)
