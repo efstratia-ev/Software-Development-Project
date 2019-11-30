@@ -147,3 +147,10 @@ void ResultsArray::filter(int arrayID1, uint64_t column1, int arrayID2, uint64_t
     }
     filter_update(results);
 }
+
+bool ResultsArray::exists(int arrayID) {
+    for(int i=0; i<columnIDs; i++){
+        if(arrayIDs[i]==arrayID) return true;
+    }
+    return false;
+}
