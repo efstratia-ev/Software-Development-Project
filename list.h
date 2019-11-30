@@ -45,6 +45,8 @@ public:
     void restart_current();
     rowids* pop();
     uint64_t pop_element();
+
+    void add(uint64_t rowID);
 };
 
 #endif

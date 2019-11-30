@@ -153,3 +153,10 @@ uint64_t list::pop_element() {
     current=current->getnext();
     return current->pop_element();
 }
+
+void list::add(uint64_t rowID) {
+    size++;
+    if(current->isFull())
+        current=current->createNext();  //new list node
+    current->add(rowID);  //add the result
+}

@@ -2,7 +2,7 @@
 
 ResultsArray::ResultsArray(uint64_t s, uint64_t r) {
     size=s;
-    rowIDs=r;
+    columnIDs=r;
     Array=new uint64_t*[size];
 }
 
@@ -22,9 +22,9 @@ void ResultsArray::update_array(list *results,int id) {
     uint64_t new_size=results->get_size();
     uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
-    int *new_arrayID=new int[rowIDs+1];
+    int *new_arrayID=new int[columnIDs+1];
     int n=-1;
-    for(int j=0; j<rowIDs; j++){
+    for(int j=0; j<columnIDs; j++){
         if(n>0){
             new_arrayID[j+1]=arrayIDs[j];
             arrayIDs[j]=j+1;
@@ -40,10 +40,10 @@ void ResultsArray::update_array(list *results,int id) {
 
     }
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[rowIDs+1];
+        new_array[i]=new uint64_t[columnIDs+1];
         rows=results->pop();
-        for(uint64_t j=0; j<rowIDs; j++){
-            new_array[i][j]=Array[rows->rowid1][j];
+        for(uint64_t j=0; j<columnIDs; j++){
+            if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
         }
         new_array[arrayIDs[i]][n]=rows->rowid2;
         delete rows;
@@ -51,7 +51,7 @@ void ResultsArray::update_array(list *results,int id) {
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
     size=new_size;
-    rowIDs+=1;
+    columnIDs+=1;
     delete[] arrayIDs;
     arrayIDs=new_arrayID;
 }
@@ -60,9 +60,9 @@ void ResultsArray::update_array(list *results, ResultsArray *array2) {
     uint64_t new_size=results->get_size();
     uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
-    int *new_arrayID=new int[rowIDs+1];
+    int *new_arrayID=new int[columnIDs+1];
     int n=-1;
-    for(int j=0; j<rowIDs; j++){
+    for(int j=0; j<columnIDs; j++){
         if(n>0){
             new_arrayID[j+1]=arrayIDs[j];
             arrayIDs[j]=j+1;
@@ -78,10 +78,10 @@ void ResultsArray::update_array(list *results, ResultsArray *array2) {
 
     }
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[rowIDs+1];
+        new_array[i]=new uint64_t[columnIDs+1];
         rows=results->pop();
-        for(uint64_t j=0; j<rowIDs; j++){
-            new_array[i][j]=Array[rows->rowid1][j];
+        for(uint64_t j=0; j<columnIDs; j++){
+            if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
         }
         new_array[arrayIDs[i]][n]=array2->Array[rows->rowid2][0];
         delete rows;
@@ -89,18 +89,61 @@ void ResultsArray::update_array(list *results, ResultsArray *array2) {
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
     size=new_size;
-    rowIDs+=1;
+    columnIDs+=1;
     delete[] arrayIDs;
     arrayIDs=new_arrayID;
 }
 
 void ResultsArray::create_array(list *results,int id) {
-    uint64_t size = results->get_size();
-    Array = new uint64_t *[size];
+    uint64_t sz = results->get_size();
+    Array = new uint64_t *[sz];
     arrayIDs = new int[1];
     arrayIDs[0] = id;
-    for (uint64_t i = 0; i < size; i++) {
+    for (uint64_t i = 0; i < sz; i++) {
         Array[i] = new uint64_t[1];
         Array[i][0] = results->pop_element();
     }
+}
+
+int ResultsArray::get_column(int arrayID) {
+    for(int i=0; i<columnIDs; i++)
+        if(arrayID==arrayIDs[i]) return i;
+}
+
+void ResultsArray::filter_update(list *results) {
+    uint64_t new_size=results->get_size();
+    uint64_t **new_array=new uint64_t*[new_size];
+    rowids *rows;
+
+    for(uint64_t i=0; i<new_size; i++){
+        new_array[i]=new uint64_t[columnIDs];
+        rows=results->pop();
+        for(uint64_t j=0; j<columnIDs; j++){
+            new_array[i][j]=Array[rows->rowid1][j];
+        }
+    }
+    for(uint64_t i=0; i<size; i++)delete[] Array[i];
+    delete[] Array;
+    size=new_size;
+    delete[] arrayIDs;
+}
+
+void ResultsArray::filter(int arrayID, uint64_t column1, uint64_t column2, Relations *Data) {
+    int column=get_column(arrayID);
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(Data->filter(arrayID,Array[column][i],column1,column2))
+            results->add(Array[column][i]);
+    }
+    filter_update(results);
+}
+
+void ResultsArray::filter(int arrayID1, uint64_t column1, int arrayID2, uint64_t column2, Relations *Data) {
+    int c1=get_column(arrayID1),c2=get_column(arrayID2);
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(Data->filter(arrayID1,arrayID2,Array[column1][i],Array[column2][i],column1,column2))
+            results->add(i);
+    }
+    filter_update(results);
 }

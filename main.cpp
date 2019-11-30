@@ -7,6 +7,7 @@
 #include "inputFunctions.h"
 #include "sort.h"
 #include "array.h"
+#include "relations.h"
 
 // sed -i 's/,/ /g' filename
 
@@ -15,21 +16,16 @@ using namespace std;
 int main(int argc, char *argv[]) {
     uint64_t count1=0,count2=0;
     struct array *array1,*array2,*_array1,*_array2;
-    string filename1,filename2;
-    if(argc!=3) {  //get filenames
+    char *filename;
+    if(argc!=2) {  //get filenames
         cout<<"Wrong amount of arguments\n";
         exit(-1);
     }
-	filename1=argv[1];
-    filename2=argv[2];
-    if(!getArraysSize(filename1,filename2,count1,count2)) //find array's size
-        exit(-1);
-    array1=new array(count1);
-    array2=new array(count2);
-    if(!makeArrays(filename1,array1,filename2,array2)) //get array's data
-        exit(-1);
-    _array1=new array(count1);
-    _array2=new array(count2);
+	filename=argv[1];
+
+    Relations *relations=new Relations(filename);
+
+
     radix r1(0,array1->Size,array1->Array,_array1->Array,1);
     sort(&r1);
     radix r2(0,array2->Size,array2->Array,_array2->Array,1);
