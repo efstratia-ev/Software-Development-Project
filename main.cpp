@@ -17,7 +17,7 @@
 
 using namespace std;
 
-ResultsArray *join(SQLInfo *sql,Relations *relations){
+JoinArray *join(SQLInfo *sql,Relations *relations){
     //ap ti main tou part 1
    /* radix r1(0,array1->Size,array1->Array,_array1->Array,1);
     sort(&r1);

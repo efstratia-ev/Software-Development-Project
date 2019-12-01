@@ -5,10 +5,10 @@
 
 
 class results_node{
-    ResultsArray *results;
+    JoinArray *results;
     results_node *next;
 public:
-    results_node(ResultsArray *a,results_node *n);
+    results_node(JoinArray *a,results_node *n);
     ~results_node();
 };
 
@@ -18,7 +18,7 @@ class results_list {
 public:
     results_list();
     ~results_list();
-    void add(ResultsArray *results);
+    void add(JoinArray *results);
     void clear();
 };
 
