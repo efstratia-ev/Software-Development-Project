@@ -25,9 +25,7 @@ public:
     void makeArraysResults();
     int *get_next_filter();
     int *get_next_join();
-    int get_filters_counter(){
-        return filters;
-    }
+    int get_filters_counter();
 };
 
 

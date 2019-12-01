@@ -151,3 +151,7 @@ int *SQLInfo::get_next_join() {
     if(current==Predicates_sz) return NULL;
     else return Predicates[current++];
 }
+
+int SQLInfo::get_filters_counter() {
+    return filters;
+}

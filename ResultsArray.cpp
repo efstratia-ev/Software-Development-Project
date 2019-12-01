@@ -128,7 +128,7 @@ void ResultsArray::filter_update(list *results) {
     delete[] arrayIDs;
 }
 
-void ResultsArray::filter(int arrayID, uint64_t column1, uint64_t column2, Relations *Data) {
+void ResultsArray::compare(int arrayID, uint64_t column1, uint64_t column2, Relations *Data) {
     int column=get_column(arrayID);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
@@ -138,7 +138,7 @@ void ResultsArray::filter(int arrayID, uint64_t column1, uint64_t column2, Relat
     filter_update(results);
 }
 
-void ResultsArray::filter(int arrayID1, uint64_t column1, int arrayID2, uint64_t column2, Relations *Data) {
+void ResultsArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t column2, Relations *Data) {
     int c1=get_column(arrayID1),c2=get_column(arrayID2);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){

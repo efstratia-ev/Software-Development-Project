@@ -21,8 +21,8 @@ public:
     void create_array(list *results,int id);
     int get_column(int arrayID);
     void filter_update(list *results);
-    void filter(int arrayID,uint64_t column1,uint64_t column2,Relations *Data);
-    void filter(int arrayID1,uint64_t column1,int arrayID2,uint64_t column2,Relations *Data);
+    void compare(int arrayID,uint64_t column1,uint64_t column2,Relations *Data);
+    void compare(int arrayID1,uint64_t column1,int arrayID2,uint64_t column2,Relations *Data);
     bool exists(int arrayID);
 };
 
