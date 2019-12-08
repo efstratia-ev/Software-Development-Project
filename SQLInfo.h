@@ -63,6 +63,9 @@ public:
     node* get_next(){
         return next;
     }
+    Predicate *getPredicate(){
+        return predicate;
+    }
 };
 
 class Priority_Queue{

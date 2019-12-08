@@ -37,10 +37,9 @@ void Priority_Queue::Push(Predicate *p){
 
 }
 Predicate* Priority_Queue::Priority_Queue::Pop(){
-    node * tmp = head->get_next();
-    delete head;
-    this->head = tmp;
-    this->size--;
+    Predicate *predicate=head->getPredicate();
+    head=head->get_next();
+    return predicate;
 }
 
 bool Priority_Queue::IsEmpty(){

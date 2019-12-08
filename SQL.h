@@ -7,8 +7,6 @@ using namespace std;
 
 class SQL{
     char * query;
-    int filters;
-    int current;
     int * from_arrays,from_arrays_sz,select_result_sz;
     Priority_Queue * where_predicates;
     set * select_results;
@@ -24,6 +22,7 @@ public:
     int InitSelectResults(string);
     void SplitSelectResults(string select);
     void GetSelectResults(string,int);
+
 };
 
 
