@@ -30,6 +30,7 @@ int SQL::CutQueryToParts(){
    where = q.substr (0,pos);
    cout<<where<<endl;
    SplitWherePredicates(where);
+   where_predicates->InitRearrange();
 
    //get select
    select = q.substr(pos+1);
@@ -112,7 +113,7 @@ void SQL::GetWherePredicates(string predicate) {
 
 void SQL::GetWhereFilters(string predicate){
     int a,c,number;
-    char comparison;
+    char comp;
     size_t pos_start = 0;
     size_t pos = predicate.find( '.' );
     a=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
@@ -121,12 +122,12 @@ void SQL::GetWhereFilters(string predicate){
     while(predicate[pos]>='0' && predicate[pos]<='9') pos++; //skip until comparison
     c=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
-    comparison=predicate[pos];
+    comp=predicate[pos];
 
     pos_start = pos + 1;
     number=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
-    where_predicates->Push(new class comparison(a,c,comparison,number));
+    where_predicates->Push(new comparison(a,c,comp,number));
 
 }
 
@@ -167,4 +168,3 @@ void SQL::GetSelectResults(string select,int i){
     select_results[i].setArray(a);
     select_results[i].setColumn(c);
 }
-

@@ -4,13 +4,10 @@ class set{
 public:
     set();
     set(int a, int c);
-
     int getArray() const;
-
     int getColumn() const;
-
-    void setArray(int array);
-    void setColumn(int column);
+    void setArray(int a);
+    void setColumn(int c);
 };
 
 class Predicate{
@@ -20,6 +17,10 @@ public:
         array1=new set(a,c);
     }
     virtual bool is_filter()=0;
+    virtual set * getArray2()=0;
+    set *getArray1() const {
+        return array1;
+    }
 };
 
 class comparison:public Predicate{
@@ -33,6 +34,8 @@ public:
     bool is_filter(){
         return true;
     }
+    set * getArray2(){return NULL;}
+
 
 };
 
@@ -48,36 +51,60 @@ public:
     bool is_filter(){
         return isfilter;
     }
+
+    set *getArray2() {
+        return array2;
+    }
 };
 
 
 
-class node{
+class Priority_Queue_Node{
     Predicate *predicate;
-    node * next;
+    Priority_Queue_Node * next;
 public:
-    node(Predicate *p,node *n){
+    Priority_Queue_Node(Predicate *p,Priority_Queue_Node *n){
         predicate=p;
         next=n;
     }
-    node* get_next(){
+    Priority_Queue_Node* get_next(){
         return next;
     }
     Predicate *getPredicate(){
         return predicate;
     }
+
+    void setNext(Priority_Queue_Node *next) {
+        Priority_Queue_Node::next = next;
+    }
 };
+
+class List_Int{
+    int data;
+    List_Int * next;
+public:
+    List_Int(int d,List_Int * n);
+    List_Int *getNext() const;
+    int getData() const;
+};
+
 
 class Priority_Queue{
     int size;
-    node * head;
+    Priority_Queue_Node * head;
+    List_Int * used_arrays;  //needs delete ..
 
 public:
     Priority_Queue();
     void Push(Predicate *p);
     Predicate *Pop();
-    //void Rearrange(int,int);
+    void Rearrange();
+    void InitRearrange();
     bool IsEmpty();
+    bool IsUsedArray(int);
+    bool AreUsedArray(int,int);
+
+    ~Priority_Queue();
 };
 
 
