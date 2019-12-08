@@ -78,8 +78,6 @@ public:
     int InitSelectResults(string);
     void SplitSelectResults(string select);
     void GetSelectResults(string,int);
-    int *get_next_join();
-    int get_filters_counter();
 };
 
 
