@@ -238,11 +238,7 @@ void SQL::GetSelectResults(string select,int i){
     select_results[i].column=c;
 }
 
-int *SQL::get_next_filter() {
-    if(where_filters->IsEmpty()) return NULL;
-    //pop + return
 
-}
 
 int *SQL::get_next_join() {
     if(where_predicates->IsEmpty()) return NULL;
