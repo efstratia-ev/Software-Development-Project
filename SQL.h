@@ -11,6 +11,14 @@ class set{
 public:
     set();
     set(int array, int column);
+
+    int getArray() const;
+
+    int getColumn() const;
+
+    void setArray(int array);
+
+    void setColumn(int column);
 };
 
 class Predicate{
@@ -72,7 +80,6 @@ class SQL{
     int filters;
     int current;
     int * from_arrays,from_arrays_sz,select_result_sz;
-    list_filters * where_filters;
     Priority_Queue * where_predicates;
     set * select_results;
 public:

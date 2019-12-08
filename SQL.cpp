@@ -12,6 +12,21 @@ set::set(int array, int column) {
 
 set::set() {}
 
+int set::getArray() const {
+    return array;
+}
+
+void set::setArray(int array) {
+    set::array = array;
+}
+
+void set::setColumn(int column) {
+    set::column = column;
+}
+
+int set::getColumn() const {
+    return column;
+}
 
 
 Priority_Queue::Priority_Queue() {
@@ -38,11 +53,10 @@ bool Priority_Queue::IsEmpty(){
 
 
 SQL::SQL(char *line) {
-   query = new char[(strlen(line)+1)];
-   strcpy(query,line);
-   query[strlen(line)]='\0';
+    query = new char[(strlen(line)+1)];
+    strcpy(query,line);
+    query[strlen(line)]='\0';
     where_predicates = new Priority_Queue();
-    where_filters = new list_filters();
     CutQueryToParts();
 }
 
@@ -161,7 +175,7 @@ void SQL::GetWhereFilters(string predicate){
     pos_start = pos + 1;
     number=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
-    where_filters->Push(comparison,number,a,c);
+    where_predicates->Push(new class comparison(a,c,comparison,number));
 
 }
 
@@ -199,7 +213,7 @@ void SQL::GetSelectResults(string select,int i){
     pos_start = pos + 1;
     c=stoi(select.substr( pos_start,  select.size()  - pos_start + 1),nullptr,10);
 
-    select_results[i].array=a;
-    select_results[i].column=c;
+    select_results[i].setArray(a);
+    select_results[i].setColumn(c);
 }
 
