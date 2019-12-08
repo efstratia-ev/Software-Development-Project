@@ -6,13 +6,18 @@ link_libraries(cunit)
 
 include_directories(.)
 add_executable(Project2019
-        SQLInfo.h
-        SQLInfo.cpp
-        radix.cpp
-        radix.h
-        inputFunctions.cpp
-        inputFunctions.h
-        main.cpp stack.cpp stack.h sort.cpp sort.h array.cpp array.h list.cpp list.h ResultsArray.cpp ResultsArray.h relations.cpp relation.cpp results_list.cpp results_list.h)
+        SQLInfo.h SQLInfo.cpp
+        radix.cpp radix.h
+        inputFunctions.cpp inputFunctions.h
+        main.cpp
+        stack.cpp stack.h
+        sort.cpp sort.h
+        array.cpp array.h
+        list.cpp list.h
+        JoinArray.h JoinArray.cpp
+        relations.cpp relation.cpp
+        results_list.cpp results_list.h
+        SQL.h SQL.cpp)
 
 add_executable(test_radix
         radix.cpp

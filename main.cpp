@@ -12,6 +12,7 @@
 #include "relations.h"
 #include "SQLInfo.h"
 #include "results_list.h"
+#include "JoinArray.h"
 
 // sed -i 's/,/ /g' filename
 
@@ -34,17 +35,16 @@ JoinArray *join(SQLInfo *sql,Relations *relations){
     delete resultlist;*/
    int *current,filters=sql->get_filters_counter();
 
-   while((current=sql->get_next_filter())){
+   filters:while((current=sql->get_next_filter())){
 
    }
    while((current=sql->get_next_join())){
-
+        if(sql->get_filters_counter()>0) goto filters;
    }
 }
 
 int main(int argc, char *argv[]) {
-    uint64_t count1=0,count2=0;
-    struct array *array1,*array2,*_array1,*_array2;
+
     char *filename;
     if(argc!=2) {  //get filenames
         cout<<"Wrong amount of arguments\n";

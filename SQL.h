@@ -3,45 +3,55 @@
 
 #include <iostream>
 
+using namespace std;
+
 class set{
-public:
     int array;
     int column;
-
+public:
     set();
-
     set(int array, int column);
 };
 
-class filter{
+class Predicate{
+    set *array1;
 public:
-    char comparison;
-    int number;
-    int array;
-    int column;
-    filter * next;
-
+    Predicate(int a,int c){
+        array1=new set(a,c);
+    }
 };
 
-class list_filters{
-    int size;
-    filter * head;
+class comparison:public Predicate{
+    char comp;
+    int num;
 public:
-    list_filters();
-    void Push(char comparison,int filter_v,int a,int c);
-    void Pop();
-    bool IsEmpty();
-
-    int getSize() const;
+    comparison(int a,int c,char cmp,int n):Predicate(a,c){
+        comp=cmp;
+        num=n;
+    }
 };
+
+class join:public Predicate{
+    set *array2;
+public:
+    join(int a1,int c1,int a2,int c2):Predicate(a1,c1){
+        array2=new set(a2,c2);
+    }
+};
+
+
 
 class node{
-public:
-    int array1;
-    int column1;
-    int array2;
-    int column2;
+    Predicate *predicate;
     node * next;
+public:
+    node(Predicate *p,node *n){
+        predicate=p;
+        next=n;
+    }
+    node* get_next(){
+        return next;
+    }
 };
 
 class Priority_Queue{
@@ -50,13 +60,12 @@ class Priority_Queue{
 
 public:
     Priority_Queue();
-    void Push(int a1,int c1,int a2,int c2);
-    void Pop();
+    void Push(Predicate *p);
+    Predicate *Pop();
     //void Rearrange(int,int);
     bool IsEmpty();
 };
 
-using namespace std;
 
 class SQL{
     char * query;

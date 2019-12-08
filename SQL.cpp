@@ -12,35 +12,7 @@ set::set(int array, int column) {
 
 set::set() {}
 
-list_filters::list_filters(){
-    this->head=NULL;
-    this->size=0;
-}
-void list_filters::Push(char comparison,int filter_v,int a,int c){
-    filter * tmp = new filter();
-    tmp->array=a;
-    tmp->column=c;
-    tmp->comparison=comparison;
-    tmp->number=filter_v;
-    tmp->next = this->head;
 
-    this->head = tmp;
-    this->size++;
-}
-void list_filters::Pop(){
-    filter * tmp = head->next;
-    delete head;
-    this->head = tmp;
-    this->size--;
-}
-
-bool list_filters::IsEmpty(){
-    return (this->size==0) ;
-}
-
-int list_filters::getSize() const {
-    return size;
-}
 
 Priority_Queue::Priority_Queue() {
     this->head=NULL;
@@ -48,20 +20,13 @@ Priority_Queue::Priority_Queue() {
 }
 
 
-void Priority_Queue::Push(int a1,int c1,int a2,int c2){
-    node * tmp = new node();
-    tmp->array1=a1;
-    tmp->array2=a2;
-    tmp->column1=c1;
-    tmp->column2=c2;
-    tmp->next = this->head;
-
-    this->head = tmp;
+void Priority_Queue::Push(Predicate *p){
+    head=new node(p,head);
     this->size++;
 
 }
-void Priority_Queue::Priority_Queue::Pop(){
-    node * tmp = head->next;
+Predicate* Priority_Queue::Priority_Queue::Pop(){
+    node * tmp = head->get_next();
     delete head;
     this->head = tmp;
     this->size--;
@@ -176,7 +141,7 @@ void SQL::GetWherePredicates(string predicate) {
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
 
-    where_predicates->Push(a1,c1,a2,c2);
+    where_predicates->Push(new join(a1,c1,a2,c2));
 
 }
 
