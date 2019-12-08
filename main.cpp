@@ -17,8 +17,8 @@
 
 using namespace std;
 
-/*JoinArray *join(SQL *sql,Relations *relations){
-    //ap ti main tou part 1
+JoinArray *join(SQL *sql,Relations *relations){
+   /* //ap ti main tou part 1
     radix r1(0,array1->Size,array1->Array,_array1->Array,1);
     sort(&r1);
     radix r2(0,array2->Size,array2->Array,_array2->Array,1);
@@ -32,9 +32,11 @@ using namespace std;
     delete _array1;
     delete _array2;
     delete resultlist;
-   Predicate *predicate;
-   while()
-}*/
+   Predicate *predicate;*/
+   while(){
+
+   }
+}
 
 int main(int argc, char *argv[]) {
 

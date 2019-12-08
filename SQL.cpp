@@ -3,54 +3,6 @@
 #include <string>
 #include"SQL.h"
 
-using namespace std;
-
-set::set(int a, int c) {
-    array=a;
-    column=c;
-}
-
-set::set() {}
-
-int set::getArray() const {
-    return array;
-}
-
-void set::setArray(int array) {
-    set::array = array;
-}
-
-void set::setColumn(int column) {
-    set::column = column;
-}
-
-int set::getColumn() const {
-    return column;
-}
-
-
-Priority_Queue::Priority_Queue() {
-    this->head=NULL;
-    this->size=0;
-}
-
-
-void Priority_Queue::Push(Predicate *p){
-    head=new node(p,head);
-    this->size++;
-
-}
-Predicate* Priority_Queue::Priority_Queue::Pop(){
-    node * tmp = head->get_next();
-    delete head;
-    this->head = tmp;
-    this->size--;
-}
-
-bool Priority_Queue::IsEmpty(){
-    return (this->size==0) ;
-}
-
 
 SQL::SQL(char *line) {
     query = new char[(strlen(line)+1)];
@@ -154,7 +106,7 @@ void SQL::GetWherePredicates(string predicate) {
 
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
-    where_predicates->Push(new join(a1,c1,a2,c2););
+    where_predicates->Push(new join(a1,c1,a2,c2));
 
 }
 
