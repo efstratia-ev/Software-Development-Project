@@ -5,9 +5,9 @@
 
 using namespace std;
 
-set::set(int array, int column) {
-    array=array;
-    column=column;
+set::set(int a, int c) {
+    array=a;
+    column=c;
 }
 
 set::set() {}
@@ -154,8 +154,7 @@ void SQL::GetWherePredicates(string predicate) {
 
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
-
-    where_predicates->Push(new join(a1,c1,a2,c2));
+    where_predicates->Push(new join(a1,c1,a2,c2););
 
 }
 
