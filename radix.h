@@ -21,6 +21,7 @@ class radix{
     int byte;
 public:
     radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte = 1);
+    radix(uint64_t size,mytuple *r);
     void group();
     void histogram();
     void prefixSum();

@@ -12,6 +12,13 @@ radix::radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte){
     this->byte=byte;
 }
 
+radix::radix(uint64_t size,mytuple *r) {
+    this->offset = 0;
+    this->size = size;
+    this->R = r;
+    this->_R = new struct mytuple[size];
+    this->byte = 1;
+}
 
 
 //just a wrapper

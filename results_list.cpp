@@ -1,6 +1,6 @@
 #include "results_list.h"
 
-results_node::results_node(ResultsArray *a, results_node *n) {
+results_node::results_node(JoinArray *a, results_node *n) {
     results=a;
     next=n;
 }
@@ -18,7 +18,7 @@ results_list::~results_list() {
     delete start;
 }
 
-void results_list::add(ResultsArray *results) {
+void results_list::add(JoinArray *results) {
     start=new results_node(results,start);
     counter++;
 }
