@@ -1,7 +1,7 @@
 #ifndef RESULTS_LIST_H
 #define RESULTS_LIST_H
 
-#include "ResultsArray.h"
+#include "JoinArray.h"
 
 
 class results_node{

@@ -5,11 +5,11 @@ list *join(array *array1,array *array2) {
     list *resultlist=new list();
     uint64_t i=0,j=0;
     while(i<array1->Size && j<array2->Size){
-        if(array1->Array[i].key>array2->Array[j].key){
+        if(array1->Array[i].value>array2->Array[j].value){
             j+=array2->countKeys(j);
             continue;
         }
-        if(array1->Array[i].key<array2->Array[j].key){
+        if(array1->Array[i].value<array2->Array[j].value){
             i+=array1->countKeys(i);
             continue;
         }
@@ -44,11 +44,11 @@ int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size
     int count=0;
     for(uint64_t i=0; i<size1; i++){
         for(j=start; j<size2; j++){
-            if(array1[i].key==array2[j].key) count++;
-            else if(array1[i].key<array2[j].key)
+            if(array1[i].value==array2[j].value) count++;
+            else if(array1[i].value<array2[j].value)
                 break;
         }
-        if(i!=size1-1 && array1[i].key!=array1[i+1].key)  start=j;
+        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
     }
     return count;
 }

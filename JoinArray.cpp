@@ -1,4 +1,4 @@
-#include "ResultsArray.h"
+#include "JoinArray.h"
 #include "array.h"
 #include "sort.h"
 

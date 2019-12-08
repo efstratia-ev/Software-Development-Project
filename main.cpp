@@ -6,7 +6,6 @@
 #include <cstring>
 #include "radix.h"
 #include "stack.h"
-#include "inputFunctions.h"
 #include "sort.h"
 #include "array.h"
 #include "relations.h"
