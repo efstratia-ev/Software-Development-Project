@@ -17,13 +17,10 @@ class JoinArray {
     array *sortRel(int col);
 public:
     //add rels parameter in constructor
-    void setrel(int ar){
-        for(int i=0; i<numRels; i++){
-            if(relationIDs[i]==ar) relToBeJoined=i;
-        }
-    }
+    void setrel(int ar);
     JoinArray(Relations *r);
-    void set_currentColumn(int column);
+    void set_currentColumn(int column); //antikatastithike apo tin setrel(se diaforetika simia)
+    //giati o pinakas 1 edo mporei na einai sti thesi 0
     uint64_t get_value(int i);
     void set_value(int i,uint64_t val);
     void insert_row(uint64_t i,uint64_t *row);
@@ -42,6 +39,14 @@ public:
     bool exists(int arrayID);
     list *Join(int relID1,int col1,int relID2,int colID2);
     list *Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
+    void print(){
+        for(int i=0; i<numRels; i++) cout<<relationIDs[i]<<"\t";
+        cout<<endl;
+        for(int j=0; j<size; j++){
+            for(int i=0; i<numRels; i++) cout<<Array[j][i]<<"\t";
+            cout<<endl;
+        }
+    }
 };
 
 

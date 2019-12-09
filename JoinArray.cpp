@@ -44,7 +44,10 @@ void JoinArray::update_array(list *results,int id) {
         }
 
     }
-    if(n==-1) n=numRels;
+    if(n==-1){
+        n=numRels;
+        new_arrayID[n]=id;
+    }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -83,7 +86,10 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         }
 
     }
-    if(n==-1) n=numRels;
+    if(n==-1){
+        n=numRels;
+        new_arrayID[n]=array2->relationIDs[0];
+    }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -233,7 +239,6 @@ list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID
 //column 'col' of 'rel'. Usually we call this
 //before a join. This method is called only by Join
 array *JoinArray::sortRel(int col) {
-    set_currentColumn(relToBeJoined);
     uint64_t row;
     Relation *rel = rels->relation(relToBeJoined);
     uint64_t *arr = new uint64_t[size];
@@ -271,6 +276,12 @@ void JoinArray::equal(uint64_t column, uint64_t value) {
             results->add(Array[column][i]);
     }
     filter_update(results);
+}
+
+void JoinArray::setrel(int ar) {
+    for(int i=0; i<numRels; i++){
+        if(relationIDs[i]==ar) relToBeJoined=i;
+    }
 }
 
 

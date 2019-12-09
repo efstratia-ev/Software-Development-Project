@@ -56,7 +56,6 @@ JoinArray *join(SQL *sql,Relations *relations){
                 if(exists) filter_results[curr]->less_than(predicate->get_column(),predicate->get_value());
                 else filter_results[curr]->create_array(relations->less_than(predicate->get_array(),predicate->get_column(),predicate->get_value()),predicate->get_array());
             }
-            cout<<"S"<<endl;
             continue;
        }
        if(exists) filter_results[curr]->compare(predicate->get_array(),predicate->get_column(),predicate->get_column2());
@@ -64,6 +63,7 @@ JoinArray *join(SQL *sql,Relations *relations){
    }
    list *res;
    while((predicate=sql->getPredicate())){
+       if(results) results->print();
        if(predicate->is_filter()){
            results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
            continue;
