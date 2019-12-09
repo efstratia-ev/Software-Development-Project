@@ -58,6 +58,7 @@ list *Relations::filter(int array, uint64_t column1, uint64_t column2) {
         if(rels[array]->compare_values(i,column1,column2)==0)
             results->add(i);
     }
+    results->restart_current();
     return results;
 }
 
@@ -68,6 +69,7 @@ list *Relations::equal(int array, uint64_t column, uint64_t value) {
         if(rels[array]->compare(i,column,value)==0)
             results->add(i);
     }
+    results->restart_current();
     return results;
 }
 
@@ -78,6 +80,7 @@ list *Relations::grater_than(int array, uint64_t column, uint64_t value) {
         if(rels[array]->compare(i,column,value)>0)
             results->add(i);
     }
+    results->restart_current();
     return results;
 }
 
@@ -88,6 +91,7 @@ list *Relations::less_than(int array, uint64_t column, uint64_t value) {
         if(rels[array]->compare(i,column,value)<0)
             results->add(i);
     }
+    results->restart_current();
     return results;
 }
 
@@ -97,4 +101,16 @@ bool Relations::filter(int array, uint64_t row, uint64_t column1, uint64_t colum
 
 bool Relations::filter(int array1, int array2, uint64_t row1, uint64_t row2, uint64_t column1, uint64_t column2) {
     return rels[array1]->value(row1,column1)==rels[array2]->value(row2,column2);
+}
+
+bool Relations::equal(int array, uint64_t column, uint64_t value,uint64_t row) {
+    return (rels[array]->compare(row,column,value)==0);
+}
+
+bool Relations::grater_than(int array, uint64_t column, uint64_t value,uint64_t row) {
+    return (rels[array]->compare(row,column,value)>0);
+}
+
+bool Relations::less_than(int array, uint64_t column, uint64_t value,uint64_t row) {
+    return (rels[array]->compare(row,column,value)>0);
 }

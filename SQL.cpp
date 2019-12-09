@@ -30,7 +30,7 @@ int SQL::CutQueryToParts(){
    where = q.substr (0,pos);
    cout<<where<<endl;
    SplitWherePredicates(where);
-   where_predicates->InitRearrange();
+   filters=where_predicates->InitRearrange();
 
    //get select
    select = q.substr(pos+1);
@@ -167,4 +167,9 @@ void SQL::GetSelectResults(string select,int i){
 
     select_results[i].setArray(a);
     select_results[i].setColumn(c);
+}
+
+Predicate *SQL::getPredicate() {
+    if(where_predicates->IsEmpty()) return NULL;
+    return where_predicates->Pop();
 }

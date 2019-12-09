@@ -8,7 +8,7 @@ set::set(int a, int c) {
 
 set::set() {}
 
-int set::getArray() const {
+int set::getArray(){
     return array;
 }
 
@@ -20,7 +20,7 @@ void set::setColumn(int c) {
     set::column = c;
 }
 
-int set::getColumn() const {
+int set::getColumn(){
     return column;
 }
 
@@ -71,13 +71,15 @@ void Priority_Queue::Rearrange(){
     }
 }
 
-void Priority_Queue::InitRearrange(){
+int Priority_Queue::InitRearrange(){
+    int filters=0;
     Priority_Queue_Node *current=head,*previous=NULL;
     Priority_Queue_Node * tmp;
     Priority_Queue_Node * next_tmp;
-
+    if(head->getPredicate()->is_filter()) filters++;
     while(current!=NULL){
         if(current->getPredicate()->is_filter() && current!=head){
+            filters++;
             next_tmp=current->get_next();
             tmp = current->get_next();
             current->setNext(head);
@@ -90,6 +92,7 @@ void Priority_Queue::InitRearrange(){
             current=current->get_next();
         }
     }
+    return filters;
 }
 
 
@@ -125,7 +128,7 @@ bool Priority_Queue::IsUsedArray(int target) {
     return false;
 }
 
-List_Int *List_Int::getNext() const {
+List_Int *List_Int::getNext(){
     return next;
 }
 
@@ -134,6 +137,6 @@ List_Int::List_Int(int d,List_Int * n){
     next=n;
 }
 
-int List_Int::getData() const {
+int List_Int::getData(){
     return data;
 }

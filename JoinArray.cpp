@@ -2,10 +2,9 @@
 #include "array.h"
 #include "sort.h"
 
-JoinArray::JoinArray(uint64_t s, uint64_t r) {
-    size=s;
-    numRels=r;
-    Array=new uint64_t*[size];
+JoinArray::JoinArray(Relations *r) {
+    rels=r;
+    numRels=0;
 }
 
 void JoinArray::set_currentColumn(int column) {
@@ -45,13 +44,14 @@ void JoinArray::update_array(list *results,int id) {
         }
 
     }
+    if(n==-1) n=numRels;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
         for(uint64_t j=0; j<numRels; j++){
             if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
         }
-        new_array[relationIDs[i]][n]=rows->rowid2;
+        new_array[i][n]=rows->rowid2;
         delete rows;
     }
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
@@ -83,13 +83,14 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         }
 
     }
+    if(n==-1) n=numRels;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
         for(uint64_t j=0; j<numRels; j++){
             if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
         }
-        new_array[relationIDs[i]][n]=array2->Array[rows->rowid2][0];
+        new_array[i][n]=array2->Array[rows->rowid2][0];
         delete rows;
     }
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
@@ -101,13 +102,42 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
 }
 
 void JoinArray::create_array(list *results,int id) {
-    uint64_t sz = results->get_size();
-    Array = new uint64_t *[sz];
+    size = results->get_size();
+    Array = new uint64_t *[size];
     relationIDs = new int[1];
     relationIDs[0] = id;
-    for (uint64_t i = 0; i < sz; i++) {
+    numRels=1;
+    for (uint64_t i = 0; i < size; i++) {
         Array[i] = new uint64_t[1];
         Array[i][0] = results->pop_element();
+    }
+}
+void JoinArray::create_array(list *results,int id1,int id2) {
+    size = results->get_size();
+    Array = new uint64_t *[size];
+    relationIDs = new int[1];
+    bool op=false;
+    numRels=2;
+    if(id1<id2) {
+        relationIDs[0] = id1;
+        relationIDs[1] = id2;
+    }
+    else{
+        relationIDs[0] = id2;
+        relationIDs[1] = id1;
+        op=true;
+    }
+    for (uint64_t i = 0; i < size; i++) {
+        Array[i] = new uint64_t[2];
+        rowids* temp= results->pop();
+        if(op){
+            relationIDs[0] = temp->rowid2;
+            relationIDs[1] = temp->rowid1;
+        }
+        else{
+            relationIDs[0] = temp->rowid1;
+            relationIDs[1] = temp->rowid2;
+        }
     }
 }
 
@@ -117,6 +147,7 @@ int JoinArray::get_column(int arrayID) {
 }
 
 void JoinArray::filter_update(list *results) {
+    results->restart_current();
     uint64_t new_size=results->get_size();
     uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
@@ -134,21 +165,32 @@ void JoinArray::filter_update(list *results) {
     delete[] relationIDs;
 }
 
-void JoinArray::compare(int arrayID, uint64_t column1, uint64_t column2, Relations *Data) {
+void JoinArray::compare(int arrayID, uint64_t column1, uint64_t column2) {
     int column=get_column(arrayID);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
-        if(Data->filter(arrayID,Array[column][i],column1,column2))
+        if(rels->filter(arrayID,Array[column][i],column1,column2))
             results->add(Array[column][i]);
     }
     filter_update(results);
 }
 
-void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t column2, Relations *Data) {
+list *JoinArray::getcompare(int arrayID, uint64_t column1, uint64_t column2) {
+    int column=get_column(arrayID);
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(rels->filter(arrayID,Array[column][i],column1,column2))
+            results->add(Array[column][i]);
+    }
+    results->restart_current();
+    return results;
+}
+
+void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t column2) {
     int c1=get_column(arrayID1),c2=get_column(arrayID2);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
-        if(Data->filter(arrayID1,arrayID2,Array[column1][i],Array[column2][i],column1,column2))
+        if(rels->filter(arrayID1,arrayID2,Array[column1][i],Array[column2][i],column1,column2))
             results->add(i);
     }
     filter_update(results);
@@ -167,17 +209,30 @@ bool JoinArray::exists(int arrayID) {
 //will call sortRel on. relID2 is the relation that we are willing
 //to add in ResultsArray after join.
 list *JoinArray::Join(int relID1,int col1,int relID2,int colID2) {
-    auto arr1 = sortRel(relID1,col1);
+    setrel(relID1);
+    auto arr1 = sortRel(col1);
     auto arr2 = rels->relation(relID2)->col(colID2);
     sort(new radix(size,arr2->Array));
-    return join(arr1,arr2);
+    list *results=join(arr1,arr2);
+    results->restart_current();
+    return results;
+}
+
+list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2) {
+    setrel(relID1);
+    auto arr1 = sortRel(col1);
+    array2->setrel(relID2);
+    auto arr2 = array2->sortRel(colID2);
+    list *results=join(arr1,arr2);
+    results->restart_current();
+    return results;
 }
 
 
 //returns sorted rowIDs of relation 'rel' based on 
 //column 'col' of 'rel'. Usually we call this
 //before a join. This method is called only by Join
-array *JoinArray::sortRel(int relToBeJoined,int col) {
+array *JoinArray::sortRel(int col) {
     set_currentColumn(relToBeJoined);
     uint64_t row;
     Relation *rel = rels->relation(relToBeJoined);
@@ -189,6 +244,33 @@ array *JoinArray::sortRel(int relToBeJoined,int col) {
     array *radixArr = new array(size,arr);
     sort(new radix(size,radixArr->Array));
     return radixArr;
+}
+
+void JoinArray::grater_than(uint64_t column, uint64_t value) {
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(rels->grater_than(relationIDs[0],column,value,i))
+            results->add(Array[column][i]);
+    }
+    filter_update(results);
+}
+
+void JoinArray::less_than(uint64_t column, uint64_t value) {
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(rels->less_than(relationIDs[0],column,value,i))
+            results->add(Array[column][i]);
+    }
+    filter_update(results);
+}
+
+void JoinArray::equal(uint64_t column, uint64_t value) {
+    list *results=new list();
+    for(uint64_t i=0; i<size; i++){
+        if(rels->equal(relationIDs[0],column,value,i))
+            results->add(Array[column][i]);
+    }
+    filter_update(results);
 }
 
 

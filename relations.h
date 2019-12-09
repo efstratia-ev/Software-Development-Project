@@ -22,6 +22,9 @@ class Relations {
     list *less_than(int array,uint64_t column,uint64_t value);
     bool filter(int array,uint64_t row,uint64_t column1,uint64_t column2);
     bool filter(int array1,int array2,uint64_t row1,uint64_t row2,uint64_t column1,uint64_t column2);
+    bool equal(int array,uint64_t column,uint64_t value,uint64_t row);
+    bool grater_than(int array,uint64_t column,uint64_t value,uint64_t row);
+    bool less_than(int array,uint64_t column,uint64_t value,uint64_t row);
 };
 
 

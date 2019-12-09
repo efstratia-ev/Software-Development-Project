@@ -25,7 +25,7 @@ public:
     listNode *createNext();
     void print();
     listNode *getnext();
-    ~listNode();
+  //  ~listNode();
     void restart_current();
     rowids* pop();
     uint64_t pop_element();

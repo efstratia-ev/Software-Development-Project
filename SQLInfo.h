@@ -1,11 +1,13 @@
+#include <cstdint>
+
 class set{
     int array;
     int column;
 public:
     set();
     set(int a, int c);
-    int getArray() const;
-    int getColumn() const;
+    int getArray();
+    int getColumn();
     void setArray(int a);
     void setColumn(int c);
 };
@@ -17,15 +19,26 @@ public:
         array1=new set(a,c);
     }
     virtual bool is_filter()=0;
+    virtual bool is_comparison()=0;
+    int get_array(){
+        return array1->getArray();
+    }
+    int get_column(){
+        return array1->getColumn();
+    }
+    virtual char get_comp()=0;
+    virtual uint64_t get_value()=0;
+    virtual int get_array2()=0;
+    virtual int get_column2()=0;
     virtual set * getArray2()=0;
-    set *getArray1() const {
+    set *getArray1(){
         return array1;
     }
 };
 
 class comparison:public Predicate{
     char comp;
-    int num;
+    uint64_t num;
 public:
     comparison(int a,int c,char cmp,int n):Predicate(a,c){
         comp=cmp;
@@ -34,8 +47,23 @@ public:
     bool is_filter(){
         return true;
     }
+    bool is_comparison(){
+        return true;
+    }
+    char get_comp(){
+        return comp;
+    }
+    uint64_t get_value(){
+        return num;
+    }
     set * getArray2(){return NULL;}
 
+    int get_array2(){
+        return -1;
+    }
+    int get_column2(){
+        return -1;
+    }
 
 };
 
@@ -45,11 +73,25 @@ class join:public Predicate{
 public:
     join(int a1,int c1,int a2,int c2):Predicate(a1,c1){
         array2=new set(a2,c2);
-        if(a1==a2) isfilter=true;
-        else isfilter=false;
+        isfilter = a1 == a2;
+    }
+    char get_comp(){
+        return '\0';
     }
     bool is_filter(){
         return isfilter;
+    }
+    bool is_comparison(){
+        return false;
+    }
+    uint64_t get_value(){
+        return -1;
+    }
+    int get_array2(){
+        return array2->getArray();
+    }
+    int get_column2(){
+        return array2->getColumn();
     }
 
     set *getArray2() {
@@ -84,8 +126,8 @@ class List_Int{
     List_Int * next;
 public:
     List_Int(int d,List_Int * n);
-    List_Int *getNext() const;
-    int getData() const;
+    List_Int *getNext() ;
+    int getData();
 };
 
 
@@ -99,7 +141,7 @@ public:
     void Push(Predicate *p);
     Predicate *Pop();
     void Rearrange();
-    void InitRearrange();
+    int InitRearrange();
     bool IsEmpty();
     bool IsUsedArray(int);
     bool AreUsedArray(int,int);

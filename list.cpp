@@ -55,10 +55,10 @@ uint64_t listNode::getcount(){
 }
 
 
-listNode::~listNode() {
+/*listNode::~listNode() {
     free(buffer);
     if(next) delete next;
-}
+}*/
 
 rowids* listNode::pop() {
     if(count==0) return NULL;
