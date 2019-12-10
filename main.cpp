@@ -42,10 +42,12 @@ JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int 
     auto pred = sql->getPredicate();
     int rel1=pred->get_array(),rel2=pred->get_array2();
     int col1 = pred->get_column(),col2 = pred->get_column2();
+    //check if we have filtered one or both of relations participating 
+    //in the first predicate and join them (filtered or not)
     if ((result = searchFiltered(rel1,max,filtered)) != nullptr)
         result->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
     else if ((result = searchFiltered(rel2,max,filtered)) != nullptr) 
-        result->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
+        result->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered)); //actually,rel1 is not filtered and we know it
     else  {
        auto arr1 = rels->get_column(rel1,pred->get_column());
        sort(new radix(arr1->Size,arr1->Array));
@@ -68,15 +70,17 @@ JoinArray *joinPredicates(JoinArray **filtered,SQL *sql,Relations *rels,int max)
     list *res;
     results = joinFirstPredicate(filtered,sql,rels,max);
     while((predicate=sql->getPredicate())){
-        if(predicate->is_filter()){
+        if(predicate->is_filter()){ //selfJoin or both relations are already inside results.
             results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
         }
         int rel1=predicate->get_array(),rel2=predicate->get_array2();
         int col1 = predicate->get_column(),col2 = predicate->get_column2();
         if (results->exists(rel1)) {
+            //we know rel2 doesn't exist in results 
             results->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
         }
         if (results->exists(rel2)) {
+            //we know rel1 doesn't exist in results 
             results->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
         }
     }
