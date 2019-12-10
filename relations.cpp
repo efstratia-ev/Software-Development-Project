@@ -116,3 +116,7 @@ bool Relations::grater_than(int array, uint64_t column, uint64_t value,uint64_t 
 bool Relations::less_than(int array, uint64_t column, uint64_t value,uint64_t row) {
     return (rels[query_rels[array]]->compare(row,column,value)>0);
 }
+
+uint64_t Relations::get_value(int array, uint64_t row, int column) {
+    return rels[query_rels[array]]->value(row,column);
+}

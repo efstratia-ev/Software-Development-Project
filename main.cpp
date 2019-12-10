@@ -117,8 +117,6 @@ uint64_t *join(SQL *sql,Relations *relations){
        results=new JoinArray(relations);
        results->create_array(resultlist,array1,array2);
 
-       delete arr1;
-       delete arr2;
        delete resultlist;
    }
 
