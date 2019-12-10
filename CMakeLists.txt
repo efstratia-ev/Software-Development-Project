@@ -28,5 +28,3 @@ add_executable(test_relations
         relation.h
         relations.h
 )
-
-add_executable(test testi.cpp)
