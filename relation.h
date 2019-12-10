@@ -14,6 +14,12 @@ class Relation {
     uint64_t fileSz;
     public:
     Relation(const char *filename); //loads file into memory with mmap
+    //for debug
+    Relation(uint64_t *data,uint64_t rows,uint64_t cols) {
+        this->data = data;
+        this->rows = rows;
+        this->cols = cols;
+    }
     ~Relation();
     array *col(uint64_t i); //return ith column and sets sz to be the size of the column (zero based)
     uint64_t value(uint64_t row,uint64_t col); //return value at row 'row' and col 'col' (zero based)

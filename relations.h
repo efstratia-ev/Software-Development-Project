@@ -13,6 +13,11 @@ class Relations {
     int sz;
 public:
     Relations(char *filename);
+    //for debug
+    Relations(Relation **rels,int sz) {
+        this->rels = rels;
+        this->sz = sz;
+    }
     Relation *relation(int i);
     int getSize();
     ~Relations();
