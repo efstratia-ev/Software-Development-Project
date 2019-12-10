@@ -247,7 +247,7 @@ list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID
 //before a join. This method is called only by Join
 array *JoinArray::sortRel(int col) {
     uint64_t row;
-    Relation *rel = rels->relation(relToBeJoined);
+    Relation *rel = rels->relation(relationIDs[relToBeJoined]);
     array *arr = new array(size);
     for (int i =0; i < size; i++) {
         row = get_value(i);
