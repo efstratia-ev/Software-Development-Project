@@ -40,6 +40,7 @@ void JoinArray::update_array(list *results,int id) {
         }
         else{
             new_arrayID[j]=relationIDs[j];
+            relationIDs[j]=j;
         }
 
     }
@@ -49,12 +50,13 @@ void JoinArray::update_array(list *results,int id) {
     }
     else{
         new_arrayID[numRels]=relationIDs[numRels-1];
+        relationIDs[numRels-1]=numRels;
     }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
-        for(uint64_t j=0; j<numRels+1; j++){
-            if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
+        for(uint64_t j=0; j<numRels; j++){
+            new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
         }
         new_array[i][n]=rows->rowid2;
         delete rows;
@@ -85,6 +87,7 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         }
         else{
             new_arrayID[j]=relationIDs[j];
+            relationIDs[j]=j;
         }
 
     }
@@ -94,12 +97,13 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
     }
     else{
         new_arrayID[numRels]=relationIDs[numRels-1];
+        relationIDs[numRels-1]=numRels;
     }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
         for(uint64_t j=0; j<numRels+1; j++){
-            if(j!=n) new_array[i][j]=Array[rows->rowid1][j];
+            if(j!=n) new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
         }
         new_array[i][n]=array2->Array[rows->rowid2][0];
         delete rows;
@@ -174,7 +178,6 @@ void JoinArray::filter_update(list *results) {
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
     size=new_size;
-    delete[] relationIDs;
 }
 
 void JoinArray::compare(int arrayID, uint64_t column1, uint64_t column2) {
