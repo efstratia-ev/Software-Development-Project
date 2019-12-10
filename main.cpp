@@ -17,14 +17,74 @@
 
 using namespace std;
 
-int checkArray(JoinArray **arrays,int max,int id){
+//check array if they have been filtered
+int isRelationFiltered(JoinArray **filtered,int max,int relation){
     for(int j=0; j<max; j++){
-        if(arrays[j] && arrays[j]->exists(id)){
+        if(filtered[j] && filtered[j]->exists(relation)){
             return j;
         }
     }
     return -1;
 }
+
+//returns nulls if not found
+JoinArray *searchFiltered(int relation,int max,JoinArray **filtered) {
+    for(int i=0; i<max; i++) {
+        if(filtered[i] && filtered[i]->exists(relation)){
+            return filtered[i];
+        }
+    }
+    return nullptr;
+}
+
+JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int max) {
+    JoinArray *result;
+    auto pred = sql->getPredicate();
+    if (pred == nullptr)
+        return nullptr;
+    int rel1=pred->get_array(),rel2=pred->get_array2();
+    int col1 = pred->get_column(),col2 = pred->get_column2();
+    if ((result = searchFiltered(rel1,max,filtered)) != nullptr)
+        result->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
+    else if ((result = searchFiltered(rel2,max,filtered)) != nullptr) 
+        result->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
+    else  {
+       auto arr1 = rels->get_column(rel1,pred->get_column());
+       sort(new radix(arr1->Size,arr1->Array));
+       auto arr2 = rels->get_column(rel2,pred->get_column2());
+       sort(new radix(arr2->Size,arr2->Array));
+       list *resultlist=join(arr1,arr2);
+       result=new JoinArray(rels);
+       result->create_array(resultlist,rel1,rel2);
+       delete arr1;
+       delete arr2;
+       delete resultlist;
+    }
+    return result;
+}
+
+
+JoinArray *joinPredicates(JoinArray **filtered,SQL *sql,Relations *rels,int max) {
+    JoinArray *results = nullptr;
+    Predicate *predicate;
+    list *res;
+    results = joinFirstPredicate(filtered,sql,rels,max);
+    while((predicate=sql->getPredicate())){
+        if(predicate->is_filter()){
+            results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
+        }
+        int rel1=predicate->get_array(),rel2=predicate->get_array2();
+        int col1 = predicate->get_column(),col2 = predicate->get_column2();
+        if (results->exists(rel1)) {
+            results->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
+        }
+        if (results->exists(rel2)) {
+            results->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
+        }
+    }
+    return results;
+}
+
 uint64_t *join(SQL *sql,Relations *relations){
    Predicate *predicate;
    JoinArray *results=NULL,**filter_results;
@@ -35,7 +95,7 @@ uint64_t *join(SQL *sql,Relations *relations){
        int curr;
        predicate=sql->getPredicate();
        exists=false;
-       if((curr=checkArray(filter_results,max,predicate->get_array()))>=0) exists=true;
+       if((curr=isRelationFiltered(filter_results,max,predicate->get_array()))>=0) exists=true;
        if(!exists){
            curr=max;
            filter_results[curr]=new JoinArray(relations);
@@ -68,13 +128,13 @@ uint64_t *join(SQL *sql,Relations *relations){
        }
        int array1=predicate->get_array(),array2=predicate->get_array2();
        if(!results){
-           int curr=checkArray(filter_results,max,array1);
+           int curr=isRelationFiltered(filter_results,max,array1);
            if(curr!=-1){
                results=filter_results[curr];
                filter_results[curr]=NULL;
            }
            else{
-               curr=checkArray(filter_results,max,array2);
+               curr=isRelationFiltered(filter_results,max,array2);
                if(curr!=-1){
                    results=filter_results[curr];
                    filter_results[curr]=NULL;
@@ -82,7 +142,7 @@ uint64_t *join(SQL *sql,Relations *relations){
            }
        }
        if(results && results->exists(array1)){
-           int curr=checkArray(filter_results,max,array2);
+           int curr=isRelationFiltered(filter_results,max,array2);
            if(curr==-1){
                res=results->Join(array1,predicate->get_column(),array2,predicate->get_column2());
                results->update_array(res,array2);
@@ -96,7 +156,7 @@ uint64_t *join(SQL *sql,Relations *relations){
            continue;
        }
        if(results && results->exists(array2)){
-           int curr=checkArray(filter_results,max,array1);
+           int curr=isRelationFiltered(filter_results,max,array1);
            if(curr==-1){
                res=results->Join(array2,predicate->get_column2(),array1,predicate->get_column());
                results->update_array(res,array1);
@@ -125,7 +185,6 @@ uint64_t *join(SQL *sql,Relations *relations){
    if(!results){
        results=filter_results[0];
    }
-
    int res_counter=sql->get_results_counter();
    uint64_t *sums=new uint64_t[res_counter];
    set *select=sql->get_select();
