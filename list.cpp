@@ -79,7 +79,6 @@ void listNode::add(uint64_t rowID) {
 }
 
 uint64_t listNode::pop_element() {
-    if(count==0) return NULL;
     count--;
     uint64_t temp;
     memcpy(&temp,current, sizeof(uint64_t));
@@ -148,8 +147,9 @@ rowids *list::pop() {
 }
 
 uint64_t list::pop_element() {
-    uint64_t  temp=current->pop_element();
-    if(temp) return temp;
+    if(current->getcount()>0){
+        return current->pop_element();
+    }
     current=current->getnext();
     return current->pop_element();
 }
