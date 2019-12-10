@@ -10,7 +10,7 @@ char* concat(const char *s1, const char *s2);
 class Relations {
     Relation **rels;
     int sz;
-    public:
+public:
     Relations(char *filename);
     Relation *relation(int i);
     int getSize();
@@ -25,6 +25,9 @@ class Relations {
     bool equal(int array,uint64_t column,uint64_t value,uint64_t row);
     bool grater_than(int array,uint64_t column,uint64_t value,uint64_t row);
     bool less_than(int array,uint64_t column,uint64_t value,uint64_t row);
+    uint64_t get_value(int array,int row,int column){
+        return rels[array]->value(row,column);
+    }
 };
 
 

@@ -35,8 +35,8 @@ int SQL::CutQueryToParts(){
    //get select
    select = q.substr(pos+1);
    cout<<select<<endl;
-    InitSelectResults(select);
-    SplitSelectResults(select);
+   InitSelectResults(select);
+   SplitSelectResults(select);
    return 1;
 }
 
@@ -165,7 +165,7 @@ void SQL::GetSelectResults(string select,int i){
     pos_start = pos + 1;
     c=stoi(select.substr( pos_start,  select.size()  - pos_start + 1),nullptr,10);
 
-    select_results[i].setArray(a);
+    select_results[i].setArray(from_arrays[a]);
     select_results[i].setColumn(c);
 }
 

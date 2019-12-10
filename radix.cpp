@@ -4,17 +4,17 @@
 
 using  namespace std;
 
-radix::radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte){
+radix::radix(uint64_t offset,uint64_t s, mytuple *r,mytuple *_r,int b){
     this->offset=offset;
-    this->size=size;
+    this->size=s;
     R=r;
     _R=_r;
-    this->byte=byte;
+    this->byte=b;
 }
 
-radix::radix(uint64_t size,mytuple *r) {
+radix::radix(uint64_t s,mytuple *r) {
     this->offset = 0;
-    this->size = size;
+    this->size = s;
     this->R = r;
     this->_R = new struct mytuple[size];
     this->byte = 1;

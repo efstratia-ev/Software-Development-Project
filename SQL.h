@@ -27,6 +27,12 @@ public:
     int get_filters_num(){
         return filters;
     }
+    int get_results_counter(){
+        return select_result_sz;
+    }
+    set *get_select(){
+        return select_results;
+    }
 };
 
 

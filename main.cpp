@@ -25,8 +25,7 @@ int checkArray(JoinArray **arrays,int max,int id){
     }
     return -1;
 }
-
-JoinArray *join(SQL *sql,Relations *relations){
+uint64_t *join(SQL *sql,Relations *relations){
    Predicate *predicate;
    JoinArray *results=NULL,**filter_results;
    int filters=sql->get_filters_num(),max=0;
@@ -63,7 +62,6 @@ JoinArray *join(SQL *sql,Relations *relations){
    }
    list *res;
    while((predicate=sql->getPredicate())){
-       if(results) results->print();
        if(predicate->is_filter()){
            results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
            continue;
@@ -111,18 +109,25 @@ JoinArray *join(SQL *sql,Relations *relations){
            }
            continue;
        }
-       auto arr1 = relations->relation(array1)->col(predicate->get_column());
-       sort(new radix(relations->getSize(),arr1->Array));
-       auto arr2 = relations->relation(array2)->col(predicate->get_column2());
-       sort(new radix(relations->getSize(),arr2->Array));
+       auto arr1 = relations->get_column(array1,predicate->get_column());
+       sort(new radix(arr1->Size,arr1->Array));
+       auto arr2 = relations->get_column(array2,predicate->get_column2());
+       sort(new radix(arr2->Size,arr2->Array));
        list *resultlist=join(arr1,arr2);
        results=new JoinArray(relations);
+       results->create_array(resultlist,array1,array2);
 
        delete arr1;
        delete arr2;
        delete resultlist;
    }
-   return results;
+   int res_counter=sql->get_results_counter();
+   uint64_t *sums=new uint64_t[res_counter];
+   set *select=sql->get_select();
+   for(int i=0; i<res_counter; i++){
+       sums[i]=results->get_sum(select[i].getArray(),select[i].getColumn());
+   }
+   return sums;
 }
 
 int main(int argc, char *argv[]) {
@@ -144,15 +149,17 @@ int main(int argc, char *argv[]) {
    while(true){
        cout << "Enter Input:" << endl;
        getline(&line, &size, stdin);
+       line=strtok(line,"\n");
        if (!line) continue;
        if (strcmp(line, "Done") == 0 ) break;
        else if (strcmp(line, "F") == 0) {
-           //print sum for each relation in the list
+           results->print();
            results->clear();
        }
        else{
            sql=new SQL(line);
-           results->add(join(sql,relations));
+           int count;
+           results->add(sql->get_results_counter(),join(sql,relations));
            delete sql;
        }
 
