@@ -303,5 +303,13 @@ void JoinArray::setrel(int ar) {
     }
 }
 
+uint64_t JoinArray::get_sum(int relID, int colID) {
+    uint64_t sum=0;
+    for(int i=0; i<size; i++){
+        sum+=rels->get_value(relID,get_value(i),colID);
+    }
+    return sum;
+}
+
 
 

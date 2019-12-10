@@ -10,7 +10,9 @@ char *concat(const char *s1, const char *s2) {
     return result;
 }
 
-Relation *Relations::relation(int i) { return rels[i]; }
+Relation *Relations::relation(int i) {
+    return rels[query_rels[i]];
+}
 
 Relations::Relations(char *filename) {
     ifstream infile(filename);
@@ -48,14 +50,14 @@ Relations::~Relations() {
 }
 
 array *Relations::get_column(int relation, uint64_t column) {
-    return rels[relation]->col(column);
+    return rels[query_rels[relation]]->col(column);
 }
 
 list *Relations::filter(int array, uint64_t column1, uint64_t column2) {
     list *results=new list();
-    int size=rels[array]->getRows();
+    int size=rels[query_rels[array]]->getRows();
     for(int i=0; i<size; i++){
-        if(rels[array]->compare_values(i,column1,column2)==0)
+        if(rels[query_rels[array]]->compare_values(i,column1,column2)==0)
             results->add(i);
     }
     results->restart_current();
@@ -64,9 +66,9 @@ list *Relations::filter(int array, uint64_t column1, uint64_t column2) {
 
 list *Relations::equal(int array, uint64_t column, uint64_t value) {
     list *results=new list();
-    int size=rels[array]->getRows();
+    int size=rels[query_rels[array]]->getRows();
     for(int i=0; i<size; i++){
-        if(rels[array]->compare(i,column,value)==0)
+        if(rels[query_rels[array]]->compare(i,column,value)==0)
             results->add(i);
     }
     results->restart_current();
@@ -75,9 +77,9 @@ list *Relations::equal(int array, uint64_t column, uint64_t value) {
 
 list *Relations::grater_than(int array, uint64_t column, uint64_t value) {
     list *results=new list();
-    int size=rels[array]->getRows();
+    int size=rels[query_rels[array]]->getRows();
     for(int i=0; i<size; i++){
-        if(rels[array]->compare(i,column,value)>0)
+        if(rels[query_rels[array]]->compare(i,column,value)>0)
             results->add(i);
     }
     results->restart_current();
@@ -86,9 +88,9 @@ list *Relations::grater_than(int array, uint64_t column, uint64_t value) {
 
 list *Relations::less_than(int array, uint64_t column, uint64_t value) {
     list *results=new list();
-    int size=rels[array]->getRows();
+    int size=rels[query_rels[array]]->getRows();
     for(int i=0; i<size; i++){
-        if(rels[array]->compare(i,column,value)<0)
+        if(rels[query_rels[array]]->compare(i,column,value)<0)
             results->add(i);
     }
     results->restart_current();
@@ -96,21 +98,21 @@ list *Relations::less_than(int array, uint64_t column, uint64_t value) {
 }
 
 bool Relations::filter(int array, uint64_t row, uint64_t column1, uint64_t column2) {
-    return rels[array]->compare_values(row,column1,column2)==0;
+    return rels[query_rels[array]]->compare_values(row,column1,column2)==0;
 }
 
 bool Relations::filter(int array1, int array2, uint64_t row1, uint64_t row2, uint64_t column1, uint64_t column2) {
-    return rels[array1]->value(row1,column1)==rels[array2]->value(row2,column2);
+    return rels[query_rels[array1]]->value(row1,column1)==rels[query_rels[array2]]->value(row2,column2);
 }
 
 bool Relations::equal(int array, uint64_t column, uint64_t value,uint64_t row) {
-    return (rels[array]->compare(row,column,value)==0);
+    return (rels[query_rels[array]]->compare(row,column,value)==0);
 }
 
 bool Relations::grater_than(int array, uint64_t column, uint64_t value,uint64_t row) {
-    return (rels[array]->compare(row,column,value)>0);
+    return (rels[query_rels[array]]->compare(row,column,value)>0);
 }
 
 bool Relations::less_than(int array, uint64_t column, uint64_t value,uint64_t row) {
-    return (rels[array]->compare(row,column,value)>0);
+    return (rels[query_rels[array]]->compare(row,column,value)>0);
 }

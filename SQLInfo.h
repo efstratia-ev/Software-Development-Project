@@ -73,7 +73,7 @@ class join:public Predicate{
 public:
     join(int a1,int c1,int a2,int c2):Predicate(a1,c1){
         array2=new set(a2,c2);
-        isfilter = a1 == a2;
+        isfilter = false;
     }
     char get_comp(){
         return '\0';

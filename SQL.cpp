@@ -107,7 +107,7 @@ void SQL::GetWherePredicates(string predicate) {
 
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
-    where_predicates->Push(new join(from_arrays[a1],c1,from_arrays[a2],c2));
+    where_predicates->Push(new join(a1,c1,a2,c2));
 
 }
 
@@ -127,7 +127,7 @@ void SQL::GetWhereFilters(string predicate){
     pos_start = pos + 1;
     number=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
-    where_predicates->Push(new comparison(from_arrays[a],c,comp,number));
+    where_predicates->Push(new comparison(a,c,comp,number));
 
 }
 
@@ -165,7 +165,7 @@ void SQL::GetSelectResults(string select,int i){
     pos_start = pos + 1;
     c=stoi(select.substr( pos_start,  select.size()  - pos_start + 1),nullptr,10);
 
-    select_results[i].setArray(from_arrays[a]);
+    select_results[i].setArray(a);
     select_results[i].setColumn(c);
 }
 

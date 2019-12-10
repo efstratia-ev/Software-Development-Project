@@ -33,6 +33,12 @@ public:
     set *get_select(){
         return select_results;
     }
+    bool same_array(int a,int b){
+        return from_arrays[a]==from_arrays[b];
+    }
+    int *get_from_arrays(){
+        return from_arrays;
+    }
 };
 
 

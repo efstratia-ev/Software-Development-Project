@@ -8,6 +8,7 @@ char* concat(const char *s1, const char *s2);
 
 
 class Relations {
+    int *query_rels;
     Relation **rels;
     int sz;
 public:
@@ -26,7 +27,10 @@ public:
     bool grater_than(int array,uint64_t column,uint64_t value,uint64_t row);
     bool less_than(int array,uint64_t column,uint64_t value,uint64_t row);
     uint64_t get_value(int array,int row,int column){
-        return rels[array]->value(row,column);
+        return rels[query_rels[array]]->value(row,column);
+    }
+    void set_query_rels(int *from_arrays){
+        query_rels=from_arrays;
     }
 };
 
