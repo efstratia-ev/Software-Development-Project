@@ -208,15 +208,27 @@ void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t c
     filter_update(results);
 }
 
-bool JoinArray::exists(int arrayID) {
+bool JoinArray::exists(int relation) {
     for(int i=0; i<numRels; i++){
-        if(relationIDs[i]==arrayID)
+        if(relationIDs[i]==relation)
             return true;
     }
     return false;
 }
 
-
+//wraps join and update. If array2 isn't nil it performs a join 
+//with two JoinArrays. Otherwise performs join with one JoinArray
+//and one relation (simple array).
+void JoinArray::joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *array2) {
+    list *lst;
+    if (array2 != nullptr) {
+        lst = Join(relID1,col1,array2,relID2,colID2);
+        update_array(lst,array2);
+    } else {
+        lst = Join(relID1,col1,relID2,colID2);
+        update_array(lst,relID2);
+    }
+}
 
 //relID1 is the relation that already exists in ResultsArray and we 
 //will call sortRel on. relID2 is the relation that we are willing

@@ -39,6 +39,7 @@ public:
     bool exists(int arrayID);
     list *Join(int relID1,int col1,int relID2,int colID2);
     list *Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
+    void joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *array2);
     void print(){
         for(int i=0; i<numRels; i++) cout<<relationIDs[i]<<"\t";
         cout<<endl;
