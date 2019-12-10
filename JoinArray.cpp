@@ -59,7 +59,6 @@ void JoinArray::update_array(list *results,int id) {
             new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
         }
         new_array[i][n]=rows->rowid2;
-        delete rows;
     }
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
@@ -102,11 +101,10 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
-        for(uint64_t j=0; j<numRels+1; j++){
-            if(j!=n) new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
+        for(uint64_t j=0; j<numRels; j++){
+            new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
         }
         new_array[i][n]=array2->Array[rows->rowid2][0];
-        delete rows;
     }
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
