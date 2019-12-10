@@ -164,11 +164,9 @@ int main(int argc, char *argv[]) {
        else{
            sql=new SQL(line);
            relations->set_query_rels(sql->get_from_arrays());
-           int count;
            results->add(sql->get_results_counter(),join(sql,relations));
            delete sql;
        }
-
    }
 
    return 0;

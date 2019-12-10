@@ -22,7 +22,6 @@ list *join(array *array1,array *array2) {
         i=maxi;
         j=maxj;
     }
-    resultlist->restart_current();
     return resultlist;
 }
 
