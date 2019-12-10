@@ -40,13 +40,15 @@ void JoinArray::update_array(list *results,int id) {
         }
         else{
             new_arrayID[j]=relationIDs[j];
-            relationIDs[j]=j;
         }
 
     }
     if(n==-1){
         n=numRels;
         new_arrayID[n]=id;
+    }
+    else{
+        new_arrayID[numRels]=relationIDs[numRels-1];
     }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
@@ -83,13 +85,15 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         }
         else{
             new_arrayID[j]=relationIDs[j];
-            relationIDs[j]=j;
         }
 
     }
     if(n==-1){
         n=numRels;
         new_arrayID[n]=array2->relationIDs[0];
+    }
+    else{
+        new_arrayID[numRels]=relationIDs[numRels-1];
     }
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
@@ -206,7 +210,8 @@ void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t c
 
 bool JoinArray::exists(int arrayID) {
     for(int i=0; i<numRels; i++){
-        if(relationIDs[i]==arrayID) return true;
+        if(relationIDs[i]==arrayID)
+            return true;
     }
     return false;
 }
@@ -242,7 +247,7 @@ list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID
 //before a join. This method is called only by Join
 array *JoinArray::sortRel(int col) {
     uint64_t row;
-    Relation *rel = rels->relation(relToBeJoined);
+    Relation *rel = rels->relation(relationIDs[relToBeJoined]);
     array *arr = new array(size);
     for (int i =0; i < size; i++) {
         row = get_value(i);
