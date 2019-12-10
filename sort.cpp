@@ -4,9 +4,9 @@ using namespace std;
 list *join(array *array1,array *array2) {
     list *resultlist=new list();
     uint64_t i=0,j=0;
-    for(uint64_t f=0; f<array1->Size; f++){
+    /*for(uint64_t f=0; f<array1->Size; f++){
         cout<<array1->Array[f].value<<endl;
-    }
+    }*/
     while(i<array1->Size && j<array2->Size){
         if(array1->Array[i].value>array2->Array[j].value){
             j+=array2->countKeys(j);
