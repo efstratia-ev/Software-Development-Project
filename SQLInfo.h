@@ -140,6 +140,7 @@ class Priority_Queue{
     int size;
     Priority_Queue_Node * head;
     List_Int * used_arrays;  //needs delete ..
+    List_Int * filtered_arrays; //needs delete
 
 public:
     Priority_Queue();
@@ -150,6 +151,8 @@ public:
     bool IsEmpty();
     bool IsUsedArray(int);
     bool AreUsedArray(int,int);
+    bool AreFilteredArray(int,int);
+    bool IsFilteredArray(int);
 
     ~Priority_Queue();
 };
