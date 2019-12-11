@@ -21,7 +21,6 @@ int SQL::CutQueryToParts(){
    //get from
    pos = q.find('|');
    from = q.substr (0,pos);
-   cout<<from<<endl;
    InitFromArrays(from);
    GetFromArrays(from);
 
@@ -29,13 +28,11 @@ int SQL::CutQueryToParts(){
    q = q.substr(pos+1);
    pos = q.find('|');
    where = q.substr (0,pos);
-   cout<<where<<endl;
    SplitWherePredicates(where);
    filters=where_predicates->InitRearrange();
 
    //get select
    select = q.substr(pos+1);
-   cout<<select<<endl;
    InitSelectResults(select);
    SplitSelectResults(select);
    return 1;
@@ -58,13 +55,11 @@ void SQL::GetFromArrays(string from){
    // Decompose statement
    while( pos != std::string::npos ) {
       from_arrays[i++]=stoi(from.substr(pos_start, pos-pos_start ),nullptr,10);
-      cout<<from_arrays[i-1]<<endl;
       pos_start = pos + 1;
 
       pos = from.find( ' ', pos_start );
    }
    from_arrays[i++]=stoi(from.substr( pos_start, std::min( pos, from.size() ) - pos_start + 1),nullptr,10);
-   cout<<from_arrays[i-1]<<endl;
 
 }
 

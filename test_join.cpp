@@ -35,11 +35,11 @@ uint64_t rel2data[] = {
 
 
 Relations *createRels() {
-    uint64_t rel1rows = 4;
-    uint64_t rel1cols = 3;
+    uint64_t rel1rows = 3;
+    uint64_t rel1cols = 4;
     auto rel1 = new Relation(rel1data,rel1rows,rel1cols);
-    uint64_t rel2rows = 4;
-    uint64_t rel2cols = 3;
+    uint64_t rel2rows = 3;
+    uint64_t rel2cols = 4;
     auto rel2 = new Relation(rel2data,rel2rows,rel2cols);
     int sz = 2;
     Relation **_rels = new Relation*[2];
