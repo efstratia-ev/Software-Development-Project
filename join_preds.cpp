@@ -19,13 +19,15 @@ JoinArray *searchFiltered(int relation,int max,JoinArray **filtered) {
 }
 
 JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int max) {
-    JoinArray *result;
+    auto result=new JoinArray(rels);
     auto pred = sql->getPredicate();
     if (pred == nullptr)
         return nullptr;
     int rel1=pred->get_array(),rel2=pred->get_array2();
     int col1 = pred->get_column(),col2 = pred->get_column2();
-    if ((result = searchFiltered(rel1,max,filtered)) != nullptr)
+    if(pred->is_filter())
+        result->compare(pred->get_array(),pred->get_column(),pred->get_array2(),pred->get_column2());
+    else if ((result = searchFiltered(rel1,max,filtered)) != nullptr)
         result->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
     else if ((result = searchFiltered(rel2,max,filtered)) != nullptr) 
         result->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
@@ -59,7 +61,7 @@ JoinArray *joinPredicates(JoinArray **filtered,SQL *sql,Relations *rels,int max)
         if (results->exists(rel1)) {
             results->joinUpdate(rel1,col1,rel2,col2,searchFiltered(rel2,max,filtered));
         }
-        if (results->exists(rel2)) {
+        else if (results->exists(rel2)) {
             results->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
         }
     }
