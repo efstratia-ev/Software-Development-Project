@@ -122,6 +122,7 @@ void JoinArray::create_array(list *results,int id) {
         Array[i][0] = results->pop_element();
     }
 }
+
 void JoinArray::create_array(list *results,int id1,int id2) {
     size = results->get_size();
     Array = new uint64_t *[size];
@@ -311,5 +312,15 @@ uint64_t JoinArray::get_sum(int relID, int colID) {
     return sum;
 }
 
+void JoinArray::print() {
+   cout << "results:" << endl;
+   auto arr = Array;
+   for (int i =0; i < size; i++) {
+     cout << endl;
+     for (int j =0; j < numRels; j++)
+        cout << arr[i][j] << ",";
+   }
+   cout << endl;
+}
 
 
