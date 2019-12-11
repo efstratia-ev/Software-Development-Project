@@ -133,6 +133,7 @@ uint64_t list::get_size() {
 }
 
 void list::restart_current() {
+    if(size==0) return;
     current=start;
     start->restart_current();
 }

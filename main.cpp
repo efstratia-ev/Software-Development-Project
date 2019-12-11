@@ -151,7 +151,6 @@ int main(int argc, char *argv[]) {
    char *line= NULL;
    size_t size=0;
    while(true){
-       cout << "Enter Input:" << endl;
        getline(&line, &size, stdin);
        line=strtok(line,"\n");
        if (!line) continue;

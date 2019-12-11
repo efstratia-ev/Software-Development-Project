@@ -48,6 +48,9 @@ public:
     uint64_t pop_element();
 
     void add(uint64_t rowID);
+    bool isEmpty(){
+        return size==0;
+    }
 };
 
 #endif
