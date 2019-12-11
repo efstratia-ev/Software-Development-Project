@@ -19,6 +19,7 @@ public:
         array1=new set(a,c);
     }
     virtual bool is_filter()=0;
+    virtual void setfilter(bool filter)=0;
     virtual bool is_comparison()=0;
     int get_array(){
         return array1->getArray();
@@ -64,6 +65,7 @@ public:
     int get_column2(){
         return -1;
     }
+    void setfilter(bool filter){}
 
 };
 
@@ -96,6 +98,9 @@ public:
 
     set *getArray2() {
         return array2;
+    }
+    void setfilter(bool filter){
+        isfilter=filter;
     }
 };
 

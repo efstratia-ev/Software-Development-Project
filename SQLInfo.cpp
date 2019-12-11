@@ -42,8 +42,8 @@ Predicate* Priority_Queue::Priority_Queue::Pop(){
     head=head->get_next();
     size--;
     if(!predicate->is_filter()){
-        int array1=IsUsedArray(predicate->getArray1()->getArray());
-        int array2=IsUsedArray(predicate->getArray2()->getArray());
+        int array1=predicate->getArray1()->getArray();
+        int array2=predicate->getArray2()->getArray();
         if(!IsUsedArray(array1)) used_arrays= new List_Int(array1,used_arrays);
         if(!IsUsedArray(array2)) used_arrays= new List_Int(array2,used_arrays);
         if(size>1) Rearrange();
@@ -56,15 +56,17 @@ void Priority_Queue::Rearrange(){
     Priority_Queue_Node * tmp;
 
     while(current!=NULL){
-        if(current->getPredicate()->is_filter()){
-            if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
+        if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray()) && current!=head) {
                 tmp = current->get_next();
                 current->setNext(head);
                 previous->setNext(tmp);
                 head=current;
-            }
+                //isfilter ==1;
+                current->getPredicate()->setfilter(true);
         }
         else {
+            if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray()))
+                current->getPredicate()->setfilter(true);
             previous=current;
             current=current->get_next();
         }
