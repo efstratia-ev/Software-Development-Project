@@ -18,6 +18,9 @@ class JoinArray {
 public:
     //add rels parameter in constructor
     void setrel(int ar);
+    int getNumRels() { return numRels; }
+    int getSize() { return size; }
+    uint64_t **getArray() { return Array; }
     JoinArray(Relations *r);
     void set_currentColumn(int column); //antikatastithike apo tin setrel(se diaforetika simia)
     //giati o pinakas 1 edo mporei na einai sti thesi 0
