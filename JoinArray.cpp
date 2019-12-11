@@ -11,11 +11,11 @@ void JoinArray::set_currentColumn(int column) {
     relToBeJoined=column;
 }
 
-uint64_t JoinArray::get_value(int i) {
+uint64_t JoinArray::get_value(uint64_t i) {
     return Array[i][relToBeJoined];
 }
 
-void JoinArray::set_value(int i,uint64_t val) {
+void JoinArray::set_value(uint64_t i,uint64_t val) {
     Array[i][relToBeJoined] = val;
 }
 
@@ -30,7 +30,7 @@ void JoinArray::update_array(list *results,int id) {
     int *new_arrayID=new int[numRels+1];
     int n=-1;
     for(int j=0; j<numRels; j++){
-        if(n>0){
+        if(n>=0){
             new_arrayID[j+1]=relationIDs[j];
             relationIDs[j]=j+1;
         }
@@ -76,7 +76,7 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
     int *new_arrayID=new int[numRels+1];
     int n=-1;
     for(int j=0; j<numRels; j++){
-        if(n>0){
+        if(n>=0){
             new_arrayID[j+1]=relationIDs[j];
             relationIDs[j]=j+1;
         }
@@ -167,7 +167,7 @@ void JoinArray::filter_update(list *results) {
     rowids *rows;
 
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[numRels];
+        new_array[i]=new uint64_t[new_size];
         rows=results->pop();
         for(uint64_t j=0; j<numRels; j++){
             new_array[i][j]=Array[rows->rowid1][j];
@@ -175,6 +175,7 @@ void JoinArray::filter_update(list *results) {
     }
     for(uint64_t i=0; i<size; i++)delete[] Array[i];
     delete[] Array;
+    Array=new_array;
     size=new_size;
 }
 
@@ -183,7 +184,7 @@ void JoinArray::compare(int arrayID, uint64_t column1, uint64_t column2) {
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
         if(rels->filter(arrayID,Array[column][i],column1,column2))
-            results->add(Array[column][i]);
+            results->add(i);
     }
     filter_update(results);
 }
@@ -274,7 +275,7 @@ void JoinArray::grater_than(uint64_t column, uint64_t value) {
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
         if(rels->grater_than(relationIDs[0],column,value,i))
-            results->add(Array[column][i]);
+            results->add(i);
     }
     filter_update(results);
 }
@@ -283,7 +284,7 @@ void JoinArray::less_than(uint64_t column, uint64_t value) {
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
         if(rels->less_than(relationIDs[0],column,value,i))
-            results->add(Array[column][i]);
+            results->add(i);
     }
     filter_update(results);
 }
@@ -292,7 +293,7 @@ void JoinArray::equal(uint64_t column, uint64_t value) {
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
         if(rels->equal(relationIDs[0],column,value,i))
-            results->add(Array[column][i]);
+            results->add(i);
     }
     filter_update(results);
 }
@@ -305,7 +306,8 @@ void JoinArray::setrel(int ar) {
 
 uint64_t JoinArray::get_sum(int relID, int colID) {
     uint64_t sum=0;
-    for(int i=0; i<size; i++){
+    setrel(relID);
+    for(uint64_t i=0; i<size; i++){
         sum+=rels->get_value(relID,get_value(i),colID);
     }
     return sum;

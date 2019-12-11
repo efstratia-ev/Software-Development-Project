@@ -8,18 +8,18 @@ listNode::listNode() {
     if(buffer==NULL){
         std::cout<<"error"<<std::endl;
     }
-    max=(1024*1024)/( sizeof(uint64_t));  //max size of results in the buffer
+    max=(1024*1024)/(sizeof(uint64_t));  //max size of results in the buffer
     count=0;   //current number of results in the buffer
     current=buffer;
     next=NULL;
 }
 
 void listNode::add(uint64_t rowID1, uint64_t rowID2) {  //add new result
-    count+=2;
+    count+=1;
     memcpy(current,&rowID1, sizeof(uint64_t));
     current+= sizeof(uint64_t);
     memcpy(current,&rowID2, sizeof(uint64_t));
-    if(count!=max) current+= sizeof(uint64_t);
+    if(count!=max/2) current+= sizeof(uint64_t);
 }
 
 bool listNode::isFull() {
@@ -56,7 +56,7 @@ uint64_t listNode::getcount(){
 
 rowids* listNode::pop() {
     if(count==0) return NULL;
-    count-=2;
+    count-=1;
     uint64_t temp1,temp2;
     memcpy(&temp1,current, sizeof(uint64_t));
     current+= sizeof(uint64_t);
@@ -82,6 +82,7 @@ uint64_t listNode::pop_element() {
 
 void listNode::restart_current() {
     current=buffer;
+    if(next) next->restart_current();
 }
 
 list::list() {
@@ -126,11 +127,7 @@ uint64_t list::get_size() {
 
 void list::restart_current() {
     current=start;
-    while(current){
-        current->restart_current();
-        current=current->getnext();
-    }
-    current=start;
+    start->restart_current();
 }
 
 rowids *list::pop() {
