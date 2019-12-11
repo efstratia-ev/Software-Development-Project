@@ -28,3 +28,17 @@ add_executable(test_relations
         relation.h
         relations.h
 )
+
+add_executable(test_join
+        test_join.cpp
+        join_preds.cpp join_preds.h
+        SQLInfo.h SQLInfo.cpp
+        radix.cpp radix.h
+        stack.cpp stack.h
+        sort.cpp sort.h
+        array.cpp array.h
+        list.cpp list.h
+        JoinArray.h JoinArray.cpp
+        relations.cpp relation.cpp
+        results_list.cpp results_list.h
+        SQL.h SQL.cpp)
