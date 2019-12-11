@@ -18,15 +18,11 @@ class JoinArray {
 public:
     //add rels parameter in constructor
     void setrel(int ar);
-    int getNumRels() { return numRels; }
-    int getSize() { return size; }
-    uint64_t **getArray() { return Array; }
+    int getNumRels();
+    int getSize();
+    uint64_t **getArray();
     JoinArray(Relations *r);
-    void set_currentColumn(int column); //antikatastithike apo tin setrel(se diaforetika simia)
-    //giati o pinakas 1 edo mporei na einai sti thesi 0
     uint64_t get_value(uint64_t i);
-    void set_value(uint64_t i,uint64_t val);
-    void insert_row(uint64_t i,uint64_t *row);
     void update_array(list *results,int id);
     void update_array(list *results,JoinArray *array2);
     void create_array(list *results,int id);

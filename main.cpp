@@ -134,6 +134,16 @@ uint64_t *join(SQL *sql,Relations *relations){
    return sums;
 }
 
+char *create_outfileName(char *filename){
+    int i;
+    for(i=strlen(filename); i>0; i--)
+        if(filename[i]=='.') break;
+    char *outfile=new char[i+10];
+    strncpy(outfile,filename,i+1);
+    strcpy(outfile+i+1,"myresult");
+    return outfile;
+}
+
 int main(int argc, char *argv[]) {
 
    char *filename;
@@ -147,6 +157,13 @@ int main(int argc, char *argv[]) {
    SQL *sql;
    results_list *results=new results_list();
 
+    char *outfile=create_outfileName(filename);
+    FILE *file;
+    file = fopen(outfile,"w");
+    if (file== NULL) {
+        cout<<"file "<<outfile<<" can not be opened"<<endl;
+        return -1;
+    }
 
    char *line= NULL;
    size_t size=0;
@@ -156,7 +173,7 @@ int main(int argc, char *argv[]) {
        if (!line) continue;
        if (strcmp(line, "Done") == 0 ) break;
        else if (strcmp(line, "F") == 0) {
-           results->print();
+           results->print(file);
            results->clear();
        }
        else{
@@ -167,5 +184,6 @@ int main(int argc, char *argv[]) {
        }
    }
 
+   fclose(file);
    return 0;
 }

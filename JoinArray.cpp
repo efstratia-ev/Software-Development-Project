@@ -7,25 +7,14 @@ JoinArray::JoinArray(Relations *r) {
     numRels=0;
 }
 
-void JoinArray::set_currentColumn(int column) {
-    relToBeJoined=column;
-}
-
 uint64_t JoinArray::get_value(uint64_t i) {
-    return Array[i][relToBeJoined];
-}
-
-void JoinArray::set_value(uint64_t i,uint64_t val) {
-    Array[i][relToBeJoined] = val;
-}
-
-void JoinArray::insert_row(uint64_t i, uint64_t *row) {
-    Array[i]=row;
+    return Array[relToBeJoined][i];
 }
 
 void JoinArray::update_array(list *results,int id) {
     uint64_t new_size=results->get_size();
-    uint64_t **new_array=new uint64_t*[new_size];
+    uint64_t **new_array=new uint64_t*[numRels+1];
+    for(int j=0; j<numRels+1; j++) new_array[j]=new uint64_t[new_size];
     rowids *rows;
     int *new_arrayID=new int[numRels+1];
     int n=-1;
@@ -48,15 +37,14 @@ void JoinArray::update_array(list *results,int id) {
         new_arrayID[n]=id;
     }
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
         for(uint64_t j=0; j<numRels; j++){
             int temp=relationIDs[j];
-            new_array[i][temp]=Array[rows->rowid1][j];
+            new_array[temp][i]=Array[j][rows->rowid1];
         }
-        new_array[i][n]=rows->rowid2;
+        new_array[n][i]=rows->rowid2;
     }
-    for(uint64_t i=0; i<size; i++)delete[] Array[i];
+    for(uint64_t i=0; i<numRels; i++)delete[] Array[i];
     delete[] Array;
     Array=new_array;
     size=new_size;
@@ -67,7 +55,8 @@ void JoinArray::update_array(list *results,int id) {
 
 void JoinArray::update_array(list *results, JoinArray *array2) {
     uint64_t new_size=results->get_size();
-    uint64_t **new_array=new uint64_t*[new_size];
+    uint64_t **new_array=new uint64_t*[numRels+1];
+    for(int j=0; j<numRels+1; j++) new_array[j]=new uint64_t[new_size];
     rowids *rows;
     int *new_arrayID=new int[numRels+1];
     int n=-1;
@@ -90,15 +79,13 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         new_arrayID[n]=array2->relationIDs[0];
     }
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
         for(uint64_t j=0; j<numRels; j++){
-            int temp=relationIDs[j];
-            new_array[i][relationIDs[j]]=Array[rows->rowid1][j];
+            new_array[relationIDs[j]][i]=Array[j][rows->rowid1];
         }
-        new_array[i][n]=array2->Array[rows->rowid2][0];
+        new_array[n][i]=array2->Array[0][rows->rowid2];
     }
-    for(uint64_t i=0; i<size; i++) delete[] Array[i];
+    for(uint64_t i=0; i<numRels; i++) delete[] Array[i];
     delete[] Array;
     Array=new_array;
     size=new_size;
@@ -109,18 +96,19 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
 
 void JoinArray::create_array(list *results,int id) {
     size = results->get_size();
-    Array = new uint64_t *[size];
+    Array = new uint64_t *[1];
+    Array[0] = new uint64_t[size];
     relationIDs = new int[1];
     relationIDs[0] = id;
     numRels=1;
-    for (uint64_t i = 0; i < size; i++) {
-        Array[i] = new uint64_t[1];
-        Array[i][0] = results->pop_element();
-    }
+    for (uint64_t i = 0; i < size; i++)
+        Array[0][i] = results->pop_element();
 }
 void JoinArray::create_array(list *results,int id1,int id2) {
     size = results->get_size();
-    Array = new uint64_t *[size];
+    Array = new uint64_t *[2];
+    Array[0] = new uint64_t[size];
+    Array[1] = new uint64_t[size];
     relationIDs = new int[2];
     bool op=false;
     numRels=2;
@@ -134,15 +122,14 @@ void JoinArray::create_array(list *results,int id1,int id2) {
         op=true;
     }
     for (uint64_t i = 0; i < size; i++) {
-        Array[i] = new uint64_t[2];
         rowids* temp= results->pop();
         if(op){
-            Array[i][0] = temp->rowid2;
-            Array[i][1] = temp->rowid1;
+            Array[0][i] = temp->rowid2;
+            Array[1][i] = temp->rowid1;
         }
         else{
-            Array[i][0] = temp->rowid1;
-            Array[i][1] = temp->rowid2;
+            Array[0][i] = temp->rowid1;
+            Array[1][i] = temp->rowid2;
         }
     }
 }
@@ -155,17 +142,19 @@ int JoinArray::get_column(int arrayID) {
 void JoinArray::filter_update(list *results) {
     results->restart_current();
     uint64_t new_size=results->get_size();
-    uint64_t **new_array=new uint64_t*[new_size];
+    uint64_t **new_array=new uint64_t*[numRels];
+    for(uint64_t i=0; i<numRels; i++)
+        new_array[i]=new uint64_t[new_size];
     rowids *rows;
 
+    uint64_t temp;
     for(uint64_t i=0; i<new_size; i++){
-        new_array[i]=new uint64_t[new_size];
-        rows=results->pop();
+        temp=results->pop_element();
         for(uint64_t j=0; j<numRels; j++){
-            new_array[i][j]=Array[rows->rowid1][j];
+            new_array[j][i]=Array[j][temp];
         }
     }
-    for(uint64_t i=0; i<size; i++)delete[] Array[i];
+    for(uint64_t i=0; i<numRels; i++)delete[] Array[i];
     delete[] Array;
     Array=new_array;
     size=new_size;
@@ -178,6 +167,7 @@ void JoinArray::compare(int arrayID, uint64_t column1, uint64_t column2) {
         if(rels->filter(arrayID,Array[column][i],column1,column2))
             results->add(i);
     }
+    results->restart_current();
     filter_update(results);
 }
 
@@ -196,7 +186,7 @@ void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t c
     int c1=get_column(arrayID1),c2=get_column(arrayID2);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
-        if(rels->filter(arrayID1,arrayID2,Array[i][c1],Array[i][c2],column1,column2))
+        if(rels->filter(arrayID1,arrayID2,Array[c1][i],Array[c2][i],column1,column2))
             results->add(i);
     }
     results->restart_current();
@@ -303,6 +293,18 @@ uint64_t JoinArray::get_sum(int relID, int colID) {
         sum+=rels->get_value(relID,get_value(i),colID);
     }
     return sum;
+}
+
+int JoinArray::getNumRels() {
+    return numRels;
+}
+
+int JoinArray::getSize() {
+    return size;
+}
+
+uint64_t **JoinArray::getArray() {
+    return Array;
 }
 
 

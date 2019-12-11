@@ -18,12 +18,25 @@ public:
         delete sums;
         delete next;
     }
-    void print(){
-        if(next) next->print();
+    void print(FILE *file){
+        if(next) next->print(file);
         for(int i=0; i<size; i++){
-            cout<<sums[i];
-            if(i!=size-1) cout<<" ";
-            else cout<<endl;
+            if(sums[i]!=0) {
+                cout<<sums[i];
+                fprintf(file,"%ld",sums[i]);
+            }
+            else{
+                cout<<"NULL";
+                fprintf(file,"NULL");
+            }
+            if(i!=size-1){
+                cout<<" ";
+                fprintf(file," ");
+            }
+            else{
+                cout<<endl;
+                fprintf(file,"\n");
+            }
         }
     }
     results_node *get_next(){
@@ -41,8 +54,8 @@ public:
         start=new results_node(size,sums,start);
         counter++;
     }
-    void print(){
-        start->print();
+    void print(FILE *file){
+        start->print(file);
     }
     void clear();
 };
