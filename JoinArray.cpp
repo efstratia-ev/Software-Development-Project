@@ -255,7 +255,7 @@ array *JoinArray::sortRel(int col) {
     array *arr = new array(size);
     for (int i =0; i < size; i++) {
         row = get_value(i);
-        arr->add( rel->value(row,col),i);
+        arr->add( rels->get_value(relToBeJoined,row,col),i);
     }
     sort(new radix(arr->Size,arr->Array));
     return arr;

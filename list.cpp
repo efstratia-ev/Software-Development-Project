@@ -3,7 +3,7 @@
 #include <iostream>
 #include "list.h"
 using namespace std;
-listNode::listNode() {
+listNode::listNode(bool t) {
     buffer=(char*)malloc(1024*1024);
     if(buffer==NULL){
         std::cout<<"error"<<std::endl;
@@ -12,6 +12,7 @@ listNode::listNode() {
     count=0;   //current number of results in the buffer
     current=buffer;
     next=NULL;
+    tuples=t;
 }
 
 void listNode::add(uint64_t rowID1, uint64_t rowID2) {  //add new result
@@ -23,12 +24,13 @@ void listNode::add(uint64_t rowID1, uint64_t rowID2) {  //add new result
 }
 
 bool listNode::isFull() {
+    if(tuples) return count==(max/2);
     return count==max;
 }
 
 
-listNode *listNode::createNext() {  //new list node
-    next=new listNode();
+listNode *listNode::createNext(bool tuples) {  //new list node
+    next=new listNode(tuples);
     return next;
 }
 
@@ -87,14 +89,18 @@ void listNode::restart_current() {
 
 list::list() {
     size=0;
-    start=new listNode();
+    start=NULL;
     current=start;
 }
 
 void list::add(uint64_t rowID1, uint64_t rowID2) {
+    if(!start){
+        start=new listNode(true);
+        current=start;
+    }
     size++;
     if(current->isFull())
-        current=current->createNext();  //new list node
+        current=current->createNext(true);  //new list node
     current->add(rowID1,rowID2);  //add the result
 }
 
@@ -147,8 +153,12 @@ uint64_t list::pop_element() {
 }
 
 void list::add(uint64_t rowID) {
+    if(!start){
+        start=new listNode(false);
+        current=start;
+    }
     size++;
     if(current->isFull())
-        current=current->createNext();  //new list node
+        current=current->createNext(false);  //new list node
     current->add(rowID);  //add the result
 }

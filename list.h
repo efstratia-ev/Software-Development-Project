@@ -16,13 +16,14 @@ class listNode{
     listNode *next;
     uint64_t count;
     uint64_t max;
+    bool tuples;
 public:
-    listNode();
+    listNode(bool t);
     bool isFull();
     uint64_t getcount();
     void add(uint64_t rowID1,uint64_t rowID2);
     void add(uint64_t rowID);
-    listNode *createNext();
+    listNode *createNext(bool tuples);
     void print();
     listNode *getnext();
   //  ~listNode();
