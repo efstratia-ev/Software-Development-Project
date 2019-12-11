@@ -9,6 +9,7 @@ SQL::SQL(char *line) {
     strcpy(query,line);
     query[strlen(line)]='\0';
     where_predicates = new Priority_Queue();
+    numInnerJoins = 0;
     CutQueryToParts();
 }
 
@@ -108,7 +109,7 @@ void SQL::GetWherePredicates(string predicate) {
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
     where_predicates->Push(new join(a1,c1,a2,c2));
-
+    numInnerJoins++;
 }
 
 void SQL::GetWhereFilters(string predicate){

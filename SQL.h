@@ -11,6 +11,8 @@ class SQL{
     int * from_arrays,from_arrays_sz,select_result_sz;
     Priority_Queue * where_predicates;
     set * select_results;
+    //how many inner joins the query has
+    int numInnerJoins;
 public:
     SQL(char *line);
     int CutQueryToParts();
@@ -39,6 +41,8 @@ public:
     int *get_from_arrays(){
         return from_arrays;
     }
+    int get_from_arrays_size() { return from_arrays_sz; }
+    int getNumInnerJoins() { return numInnerJoins; }
 };
 
 
