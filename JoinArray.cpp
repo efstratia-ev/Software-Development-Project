@@ -196,9 +196,10 @@ void JoinArray::compare(int arrayID1, uint64_t column1, int arrayID2, uint64_t c
     int c1=get_column(arrayID1),c2=get_column(arrayID2);
     list *results=new list();
     for(uint64_t i=0; i<size; i++){
-        if(rels->filter(arrayID1,arrayID2,Array[column1][i],Array[column2][i],column1,column2))
+        if(rels->filter(arrayID1,arrayID2,Array[i][c1],Array[i][c2],column1,column2))
             results->add(i);
     }
+    results->restart_current();
     filter_update(results);
 }
 
