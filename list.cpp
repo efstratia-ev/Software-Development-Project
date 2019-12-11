@@ -104,6 +104,7 @@ void list::print(){
         current->print();
         current=current->getnext();
     }
+    current = start; //reset current
 }
 
 void list::printSize(){
