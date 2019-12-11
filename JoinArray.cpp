@@ -28,9 +28,6 @@ void JoinArray::update_array(list *results,int id) {
     uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
     int *new_arrayID=new int[numRels+1];
-    cout<<"prosthiki"<<endl;
-    for(int j=0; j<numRels; j++) cout<<relationIDs[j]<<"\t";
-    cout<<endl;
     int n=-1;
     for(int j=0; j<numRels; j++){
         if(n<0 && relationIDs[j]>id){
@@ -50,8 +47,6 @@ void JoinArray::update_array(list *results,int id) {
         n=numRels;
         new_arrayID[n]=id;
     }
-    for(int j=0; j<numRels+1; j++) cout<<new_arrayID[j]<<"\t";
-    cout<<endl;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -93,7 +88,6 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         n=numRels;
         new_arrayID[n]=array2->relationIDs[0];
     }
-    for(int j=0; j<numRels+1; j++) cout<<new_arrayID[numRels]<<endl;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -137,8 +131,6 @@ void JoinArray::create_array(list *results,int id1,int id2) {
         relationIDs[1] = id1;
         op=true;
     }
-    cout<<"ta prota 2"<<endl;
-    cout<<relationIDs[0]<<"\t"<<relationIDs[1]<<endl;
     for (uint64_t i = 0; i < size; i++) {
         Array[i] = new uint64_t[2];
         rowids* temp= results->pop();
@@ -259,7 +251,7 @@ list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID
 //before a join. This method is called only by Join
 array *JoinArray::sortRel(int col) {
     uint64_t row;
-    Relation *rel = rels->relation(relationIDs[relToBeJoined]);
+    Relation *rel = rels->relation(relToBeJoined);
     array *arr = new array(size);
     for (int i =0; i < size; i++) {
         row = get_value(i);
