@@ -28,30 +28,30 @@ void JoinArray::update_array(list *results,int id) {
     uint64_t **new_array=new uint64_t*[new_size];
     rowids *rows;
     int *new_arrayID=new int[numRels+1];
+    cout<<"prosthiki"<<endl;
+    for(int j=0; j<numRels; j++) cout<<relationIDs[j]<<"\t";
+    cout<<endl;
     int n=-1;
     for(int j=0; j<numRels; j++){
+        if(n<0 && relationIDs[j]>id){
+            new_arrayID[j]=id;
+            n=j;
+        }
         if(n>=0){
             new_arrayID[j+1]=relationIDs[j];
             relationIDs[j]=j+1;
-        }
-        else if(relationIDs[j]>id){
-            new_arrayID[j]=id;
-            n=j;
         }
         else{
             new_arrayID[j]=relationIDs[j];
             relationIDs[j]=j;
         }
-
     }
     if(n==-1){
         n=numRels;
         new_arrayID[n]=id;
     }
-    else{
-        new_arrayID[numRels]=relationIDs[numRels-1];
-        relationIDs[numRels-1]=numRels;
-    }
+    for(int j=0; j<numRels+1; j++) cout<<new_arrayID[j]<<"\t";
+    cout<<endl;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -76,28 +76,24 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
     int *new_arrayID=new int[numRels+1];
     int n=-1;
     for(int j=0; j<numRels; j++){
+        if(n<0 && relationIDs[j]>array2->relationIDs[0]){
+            new_arrayID[j]=array2->relationIDs[0];
+            n=j;
+        }
         if(n>=0){
             new_arrayID[j+1]=relationIDs[j];
             relationIDs[j]=j+1;
-        }
-        else if(relationIDs[j]>array2->relationIDs[0]){
-            new_arrayID[j]=array2->relationIDs[0];
-            n=j;
         }
         else{
             new_arrayID[j]=relationIDs[j];
             relationIDs[j]=j;
         }
-
     }
     if(n==-1){
         n=numRels;
         new_arrayID[n]=array2->relationIDs[0];
     }
-    else{
-        new_arrayID[numRels]=relationIDs[numRels-1];
-        relationIDs[numRels-1]=numRels;
-    }
+    for(int j=0; j<numRels+1; j++) cout<<new_arrayID[numRels]<<endl;
     for(uint64_t i=0; i<new_size; i++){
         new_array[i]=new uint64_t[numRels+1];
         rows=results->pop();
@@ -106,7 +102,7 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         }
         new_array[i][n]=array2->Array[rows->rowid2][0];
     }
-    for(uint64_t i=0; i<size; i++)delete[] Array[i];
+    for(uint64_t i=0; i<size; i++) delete[] Array[i];
     delete[] Array;
     Array=new_array;
     size=new_size;
@@ -141,6 +137,8 @@ void JoinArray::create_array(list *results,int id1,int id2) {
         relationIDs[1] = id1;
         op=true;
     }
+    cout<<"ta prota 2"<<endl;
+    cout<<relationIDs[0]<<"\t"<<relationIDs[1]<<endl;
     for (uint64_t i = 0; i < size; i++) {
         Array[i] = new uint64_t[2];
         rowids* temp= results->pop();
