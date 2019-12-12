@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <iostream>
 #include "Priority_Queue.h"
 
 Priority_Queue::Priority_Queue() {
@@ -27,7 +28,7 @@ Predicate* Priority_Queue::Pop(){
         if(!IsUsedArray(array2)) used_arrays= new List_Int(array2,used_arrays);
         Rearrange();
     }
-    else if(predicate->is_filter()) {
+    else {
         int array=predicate->getArray1()->getArray();
         if(!IsFilteredArray(array)) filtered_arrays= new List_Int(array,filtered_arrays);
         Rearrange();
@@ -39,41 +40,69 @@ void Priority_Queue::Rearrange(){
     Priority_Queue_Node *current=head,*previous=NULL;
     Priority_Queue_Node * tmp;
 
-    while(current!=NULL){
-        if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
-            if(current==head) {
+    if(size==0 || current->getPredicate()->is_filter()){
+        return;
+    }
+    if(size==1){
+        if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
+            current->getPredicate()->setfilter(true);
+        }
+        return;
+    }
+    current=head;
+    while(current!=NULL) {
+        if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
+            if (current == head) {
                 current->getPredicate()->setfilter(true);
-                break;
+                return;
             }
             tmp = current->get_next();
             current->setNext(head);
             previous->setNext(tmp);
-            head=current;
-            //isfilter ==1;
+            head = current;
             current->getPredicate()->setfilter(true);
-            break;
+            return;
         }
-        else if((IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray()))){
-            if(current==head) break;
+        previous=current;
+        current=current->get_next();
+    }
+    current=head;
+    while(current!=NULL) {
+        if ((IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray()))) {
+            if (current == head) return;
             tmp = current->get_next();
             current->setNext(head);
             previous->setNext(tmp);
-            head=current;
-            break;
+            head = current;
+            return;
         }
-        else if (AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
-            if(current==head) break;
+        previous=current;
+        current=current->get_next();
+    }
+    current=head;
+    while(current!=NULL) {
+        if (AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
+            if (current == head) return;
             tmp = current->get_next();
             current->setNext(head);
             previous->setNext(tmp);
-            head=current;
+            head = current;
+            return;
         }
-        else {
-            if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray()))
-                current->getPredicate()->setfilter(true);
-            previous=current;
-            current=current->get_next();
+        previous=current;
+        current=current->get_next();
+    }
+    current=head;
+    while(current!=NULL) {
+        if ((IsFilteredArray(current->getPredicate()->getArray1()->getArray()) || IsFilteredArray(current->getPredicate()->getArray2()->getArray()))) {
+            if (current == head) return;
+            tmp = current->get_next();
+            current->setNext(head);
+            previous->setNext(tmp);
+            head = current;
         }
+        previous=current;
+        current=current->get_next();
     }
 }
 

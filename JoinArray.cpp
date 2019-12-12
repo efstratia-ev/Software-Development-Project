@@ -272,7 +272,10 @@ void JoinArray::equal(uint64_t column, uint64_t value) {
 
 void JoinArray::setrel(int ar) {
     for(int i=0; i<numRels; i++){
-        if(relationIDs[i]==ar) relToBeJoined=i;
+        if(relationIDs[i]==ar){
+            relToBeJoined=i;
+            break;
+        }
     }
 }
 

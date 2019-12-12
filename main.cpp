@@ -127,7 +127,6 @@ uint64_t *join(SQL *sql,Relations *relations){
        delete[] arr2->Array;
        delete arr1;
        delete arr2;
-       delete resultlist;
        delete predicate;
    }
 
