@@ -25,18 +25,26 @@ Relations::Relations(char *filename) {
     rels = new Relation*[count];
     ifstream _infile(filename);
     char *suffix = strrchr(filename,'/');
-    char *prefix;
-    if (suffix != nullptr) {
-        prefix = (char *)malloc((suffix-filename+1) * sizeof(char));
-        strncpy(prefix,filename,suffix-filename+1);
-    }
-    const char *fname;
+    char *prefix=NULL;
     count = 0;
-    while (getline(_infile,line)) {
-        if (suffix != nullptr)
+    if (suffix != NULL) {
+        prefix = new char[suffix-filename+2];
+        strncpy(prefix,filename,suffix-filename+1);
+        prefix[suffix-filename+1]='\0';
+        char *fname=NULL;
+        while (getline(_infile,line)) {
             fname = concat(prefix,line.c_str());
-        else
-            fname = line.c_str();
+            rels[count] = new Relation(fname);
+            count++;
+            free(fname);
+        }
+
+        delete[] prefix;
+        return;
+    }
+    const char *fname=NULL;
+    while (getline(_infile,line)) {
+        fname = line.c_str();
         rels[count] = new Relation(fname);
         count++;
     }
@@ -47,10 +55,6 @@ int Relations::getSize() { return sz; }
 Relations::~Relations() {
     for(int i=0; i<sz; i++) delete rels[i];
     delete[] rels;
-}
-
-array *Relations::get_column(int relation, uint64_t column) {
-    return rels[query_rels[relation]]->col(column);
 }
 
 list *Relations::filter(int array, uint64_t column1, uint64_t column2) {
@@ -119,4 +123,21 @@ bool Relations::less_than(int array, uint64_t column, uint64_t value,uint64_t ro
 
 uint64_t Relations::get_value(int array, uint64_t row, int column) {
     return rels[query_rels[array]]->value(row,column);
+}
+
+Relations::Relations(Relation **rels, int sz) {
+    this->rels = rels;
+    this->sz = sz;
+}
+
+void Relations::set_query_rels(int *from_arrays) {
+    query_rels=from_arrays;
+}
+
+uint64_t Relations::get_relRows(uint64_t rel) {
+    return rels[query_rels[rel]]->getRows();
+}
+
+uint64_t *Relations::get_column(uint64_t rel, uint64_t col) {
+    return rels[query_rels[rel]]->get_col(col);
 }

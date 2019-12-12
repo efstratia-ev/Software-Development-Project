@@ -4,27 +4,36 @@
 
 using  namespace std;
 
-radix::radix(uint64_t offset,uint64_t s, mytuple *r,mytuple *_r,int b){
+radix::radix(uint64_t offset,uint64_t s, uint64_t *r,uint64_t *_r,uint64_t *d,int b){
     this->offset=offset;
     this->size=s;
     R=r;
     _R=_r;
     this->byte=b;
+    data=d;
 }
 
-radix::radix(uint64_t s,mytuple *r) {
+radix::radix(uint64_t s,uint64_t *r,uint64_t *d) {
     this->offset = 0;
     this->size = s;
     this->R = r;
-    this->_R = new struct mytuple[size];
+    this->_R = new uint64_t[size];
     this->byte = 1;
+    data=d;
 }
 
-
+radix::radix(uint64_t s, uint64_t *d) {
+    this->offset = 0;
+    this->size = s;
+    this->R = NULL;
+    this->_R = new uint64_t[size];
+    this->byte = 1;
+    data=d;
+}
 //just a wrapper
 void radix::group() {
-
-    histogram();
+    if(R) histogram();
+    else histogram_init();
     prefixSum();
     reorderR();
 }
@@ -32,7 +41,17 @@ void radix::group() {
 void radix::histogram() {
     for (int i = 0; i < N; i++)
         Hist[i] = 0;
-    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(R[i].value)]++;
+    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[R[i]])]++;
+}
+
+void radix::histogram_init() {
+    R=new uint64_t[size];
+    for (int i = 0; i < N; i++)
+        Hist[i] = 0;
+    for(uint64_t i=offset; i<offset+size; i++){
+        R[i]=i;
+        Hist[hash(data[R[i]])]++;
+    }
 }
 
 void radix::prefixSum() {
@@ -48,7 +67,7 @@ void radix::reorderR() {
     for (int i = 0; i < N; i++)
         counter[i] = 0;
     for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
-        index=hash(R[i].value);
+        index=hash(data[R[i]]);
         _R[Psum[index]+counter[index]]=R[i];
         counter[index]++;
     }
@@ -82,7 +101,7 @@ void radix:: split(stack *Stack) {
         }
         else{
             if(Hist[i]==0) continue;
-            Stack->push(new radix(Psum[i],Hist[i],_R,R,byte+1)); //hash again
+            Stack->push(new radix(Psum[i],Hist[i],_R,R,data,byte+1)); //hash again
         }
     }
 }
@@ -95,12 +114,12 @@ void radix::quicksort(int start, int end) {
 }
 
 int radix::partition(int start, int end) {
-    mytuple pivot=_R[end];
+    uint64_t pivot=_R[end];
     int i=start-1;
-    mytuple temp;
+    uint64_t temp;
 
     for(int j=start; j<end; j++){
-        if(_R[j].value<pivot.value){
+        if(data[_R[j]]<data[pivot]){
             i++;
             temp=_R[i];
             _R[i]=_R[j];
@@ -113,9 +132,15 @@ int radix::partition(int start, int end) {
     return i+1;
 }
 
-void radix::print() {
-    for(uint64_t i=0; i<size; i++){
-        cout<<R[i].value<<"\t"<<_R[i].value<<endl;
-    }
+array *radix::getR() {
+    return new array(size,R);
 }
+
+void radix::delete_R() {
+    delete[] _R;
+}
+
+
+
+
 

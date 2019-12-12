@@ -14,14 +14,10 @@ class Relations {
 public:
     Relations(char *filename);
     //for debug
-    Relations(Relation **rels,int sz) {
-        this->rels = rels;
-        this->sz = sz;
-    }
+    Relations(Relation **rels,int sz);
     Relation *relation(int i);
     int getSize();
     ~Relations();
-    array *get_column(int relation,uint64_t column);
     list *filter(int array,uint64_t column1,uint64_t column2);
     list *equal(int array,uint64_t column,uint64_t value);
     list *grater_than(int array,uint64_t column,uint64_t value);
@@ -32,9 +28,10 @@ public:
     bool grater_than(int array,uint64_t column,uint64_t value,uint64_t row);
     bool less_than(int array,uint64_t column,uint64_t value,uint64_t row);
     uint64_t get_value(int array,uint64_t row,int column);
-    void set_query_rels(int *from_arrays){
-        query_rels=from_arrays;
-    }
+    void set_query_rels(int *from_arrays);
+    uint64_t get_relRows(uint64_t rel);
+    uint64_t *get_column(uint64_t rel,uint64_t col);
+
 };
 
 

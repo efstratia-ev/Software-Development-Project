@@ -13,20 +13,15 @@ class JoinArray {
     int *relationIDs; //which rels 
     //relation belonging to relationIDs array that we 
     //will apply the next join on.
-    int relToBeJoined; 
-    array *sortRel(int col);
+    int relToBeJoined;
 public:
-    //add rels parameter in constructor
     void setrel(int ar);
-    int getNumRels() { return numRels; }
-    int getSize() { return size; }
-    uint64_t **getArray() { return Array; }
+    int getNumRels();
+    int getSize();
+    uint64_t **getArray();
     JoinArray(Relations *r);
-    void set_currentColumn(int column); //antikatastithike apo tin setrel(se diaforetika simia)
-    //giati o pinakas 1 edo mporei na einai sti thesi 0
+    ~JoinArray();
     uint64_t get_value(uint64_t i);
-    void set_value(uint64_t i,uint64_t val);
-    void insert_row(uint64_t i,uint64_t *row);
     void update_array(list *results,int id);
     void update_array(list *results,JoinArray *array2);
     void create_array(list *results,int id);
@@ -34,7 +29,6 @@ public:
     int get_column(int arrayID);
     void filter_update(list *results);
     void compare(int arrayID,uint64_t column1,uint64_t column2);
-    list *getcompare(int arrayID,uint64_t column1,uint64_t column2);
     void compare(int arrayID1,uint64_t column1,int arrayID2,uint64_t column2);
     void grater_than(uint64_t column,uint64_t value);
     void less_than(uint64_t column,uint64_t value);

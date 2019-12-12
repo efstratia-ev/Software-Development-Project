@@ -87,6 +87,11 @@ void listNode::restart_current() {
     if(next) next->restart_current();
 }
 
+listNode::~listNode() {
+    free(buffer);
+    if(next) delete next;
+}
+
 list::list() {
     size=0;
     start=NULL;
@@ -102,25 +107,6 @@ void list::add(uint64_t rowID1, uint64_t rowID2) {
     if(current->isFull())
         current=current->createNext(true);  //new list node
     current->add(rowID1,rowID2);  //add the result
-}
-
-void list::print(){
-    current=start;
-    while(current){
-        current->print();
-        current=current->getnext();
-    }
-    current = start; //reset current
-}
-
-void list::printSize(){
-    current=start;
-    uint64_t count=0;
-    while(current){
-        count+=current->getcount();
-        current=current->getnext();
-    }
-    cout<<"Number of results is :"<<count<<"\n";
 }
 
 

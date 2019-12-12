@@ -1,4 +1,4 @@
-#include "SQLInfo.h"
+#include "Priority_Queue.h"
 
 #define COLUMNSPRE 4
 #define COLUMNSRE 2
@@ -15,34 +15,25 @@ class SQL{
     int numInnerJoins;
 public:
     SQL(char *line);
+    ~SQL();
     int CutQueryToParts();
-    int InitFromArrays(string);
+    void InitFromArrays(string);
     void GetFromArrays(string);
     void GetWherePredicates(string);
     void SplitWherePredicates(string);
     bool isFilter(string predicate);
     void GetWhereFilters(string);
-    int InitSelectResults(string);
+    void InitSelectResults(string);
     void SplitSelectResults(string select);
     void GetSelectResults(string,int);
     Predicate *getPredicate();
-    int get_filters_num(){
-        return filters;
-    }
-    int get_results_counter(){
-        return select_result_sz;
-    }
-    set *get_select(){
-        return select_results;
-    }
-    bool same_array(int a,int b){
-        return from_arrays[a]==from_arrays[b];
-    }
-    int *get_from_arrays(){
-        return from_arrays;
-    }
     int get_from_arrays_size() { return from_arrays_sz; }
     int getNumInnerJoins() { return numInnerJoins; }
+    int get_filters_num();
+    int get_results_counter();
+    set *get_select();
+    bool same_array(int a,int b);
+    int *get_from_arrays();
 };
 
 

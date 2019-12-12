@@ -38,7 +38,7 @@ int SQL::CutQueryToParts(){
    return 1;
 }
 
-int SQL::InitFromArrays(string from){
+void SQL::InitFromArrays(string from){
    int sum=1;
    for (auto x : from){
       if(x == ' ' ) sum++;
@@ -127,7 +127,7 @@ void SQL::GetWhereFilters(string predicate){
 
 }
 
-int SQL::InitSelectResults(string select){
+void SQL::InitSelectResults(string select){
     int sum=1;
     for (auto x : select){
         if(x == ' ' ) sum++;
@@ -168,4 +168,31 @@ void SQL::GetSelectResults(string select,int i){
 Predicate *SQL::getPredicate() {
     if(where_predicates->IsEmpty()) return NULL;
     return where_predicates->Pop();
+}
+
+int SQL::get_filters_num() {
+    return filters;
+}
+
+int SQL::get_results_counter() {
+    return select_result_sz;
+}
+
+set *SQL::get_select() {
+    return select_results;
+}
+
+bool SQL::same_array(int a, int b) {
+    return from_arrays[a]==from_arrays[b];
+}
+
+int *SQL::get_from_arrays() {
+    return from_arrays;
+}
+
+SQL::~SQL() {
+    delete[] query;
+    delete[] from_arrays;
+    delete where_predicates;
+    delete[] select_results;
 }

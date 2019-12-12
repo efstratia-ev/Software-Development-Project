@@ -5,6 +5,7 @@
 #include <cinttypes>
 #include "list.h"
 #include "stack.h"
+#include "relation.h"
 #define N 256
 #define L1size 64000
 
@@ -14,16 +15,19 @@ class stack;
 class radix{
     uint64_t offset;
     uint64_t size;
-    mytuple *R;
+    uint64_t *R;
     uint32_t Hist[N];
     uint32_t Psum[N];
-    mytuple *_R;
+    uint64_t *_R;
     int byte;
+    uint64_t *data;
 public:
-    radix(uint64_t offset,uint64_t size, mytuple *r,mytuple *_r,int byte = 1);
-    radix(uint64_t size,mytuple *r);
+    radix(uint64_t offset,uint64_t size, uint64_t *r,uint64_t *_r,uint64_t *d,int byte = 1);
+    radix(uint64_t size,uint64_t *r,uint64_t *d);
+    radix(uint64_t size,uint64_t *d);
     void group();
     void histogram();
+    void histogram_init();
     void prefixSum();
     void reorderR();
     uint64_t hash(uint64_t value);
@@ -31,7 +35,8 @@ public:
     void split(stack *Stack);
     void quicksort(int start,int end);
     int partition(int start,int end);
-    void print();
+    array *getR();
+    void delete_R();
 };
 
 #endif
