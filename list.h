@@ -19,6 +19,7 @@ class listNode{
     bool tuples;
 public:
     listNode(bool t);
+    ~listNode();
     bool isFull();
     uint64_t getcount();
     void add(uint64_t rowID1,uint64_t rowID2);
@@ -26,7 +27,6 @@ public:
     listNode *createNext(bool tuples);
     void print();
     listNode *getnext();
-  //  ~listNode();
     void restart_current();
     rowids* pop();
     uint64_t pop_element();
@@ -38,19 +38,14 @@ class list{
     listNode *current;
 public:
     list();
-    void add(uint64_t rowID1,uint64_t rowID2);
-    void print();
-    void printSize();
     ~list();
+    void add(uint64_t rowID1,uint64_t rowID2);
+    void add(uint64_t rowID);
     uint64_t get_size();
     void restart_current();
     rowids* pop();
     uint64_t pop_element();
 
-    void add(uint64_t rowID);
-    bool isEmpty(){
-        return size==0;
-    }
 };
 
 #endif

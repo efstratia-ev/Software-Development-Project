@@ -74,3 +74,9 @@ int Relation::compare(uint64_t row, uint64_t column, uint64_t v) {
 uint64_t *Relation::get_col(uint64_t i) {
     return data + i * rows;
 }
+
+Relation::Relation(uint64_t *data, uint64_t rows, uint64_t cols) {
+    this->data = data;
+    this->rows = rows;
+    this->cols = cols;
+}

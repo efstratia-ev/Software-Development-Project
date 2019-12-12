@@ -28,13 +28,14 @@ int isRelationFiltered(JoinArray **filtered,int max,int relation){
 }
 
 uint64_t *join(SQL *sql,Relations *relations){
-   Predicate *predicate;
+   Predicate *predicate=NULL;
    JoinArray *results=NULL,**filter_results;
    int filters=sql->get_filters_num(),max=0;
    filter_results=new JoinArray*[filters];
    bool exists;
    for(int i=0; i<filters; i++){
        int curr;
+       if(predicate) delete predicate;
        predicate=sql->getPredicate();
        exists=false;
        if((curr=isRelationFiltered(filter_results,max,predicate->get_array()))>=0) exists=true;
@@ -62,10 +63,12 @@ uint64_t *join(SQL *sql,Relations *relations){
        if(exists) filter_results[curr]->compare(predicate->get_array(),predicate->get_column(),predicate->get_column2());
        else filter_results[curr]->create_array(relations->filter(predicate->get_array(),predicate->get_column(),predicate->get_column2()),predicate->get_array());
    }
+   delete predicate;
    list *res;
    while((predicate=sql->getPredicate())){
        if(predicate->is_filter()){
            results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
+           delete predicate;
            continue;
        }
        int array1=predicate->get_array(),array2=predicate->get_array2();
@@ -95,6 +98,7 @@ uint64_t *join(SQL *sql,Relations *relations){
                delete filter_results[curr];
                filter_results[curr]=NULL;
            }
+           delete predicate;
            continue;
        }
        if(results && results->exists(array2)){
@@ -109,6 +113,7 @@ uint64_t *join(SQL *sql,Relations *relations){
                delete filter_results[curr];
                filter_results[curr]=NULL;
            }
+           delete predicate;
            continue;
        }
        auto arr1 = sort(new radix(relations->get_relRows(array1),relations->get_column(array1,predicate->get_column())));
@@ -118,8 +123,12 @@ uint64_t *join(SQL *sql,Relations *relations){
        list *resultlist=join(arr1,arr2,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),0);
        results=new JoinArray(relations);
        results->create_array(resultlist,array1,array2);
-
+       delete[] arr1->Array;
+       delete[] arr2->Array;
+       delete arr1;
+       delete arr2;
        delete resultlist;
+       delete predicate;
    }
 
    if(!results){
@@ -131,6 +140,8 @@ uint64_t *join(SQL *sql,Relations *relations){
    for(int i=0; i<res_counter; i++){
        sums[i]=results->get_sum(select[i].getArray(),select[i].getColumn());
    }
+   delete[] filter_results;
+   delete results;
    return sums;
 }
 
@@ -183,7 +194,10 @@ int main(int argc, char *argv[]) {
            delete sql;
        }
    }
-
+   delete results;
+   delete relations;
+   delete[] outfile;
+   free(line);
    fclose(file);
    return 0;
 }

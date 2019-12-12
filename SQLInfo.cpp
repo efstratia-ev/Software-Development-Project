@@ -25,172 +25,94 @@ int set::getColumn(){
 }
 
 
-Priority_Queue::Priority_Queue() {
-    head=NULL;
-    used_arrays=NULL;
-    filtered_arrays=NULL;
-    size=0;
+Predicate::Predicate(int a, int c) {
+    array1=new set(a,c);
 }
 
-
-void Priority_Queue::Push(Predicate *p){
-    head=new Priority_Queue_Node(p,head);
-    size++;
-
-}
-Predicate* Priority_Queue::Priority_Queue::Pop(){
-    Predicate *predicate=head->getPredicate();
-    head=head->get_next();
-    size--;
-    if(!predicate->is_filter()){
-        int array1=predicate->getArray1()->getArray();
-        int array2=predicate->getArray2()->getArray();
-        if(!IsUsedArray(array1)) used_arrays= new List_Int(array1,used_arrays);
-        if(!IsUsedArray(array2)) used_arrays= new List_Int(array2,used_arrays);
-        Rearrange();
-    }
-    else if(predicate->is_filter()) {
-        int array=predicate->getArray1()->getArray();
-        if(!IsFilteredArray(array)) filtered_arrays= new List_Int(array,filtered_arrays);
-        Rearrange();
-    }
-    return predicate;
+int Predicate::get_array() {
+    return array1->getArray();
 }
 
-void Priority_Queue::Rearrange(){
-    Priority_Queue_Node *current=head,*previous=NULL;
-    Priority_Queue_Node * tmp;
-
-    while(current!=NULL){
-        if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
-            if(current==head) {
-                current->getPredicate()->setfilter(true);
-                break;
-            }
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head=current;
-            //isfilter ==1;
-            current->getPredicate()->setfilter(true);
-            break;
-        }
-        else if((IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray()))){
-            if(current==head) break;
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head=current;
-            break;
-        }
-        else if (AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
-            if(current==head) break;
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head=current;
-        }
-        else {
-            if(AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray()))
-                current->getPredicate()->setfilter(true);
-            previous=current;
-            current=current->get_next();
-        }
-    }
+int Predicate::get_column() {
+    return array1->getColumn();
 }
 
-int Priority_Queue::InitRearrange(){
-    int filters=0;
-    Priority_Queue_Node *current=head,*previous=NULL;
-    Priority_Queue_Node * tmp;
-    Priority_Queue_Node * next_tmp;
-    if(head->getPredicate()->is_filter()) filters++;
-    while(current!=NULL){
-        if(current->getPredicate()->is_filter() && current!=head){
-            filters++;
-            next_tmp=current->get_next();
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head=current;
-            current=next_tmp;
-        }
-        else {
-            previous=current;
-            current=current->get_next();
-        }
-    }
-    return filters;
+set *Predicate::getArray1() {
+    return array1;
 }
 
-
-bool Priority_Queue::IsEmpty(){
-    return (this->size==0) ;
+Predicate::~Predicate() {
+    delete array1;
 }
 
-Priority_Queue::~Priority_Queue(){
-    List_Int * temp=used_arrays->getNext();
-    while(temp!=NULL){
-        delete used_arrays;
-        used_arrays=temp;
-    }
-    temp=filtered_arrays->getNext();
-    while(temp!=NULL){
-        delete filtered_arrays;
-        filtered_arrays=temp;
-    }
+comparison::comparison(int a, int c, char cmp, int n) :Predicate(a,c){
+    comp=cmp;
+    num=n;
 }
 
-bool Priority_Queue::AreUsedArray(int target1,int target2){
-    List_Int * temp=used_arrays;
-    int count=0;
-    while(temp!=NULL){
-        if(temp->getData()==target1) count++;
-        else if (temp->getData()==target2) count++;
-        temp=temp->getNext();
-    }
-    return count==2 ;
+bool comparison::is_filter() {
+    return true;
 }
 
+bool comparison::is_comparison() {
+    return true;
+}
 
-bool Priority_Queue::IsUsedArray(int target) {
-    List_Int *temp = used_arrays;
-    while (temp != NULL) {
-        if (temp->getData() == target) return true;
-        temp = temp->getNext();
-    }
+char comparison::get_comp() {
+    return comp;
+}
+
+uint64_t comparison::get_value() {
+    return num;
+}
+
+set *comparison::getArray2() {return NULL;}
+
+int comparison::get_array2() {
+    return -1;
+}
+
+int comparison::get_column2() {
+    return -1;
+}
+
+join::join(int a1, int c1, int a2, int c2) :Predicate(a1,c1){
+    array2=new set(a2,c2);
+    isfilter = false;
+}
+
+char join::get_comp() {
+    return '\0';
+}
+
+bool join::is_filter() {
+    return isfilter;
+}
+
+bool join::is_comparison() {
     return false;
 }
 
-bool Priority_Queue::AreFilteredArray(int target1,int target2){
-    List_Int * temp=filtered_arrays;
-    while(temp!=NULL){
-        if(temp->getData()==target1 || temp->getData()==target2) {
-           return true;
-        }
-        temp=temp->getNext();
-    }
-    return false;
+uint64_t join::get_value() {
+    return -1;
 }
 
-bool Priority_Queue::IsFilteredArray(int target){
-    List_Int *temp = filtered_arrays;
-    while (temp != NULL) {
-        if (temp->getData() == target) return true;
-        temp = temp->getNext();
-    }
-    return false;
+int join::get_array2() {
+    return array2->getArray();
 }
 
-List_Int *List_Int::getNext(){
-    return next;
+int join::get_column2() {
+    return array2->getColumn();
 }
 
-List_Int::List_Int(int d,List_Int * n){
-    data=d;
-    next=n;
+set *join::getArray2() {
+    return array2;
 }
 
-int List_Int::getData(){
-    return data;
+void join::setfilter(bool filter) {
+    isfilter=filter;
+}
+
+join::~join() {
+    delete array2;
 }

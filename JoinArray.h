@@ -15,12 +15,12 @@ class JoinArray {
     //will apply the next join on.
     int relToBeJoined;
 public:
-    //add rels parameter in constructor
     void setrel(int ar);
     int getNumRels();
     int getSize();
     uint64_t **getArray();
     JoinArray(Relations *r);
+    ~JoinArray();
     uint64_t get_value(uint64_t i);
     void update_array(list *results,int id);
     void update_array(list *results,JoinArray *array2);
@@ -29,7 +29,6 @@ public:
     int get_column(int arrayID);
     void filter_update(list *results);
     void compare(int arrayID,uint64_t column1,uint64_t column2);
-    list *getcompare(int arrayID,uint64_t column1,uint64_t column2);
     void compare(int arrayID1,uint64_t column1,int arrayID2,uint64_t column2);
     void grater_than(uint64_t column,uint64_t value);
     void less_than(uint64_t column,uint64_t value);

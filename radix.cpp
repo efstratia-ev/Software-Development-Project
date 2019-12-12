@@ -136,6 +136,10 @@ array *radix::getR() {
     return new array(size,R);
 }
 
+void radix::delete_R() {
+    delete[] _R;
+}
+
 
 
 

@@ -30,7 +30,6 @@ list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int c
 
 
 array *sort(radix *r) {
-    array *sortedR;
     stack *Stack=new stack();
     Stack->push(r);
     radix *currentRadix;
@@ -41,5 +40,8 @@ array *sort(radix *r) {
         if(currentRadix!=r) delete currentRadix;
     }
     delete Stack;
-    return r->getR();
+    array *sortedR=r->getR();
+    r->delete_R();
+    delete r;
+    return sortedR;
 }

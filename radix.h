@@ -36,6 +36,7 @@ public:
     void quicksort(int start,int end);
     int partition(int start,int end);
     array *getR();
+    void delete_R();
 };
 
 #endif
