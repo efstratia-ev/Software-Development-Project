@@ -4,29 +4,24 @@
 #include <cstdint>
 #include <iostream>
 
-struct mytuple{
-    uint64_t index;
-    uint64_t value;
-};
 
 struct array {
     uint64_t Size;
-    mytuple *Array;
+    uint64_t *Array;
     int c;
 public:
     array(uint64_t size){
         Size=size;
-        Array=new mytuple[Size];
+        Array=new uint64_t[Size];
         c=0;
     }
-    void add(uint64_t v,uint64_t i){
-        Array[c].value=v;
-        Array[c].index=i;
+    void add(uint64_t v){
+        Array[c]=v;
         c++;
     }
     array(uint64_t size,uint64_t *values);
     ~array();
-    uint64_t countKeys(uint64_t start);
+    uint64_t countKeys(uint64_t start,uint64_t *column);
 };
 
 

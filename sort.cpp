@@ -1,22 +1,24 @@
 #include <iostream>
 #include "sort.h"
 using namespace std;
-list *join(array *array1,array *array2) {
+list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int count_arrays) { //counts how many arrays are already in join results
     list *resultlist=new list();
     uint64_t i=0,j=0;
     while(i<array1->Size && j<array2->Size){
-        if(array1->Array[i].value>array2->Array[j].value){
-            j+=array2->countKeys(j);
+        if(column1[array1->Array[i]]>column2[array2->Array[j]]){
+            j+=array2->countKeys(j,column2);
             continue;
         }
-        if(array1->Array[i].value<array2->Array[j].value){
-            i+=array1->countKeys(i);
+        if(column1[array1->Array[i]]<column2[array2->Array[j]]){
+            i+=array1->countKeys(i,column1);
             continue;
         }
-        uint64_t maxi=i+array1->countKeys(i),maxj=j+array2->countKeys(j);
+        uint64_t maxi=i+array1->countKeys(i,column1),maxj=j+array2->countKeys(j,column2);
         for(uint64_t x=i; x<maxi; x++){
             for(uint64_t y=j; y<maxj; y++){
-                resultlist->add(array1->Array[x].index,array2->Array[y].index);
+                if(count_arrays==0) resultlist->add(array1->Array[x],array2->Array[y]);
+                else if(count_arrays==1) resultlist->add(x,array2->Array[y]);
+                else resultlist->add(x,y);
             }
         }
         i=maxi;
@@ -26,7 +28,9 @@ list *join(array *array1,array *array2) {
     return resultlist;
 }
 
-void sort(radix *r) {
+
+array *sort(radix *r) {
+    array *sortedR;
     stack *Stack=new stack();
     Stack->push(r);
     radix *currentRadix;
@@ -37,19 +41,5 @@ void sort(radix *r) {
         if(currentRadix!=r) delete currentRadix;
     }
     delete Stack;
-
-}
-
-int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size2) {
-    uint64_t start=0,j;
-    int count=0;
-    for(uint64_t i=0; i<size1; i++){
-        for(j=start; j<size2; j++){
-            if(array1[i].value==array2[j].value) count++;
-            else if(array1[i].value<array2[j].value)
-                break;
-        }
-        if(i!=size1-1 && array1[i].value!=array1[i+1].value)  start=j;
-    }
-    return count;
+    return r->getR();
 }

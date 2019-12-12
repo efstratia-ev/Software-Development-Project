@@ -49,8 +49,8 @@ Relations::~Relations() {
     delete[] rels;
 }
 
-array *Relations::get_column(int relation, uint64_t column) {
-    return rels[query_rels[relation]]->col(column);
+array *Relations::get_col(int relation, uint64_t column) {
+    return rels[query_rels[relation]]->get_column(column);
 }
 
 list *Relations::filter(int array, uint64_t column1, uint64_t column2) {

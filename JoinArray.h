@@ -13,8 +13,7 @@ class JoinArray {
     int *relationIDs; //which rels 
     //relation belonging to relationIDs array that we 
     //will apply the next join on.
-    int relToBeJoined; 
-    array *sortRel(int col);
+    int relToBeJoined;
 public:
     //add rels parameter in constructor
     void setrel(int ar);

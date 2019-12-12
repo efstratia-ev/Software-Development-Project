@@ -218,22 +218,21 @@ void JoinArray::joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *
 //relID1 is the relation that already exists in ResultsArray and we 
 //will call sortRel on. relID2 is the relation that we are willing
 //to add in ResultsArray after join.
-list *JoinArray::Join(int relID1,int col1,int relID2,int colID2) {
+list *JoinArray::Join(int relID1,int colID1,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = sortRel(col1);
-    auto arr2 = rels->get_column(relID2,colID2);
-    sort(new radix(arr2->Size,arr2->Array));
-    list *results=join(arr1,arr2);
+    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
+    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),1);
     results->restart_current();
     return results;
 }
 
-list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2) {
+list *JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = sortRel(col1);
+    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
     array2->setrel(relID2);
-    auto arr2 = array2->sortRel(colID2);
-    list *results=join(arr1,arr2);
+    auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));;
+    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),2);
     results->restart_current();
     return results;
 }
@@ -242,7 +241,7 @@ list *JoinArray::Join(int relID1,int col1,JoinArray *array2,int relID2,int colID
 //returns sorted rowIDs of relation 'rel' based on 
 //column 'col' of 'rel'. Usually we call this
 //before a join. This method is called only by Join
-array *JoinArray::sortRel(int col) {
+/*array *JoinArray::sortRel(int col) {
     uint64_t row;
     array *arr = new array(size);
     for (int i =0; i < size; i++) {
@@ -251,7 +250,7 @@ array *JoinArray::sortRel(int col) {
     }
     sort(new radix(arr->Size,arr->Array));
     return arr;
-}
+}*/
 
 void JoinArray::grater_than(uint64_t column, uint64_t value) {
     list *results=new list();

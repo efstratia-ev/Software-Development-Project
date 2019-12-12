@@ -5,11 +5,10 @@
 #include "list.h"
 #include "radix.h"
 
-list *join(array *array1,array *array2);
+list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int count_arrays);
 
-void sort(radix *r);
+array *sort(radix *r);
 
-int countResults(mytuple *array1, mytuple *array2, uint64_t size1, uint64_t size2);
 
 
 #endif

@@ -44,7 +44,7 @@ Relation::~Relation() {
     munmap(data,fileSz);
 }
 
-array *Relation::col(uint64_t i){
+array *Relation::get_column(uint64_t i){
     return new array(rows,data + i * rows);
 }
 
@@ -58,7 +58,7 @@ uint64_t Relation::getCols() { return cols; }
 
 uint64_t *Relation::getData() { return data; }
 
-uint64_t *Relation::col(uint64_t i, uint64_t &sz) {
+uint64_t *Relation::get_column(uint64_t i, uint64_t &sz) {
     sz = rows;
     return data + i * rows;
 }
@@ -69,4 +69,8 @@ int Relation::compare_values(uint64_t row, uint64_t column1, uint64_t column2) {
 
 int Relation::compare(uint64_t row, uint64_t column, uint64_t v) {
     return value(row,column)-v;
+}
+
+uint64_t *Relation::get_col(uint64_t i) {
+    return data + i * rows;
 }
