@@ -11,6 +11,7 @@ public:
     void setArray(int a);
     void setColumn(int c);
     bool equal(set a);
+    void copy(set *a);
 };
 
 class Predicate{

@@ -28,6 +28,11 @@ bool set::equal(set a) {
     return array==a.array && column==a.column;
 }
 
+void set::copy(set *a) {
+    array=a->array;
+    column=a->column;
+}
+
 
 Predicate::Predicate(int a, int c) {
     array1=new set(a,c);
