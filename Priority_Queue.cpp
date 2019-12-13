@@ -28,9 +28,9 @@ Predicate* Priority_Queue::Pop(){
         int array2=predicate->getArray2()->getArray();
         if(!IsUsedArray(array1)) used_arrays= new List_Int(array1,used_arrays);
         if(!IsUsedArray(array2)) used_arrays= new List_Int(array2,used_arrays);
-        Rearrange();
         last_joined[0].copy(predicate->getArray1());
         last_joined[1].copy(predicate->getArray2());
+        Rearrange();
     }
     else {
         int array=predicate->getArray1()->getArray();
