@@ -50,10 +50,10 @@ void Priority_Queue::Rearrange(){
         if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             current->getPredicate()->setfilter(true);
         }
-        if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[0])){
+        if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[1])){
             current->getPredicate()->setSorted(true);
         }
-        if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[0])){
+        if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[1])){
             current->getPredicate()->setSorted(true);
         }
         return;
@@ -68,7 +68,7 @@ void Priority_Queue::Rearrange(){
         else if ((priority_code<4 && IsUsedArray(current->getPredicate()->getArray1()->getArray()))){
             priority_code=3;
             priority_node=previous;
-            if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[0])){
+            if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[1])){
                 priority_code=4;
                 current->getPredicate()->setSorted(true);
             }
@@ -76,7 +76,7 @@ void Priority_Queue::Rearrange(){
         else if ((priority_code<4 && IsUsedArray(current->getPredicate()->getArray2()->getArray()))){
             priority_code=3;
             priority_node=previous;
-            if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[0])){
+            if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[1])){
                 priority_code=4;
                 current->getPredicate()->setSorted(true);
             }
