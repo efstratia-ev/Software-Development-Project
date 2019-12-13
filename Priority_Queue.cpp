@@ -6,6 +6,8 @@ Priority_Queue::Priority_Queue() {
     used_arrays=nullptr;
     filtered_arrays=nullptr;
     size=0;
+    last_joined[0].setArray(-1);
+    last_joined[1].setArray(-1);
 }
 
 
@@ -37,8 +39,8 @@ Predicate* Priority_Queue::Pop(){
 
 void Priority_Queue::Rearrange(){
     Priority_Queue_Node *current=head,*previous=nullptr;
-    Priority_Queue_Node * tmp;
-
+    Priority_Queue_Node * tmp,*priority_node;
+    int priority_code=0;
     if(size==0 || current->getPredicate()->is_filter()){
         return;
     }
@@ -49,60 +51,39 @@ void Priority_Queue::Rearrange(){
         return;
     }
     current=head;
-    while(current) {
-        if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
-            if (current == head) {
-                current->getPredicate()->setfilter(true);
-                return;
-            }
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head = current;
+    while(current){
+        if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             current->getPredicate()->setfilter(true);
-            return;
+            priority_code=4;
+            if(current==head) priority_node=current;
+            else priority_node=previous;
+            break;
         }
-        previous=current;
-        current=current->get_next();
-    }
-    current=head;
-    while(current) {
-        if ((IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray()))) {
-            if (current == head) return;
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head = current;
-            return;
+        else if ((priority_code<3 && (IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray())))){
+            priority_code=3;
+            if(current==head) priority_node=current;
+            else priority_node=previous;
         }
-        previous=current;
-        current=current->get_next();
-    }
-    current=head;
-    while(current) {
-        if (AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
-            if (current == head) return;
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head = current;
-            return;
+        else if (priority_code<2 && AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
+            priority_code=2;
+            if(current==head) priority_node=current;
+            else priority_node=previous;
         }
-        previous=current;
-        current=current->get_next();
-    }
-    current=head;
-    while(current) {
-        if ((IsFilteredArray(current->getPredicate()->getArray1()->getArray()) || IsFilteredArray(current->getPredicate()->getArray2()->getArray()))) {
-            if (current == head) return;
-            tmp = current->get_next();
-            current->setNext(head);
-            previous->setNext(tmp);
-            head = current;
+        else if ((priority_code<1 && (IsFilteredArray(current->getPredicate()->getArray1()->getArray()) || IsFilteredArray(current->getPredicate()->getArray2()->getArray())))){
+            priority_code=1;
+            if(current==head) priority_node=current;
+            else priority_node=previous;
         }
-        previous=current;
         current=current->get_next();
+        previous=current;
     }
+    if (priority_node == head) return;
+    previous=priority_node;
+    current=previous->get_next();
+    tmp = current->get_next();
+    current->setNext(head);
+    previous->setNext(tmp);
+    head = current;
 }
 
 int Priority_Queue::InitRearrange(){
