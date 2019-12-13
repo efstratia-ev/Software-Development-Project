@@ -90,6 +90,7 @@ void radix:: split(stack *Stack) {
     for(uint64_t i=0; i<N; i++){
         if(byte==8) continue;
         //if no more hash is needed
+        if(Psum[i]+Hist[i]==0) continue;
         if(fitsCache(i)){
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
             //copy only if we wrote to _R
