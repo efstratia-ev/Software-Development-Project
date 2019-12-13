@@ -69,8 +69,8 @@ void Priority_Queue::Rearrange(){
             priority_code=1;
             priority_node=previous;
         }
-        current=current->get_next();
         previous=current;
+        current=current->get_next();
     }
     if (!priority_node) return;
     previous=priority_node;
