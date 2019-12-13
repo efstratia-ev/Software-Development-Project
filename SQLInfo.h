@@ -46,7 +46,8 @@ public:
     int get_array2() override;
     int get_column2() override;
     void setfilter(bool filter) override{}
-
+    bool getSorted();
+    void setSorted(bool s);
 };
 
 class join:public Predicate{
