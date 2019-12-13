@@ -73,13 +73,15 @@ uint64_t *join(SQL *sql,Relations *relations){
            int curr=isRelationFiltered(filter_results,max,array1);
            if(curr!=-1){
                results=filter_results[curr];
-               filter_results[curr]=filter_results[max--];
+               filter_results[curr]=filter_results[max-1];
+               max--;
            }
            else{
                curr=isRelationFiltered(filter_results,max,array2);
                if(curr!=-1){
                    results=filter_results[curr];
-                   filter_results[curr]=filter_results[max--];
+                   filter_results[curr]=filter_results[max-1];
+                   max--;
                }
            }
        }
@@ -93,7 +95,8 @@ uint64_t *join(SQL *sql,Relations *relations){
                res=results->Join(array1,predicate->get_column(),filter_results[curr],array2,predicate->get_column2());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
-               filter_results[curr]=filter_results[max--];
+               filter_results[curr]=filter_results[max-1];
+               max--;
            }
            delete predicate;
            continue;
@@ -108,7 +111,8 @@ uint64_t *join(SQL *sql,Relations *relations){
                res=results->Join(array2,predicate->get_column2(),filter_results[curr],array1,predicate->get_column());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
-               filter_results[curr]=filter_results[max--];
+               filter_results[curr]=filter_results[max-1];
+               max--;
            }
            delete predicate;
            continue;
