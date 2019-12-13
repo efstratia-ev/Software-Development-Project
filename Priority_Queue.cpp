@@ -22,6 +22,7 @@ Predicate* Priority_Queue::Pop(){
     head=head->get_next();
     delete temp;
     size--;
+    if(size==0) return predicate;
     if(!predicate->is_filter()){
         int array1=predicate->getArray1()->getArray();
         int array2=predicate->getArray2()->getArray();
@@ -43,7 +44,7 @@ void Priority_Queue::Rearrange(){
     Priority_Queue_Node *current=head,*previous=nullptr;
     Priority_Queue_Node * tmp,*priority_node= nullptr;
     int priority_code=0;
-    if(size==0 || current->getPredicate()->is_filter()){
+    if(current->getPredicate()->is_filter()){
         return;
     }
     if(size==1){
