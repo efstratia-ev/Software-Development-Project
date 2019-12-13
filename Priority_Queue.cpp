@@ -39,7 +39,7 @@ Predicate* Priority_Queue::Pop(){
 
 void Priority_Queue::Rearrange(){
     Priority_Queue_Node *current=head,*previous=nullptr;
-    Priority_Queue_Node * tmp,*priority_node;
+    Priority_Queue_Node * tmp,*priority_node= nullptr;
     int priority_code=0;
     if(size==0 || current->getPredicate()->is_filter()){
         return;
@@ -54,30 +54,25 @@ void Priority_Queue::Rearrange(){
     while(current){
         if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             current->getPredicate()->setfilter(true);
-            priority_code=4;
-            if(current==head) priority_node=current;
-            else priority_node=previous;
+            if(current==head) priority_node=previous;
             break;
         }
         else if ((priority_code<3 && (IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray())))){
             priority_code=3;
-            if(current==head) priority_node=current;
-            else priority_node=previous;
+            priority_node=previous;
         }
         else if (priority_code<2 && AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             priority_code=2;
-            if(current==head) priority_node=current;
-            else priority_node=previous;
+            priority_node=previous;
         }
         else if ((priority_code<1 && (IsFilteredArray(current->getPredicate()->getArray1()->getArray()) || IsFilteredArray(current->getPredicate()->getArray2()->getArray())))){
             priority_code=1;
-            if(current==head) priority_node=current;
-            else priority_node=previous;
+            priority_node=previous;
         }
         current=current->get_next();
         previous=current;
     }
-    if (priority_node == head) return;
+    if (!priority_node) return;
     previous=priority_node;
     current=previous->get_next();
     tmp = current->get_next();
