@@ -88,11 +88,13 @@ uint64_t *join(SQL *sql,Relations *relations){
        if(results && results->exists(array1)){
            int curr=isRelationFiltered(filter_results,max,array2);
            if(curr==-1){
-               res=results->Join(array1,predicate->get_column(),array2,predicate->get_column2());
+               if(predicate->getSorted()) res=results->sortedJoin(array1,predicate->get_column(),array2,predicate->get_column2());
+               else res=results->Join(array1,predicate->get_column(),array2,predicate->get_column2());
                results->update_array(res,array2);
            }
            else{
-               res=results->Join(array1,predicate->get_column(),filter_results[curr],array2,predicate->get_column2());
+               if(predicate->getSorted()) res=results->sortedJoin(array1,predicate->get_column(),filter_results[curr],array2,predicate->get_column2());
+               else res=results->Join(array1,predicate->get_column(),filter_results[curr],array2,predicate->get_column2());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
                filter_results[curr]=filter_results[max-1];
@@ -104,11 +106,13 @@ uint64_t *join(SQL *sql,Relations *relations){
        if(results && results->exists(array2)){
            int curr=isRelationFiltered(filter_results,max,array1);
            if(curr==-1){
-               res=results->Join(array2,predicate->get_column2(),array1,predicate->get_column());
+               if(predicate->getSorted()) res=results->sortedJoin(array2,predicate->get_column2(),array1,predicate->get_column());
+               else res=results->Join(array2,predicate->get_column2(),array1,predicate->get_column());
                results->update_array(res,array1);
            }
            else{
-               res=results->Join(array2,predicate->get_column2(),filter_results[curr],array1,predicate->get_column());
+               if(predicate->getSorted()) res=results->sortedJoin(array2,predicate->get_column2(),filter_results[curr],array1,predicate->get_column());
+               else res=results->Join(array2,predicate->get_column2(),filter_results[curr],array1,predicate->get_column());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
                filter_results[curr]=filter_results[max-1];

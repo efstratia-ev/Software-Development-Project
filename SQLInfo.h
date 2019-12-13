@@ -10,6 +10,7 @@ public:
     int getColumn();
     void setArray(int a);
     void setColumn(int c);
+    bool equal(set a);
 };
 
 class Predicate{
@@ -27,6 +28,8 @@ public:
     virtual int get_array2()=0;
     virtual int get_column2()=0;
     virtual set * getArray2()=0;
+    virtual bool getSorted()=0;
+    virtual void setSorted(bool s)=0;
     set *getArray1();
 };
 
@@ -49,6 +52,7 @@ public:
 class join:public Predicate{
     set *array2;
     bool isfilter;
+    bool isSorted;
 public:
     join(int a1,int c1,int a2,int c2);
     ~join() override;
@@ -60,6 +64,8 @@ public:
     int get_column2() override;
     set *getArray2() override;
     void setfilter(bool filter) override;
+    bool getSorted() override ;
+    void setSorted(bool s) override;
 };
 
 

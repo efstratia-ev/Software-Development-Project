@@ -24,6 +24,10 @@ int set::getColumn(){
     return column;
 }
 
+bool set::equal(set a) {
+    return array==a.array && column==a.column;
+}
+
 
 Predicate::Predicate(int a, int c) {
     array1=new set(a,c);
@@ -79,6 +83,7 @@ int comparison::get_column2() {
 join::join(int a1, int c1, int a2, int c2) :Predicate(a1,c1){
     array2=new set(a2,c2);
     isfilter = false;
+    isSorted=false;
 }
 
 char join::get_comp() {
@@ -115,4 +120,12 @@ void join::setfilter(bool filter) {
 
 join::~join() {
     delete array2;
+}
+
+bool join::getSorted() {
+    return isSorted;
+}
+
+void join::setSorted(bool s) {
+    isSorted=s;
 }

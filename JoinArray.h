@@ -35,7 +35,9 @@ public:
     void equal(uint64_t column,uint64_t value);
     bool exists(int arrayID);
     list *Join(int relID1,int col1,int relID2,int colID2);
+    list *sortedJoin(int relID1,int col1,int relID2,int colID2);
     list *Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
+    list *sortedJoin(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
     void joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *array2);
     uint64_t get_sum(int relID,int colID);
 };

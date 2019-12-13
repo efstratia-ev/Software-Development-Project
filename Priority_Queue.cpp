@@ -57,9 +57,21 @@ void Priority_Queue::Rearrange(){
             if(current==head) priority_node=previous;
             break;
         }
-        else if ((priority_code<3 && (IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray())))){
+        else if ((priority_code<4 && IsUsedArray(current->getPredicate()->getArray1()->getArray()))){
             priority_code=3;
             priority_node=previous;
+            if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[0])){
+                priority_code=4;
+                current->getPredicate()->setSorted(true);
+            }
+        }
+        else if ((priority_code<4 && IsUsedArray(current->getPredicate()->getArray2()->getArray()))){
+            priority_code=3;
+            priority_node=previous;
+            if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[0])){
+                priority_code=4;
+                current->getPredicate()->setSorted(true);
+            }
         }
         else if (priority_code<2 && AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             priority_code=2;
