@@ -50,6 +50,12 @@ void Priority_Queue::Rearrange(){
         if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())){
             current->getPredicate()->setfilter(true);
         }
+        if(current->getPredicate()->getArray1()->equal(last_joined[0]) || current->getPredicate()->getArray1()->equal(last_joined[0])){
+            current->getPredicate()->setSorted(true);
+        }
+        if(current->getPredicate()->getArray2()->equal(last_joined[0]) || current->getPredicate()->getArray2()->equal(last_joined[0])){
+            current->getPredicate()->setSorted(true);
+        }
         return;
     }
     current=head;
