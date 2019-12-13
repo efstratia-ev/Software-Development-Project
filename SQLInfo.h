@@ -1,8 +1,8 @@
 #include <cstdint>
 
 class set{
-    int array;
-    int column;
+    int array{};
+    int column{};
 public:
     set();
     set(int a, int c);
@@ -35,14 +35,14 @@ class comparison:public Predicate{
     uint64_t num;
 public:
     comparison(int a,int c,char cmp,int n);
-    bool is_filter();
-    bool is_comparison();
-    char get_comp();
-    uint64_t get_value();
-    set * getArray2();
-    int get_array2();
-    int get_column2();
-    void setfilter(bool filter){}
+    bool is_filter() override;
+    bool is_comparison() override;
+    char get_comp() override;
+    uint64_t get_value() override;
+    set * getArray2() override;
+    int get_array2() override;
+    int get_column2() override;
+    void setfilter(bool filter) override{}
 
 };
 
@@ -51,15 +51,15 @@ class join:public Predicate{
     bool isfilter;
 public:
     join(int a1,int c1,int a2,int c2);
-    ~join();
-    char get_comp();
-    bool is_filter();
-    bool is_comparison();
-    uint64_t get_value();
-    int get_array2();
-    int get_column2();
-    set *getArray2();
-    void setfilter(bool filter);
+    ~join() override;
+    char get_comp() override;
+    bool is_filter() override;
+    bool is_comparison() override;
+    uint64_t get_value() override;
+    int get_array2() override;
+    int get_column2() override;
+    set *getArray2() override;
+    void setfilter(bool filter) override;
 };
 
 

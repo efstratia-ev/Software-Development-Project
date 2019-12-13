@@ -26,6 +26,5 @@ public:
     void push(radix *H);
     radix * pop();
     bool notEmpty();
-    bool isEmpty();
 };
 #endif //STACK_H

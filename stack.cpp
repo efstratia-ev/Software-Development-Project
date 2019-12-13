@@ -14,7 +14,7 @@ stack_node *stack_node::getNext() const {
 }
 
 stack::stack() {
-    Stack=NULL;
+    Stack=nullptr;
     size=0;
 }
 
@@ -33,9 +33,6 @@ radix *stack::pop() {
 }
 
 bool stack::notEmpty() {
-    return !(Stack==NULL);
+    return Stack != nullptr;
 }
 
-bool stack::isEmpty() {
-    return Stack==NULL;
-}

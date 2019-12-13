@@ -6,7 +6,7 @@ set::set(int a, int c) {
     column=c;
 }
 
-set::set() {}
+set::set() = default;
 
 int set::getArray(){
     return array;
@@ -66,7 +66,7 @@ uint64_t comparison::get_value() {
     return num;
 }
 
-set *comparison::getArray2() {return NULL;}
+set *comparison::getArray2() {return nullptr;}
 
 int comparison::get_array2() {
     return -1;

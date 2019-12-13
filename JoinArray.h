@@ -7,19 +7,19 @@
 
 class JoinArray {
     Relations *rels; //Join needs this
-    uint64_t size; //size of joinResults
-    uint64_t **Array;
+    uint64_t size{}; //size of joinResults
+    uint64_t **Array{};
     int numRels; //how many rels are in JoinArray
-    int *relationIDs; //which rels 
+    int *relationIDs{}; //which rels
     //relation belonging to relationIDs array that we 
     //will apply the next join on.
-    int relToBeJoined;
+    int relToBeJoined{};
 public:
     void setrel(int ar);
     int getNumRels();
     int getSize();
     uint64_t **getArray();
-    JoinArray(Relations *r);
+    explicit JoinArray(Relations *r);
     ~JoinArray();
     uint64_t get_value(uint64_t i);
     void update_array(list *results,int id);

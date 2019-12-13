@@ -1,11 +1,10 @@
-#include <cstdio>
 #include <iostream>
 #include "Priority_Queue.h"
 
 Priority_Queue::Priority_Queue() {
-    head=NULL;
-    used_arrays=NULL;
-    filtered_arrays=NULL;
+    head=nullptr;
+    used_arrays=nullptr;
+    filtered_arrays=nullptr;
     size=0;
 }
 
@@ -37,7 +36,7 @@ Predicate* Priority_Queue::Pop(){
 }
 
 void Priority_Queue::Rearrange(){
-    Priority_Queue_Node *current=head,*previous=NULL;
+    Priority_Queue_Node *current=head,*previous=nullptr;
     Priority_Queue_Node * tmp;
 
     if(size==0 || current->getPredicate()->is_filter()){
@@ -50,7 +49,7 @@ void Priority_Queue::Rearrange(){
         return;
     }
     current=head;
-    while(current!=NULL) {
+    while(current) {
         if (AreUsedArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
             if (current == head) {
                 current->getPredicate()->setfilter(true);
@@ -67,7 +66,7 @@ void Priority_Queue::Rearrange(){
         current=current->get_next();
     }
     current=head;
-    while(current!=NULL) {
+    while(current) {
         if ((IsUsedArray(current->getPredicate()->getArray1()->getArray()) || IsUsedArray(current->getPredicate()->getArray2()->getArray()))) {
             if (current == head) return;
             tmp = current->get_next();
@@ -80,7 +79,7 @@ void Priority_Queue::Rearrange(){
         current=current->get_next();
     }
     current=head;
-    while(current!=NULL) {
+    while(current) {
         if (AreFilteredArray(current->getPredicate()->getArray1()->getArray(),current->getPredicate()->getArray2()->getArray())) {
             if (current == head) return;
             tmp = current->get_next();
@@ -93,7 +92,7 @@ void Priority_Queue::Rearrange(){
         current=current->get_next();
     }
     current=head;
-    while(current!=NULL) {
+    while(current) {
         if ((IsFilteredArray(current->getPredicate()->getArray1()->getArray()) || IsFilteredArray(current->getPredicate()->getArray2()->getArray()))) {
             if (current == head) return;
             tmp = current->get_next();
@@ -108,11 +107,11 @@ void Priority_Queue::Rearrange(){
 
 int Priority_Queue::InitRearrange(){
     int filters=0;
-    Priority_Queue_Node *current=head,*previous=NULL;
+    Priority_Queue_Node *current=head,*previous=nullptr;
     Priority_Queue_Node * tmp;
     Priority_Queue_Node * next_tmp;
     if(head->getPredicate()->is_filter()) filters++;
-    while(current!=NULL){
+    while(current){
         if(current->getPredicate()->is_filter() && current!=head){
             filters++;
             next_tmp=current->get_next();
@@ -143,9 +142,8 @@ Priority_Queue::~Priority_Queue(){
 bool Priority_Queue::AreUsedArray(int target1,int target2){
     List_Int * temp=used_arrays;
     int count=0;
-    while(temp!=NULL){
-        if(temp->getData()==target1) count++;
-        else if (temp->getData()==target2) count++;
+    while(temp){
+        if(temp->getData()==target1 || temp->getData()==target2) count++;
         temp=temp->getNext();
     }
     return count==2 ;
@@ -154,7 +152,7 @@ bool Priority_Queue::AreUsedArray(int target1,int target2){
 
 bool Priority_Queue::IsUsedArray(int target) {
     List_Int *temp = used_arrays;
-    while (temp != NULL) {
+    while (temp) {
         if (temp->getData() == target) return true;
         temp = temp->getNext();
     }
@@ -163,7 +161,7 @@ bool Priority_Queue::IsUsedArray(int target) {
 
 bool Priority_Queue::AreFilteredArray(int target1,int target2){
     List_Int * temp=filtered_arrays;
-    while(temp!=NULL){
+    while(temp){
         if(temp->getData()==target1 || temp->getData()==target2) {
             return true;
         }
@@ -174,7 +172,7 @@ bool Priority_Queue::AreFilteredArray(int target1,int target2){
 
 bool Priority_Queue::IsFilteredArray(int target){
     List_Int *temp = filtered_arrays;
-    while (temp != NULL) {
+    while (temp) {
         if (temp->getData() == target) return true;
         temp = temp->getNext();
     }
@@ -211,6 +209,6 @@ Predicate *Priority_Queue_Node::getPredicate() {
     return predicate;
 }
 
-void Priority_Queue_Node::setNext(Priority_Queue_Node *next) {
-    Priority_Queue_Node::next = next;
+void Priority_Queue_Node::setNext(Priority_Queue_Node *n) {
+    Priority_Queue_Node::next = n;
 }

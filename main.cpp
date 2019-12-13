@@ -1,13 +1,10 @@
 #include<iostream>
-#include<fstream>
 #include <cstdlib>
 #include <string>
 #include <vector>
 #include <cstring>
 #include "radix.h"
-#include "stack.h"
 #include "sort.h"
-#include "array.h"
 #include "relations.h"
 #include "results_list.h"
 #include "JoinArray.h"
@@ -20,7 +17,7 @@ using namespace std;
 //check array if they have been filtered
 int isRelationFiltered(JoinArray **filtered,int max,int relation){
     for(int j=0; j<max; j++){
-        if(filtered[j] && filtered[j]->exists(relation)){
+        if(filtered[j]->exists(relation)){
             return j;
         }
     }
@@ -28,14 +25,14 @@ int isRelationFiltered(JoinArray **filtered,int max,int relation){
 }
 
 uint64_t *join(SQL *sql,Relations *relations){
-   Predicate *predicate=NULL;
-   JoinArray *results=NULL,**filter_results;
+   Predicate *predicate=nullptr;
+   JoinArray *results=nullptr,**filter_results;
    int filters=sql->get_filters_num(),max=0;
    filter_results=new JoinArray*[filters];
    bool exists;
    for(int i=0; i<filters; i++){
        int curr;
-       if(predicate) delete predicate;
+       delete predicate;
        predicate=sql->getPredicate();
        exists=false;
        if((curr=isRelationFiltered(filter_results,max,predicate->get_array()))>=0) exists=true;
@@ -76,13 +73,13 @@ uint64_t *join(SQL *sql,Relations *relations){
            int curr=isRelationFiltered(filter_results,max,array1);
            if(curr!=-1){
                results=filter_results[curr];
-               filter_results[curr]=NULL;
+               filter_results[curr]=filter_results[max--];
            }
            else{
                curr=isRelationFiltered(filter_results,max,array2);
                if(curr!=-1){
                    results=filter_results[curr];
-                   filter_results[curr]=NULL;
+                   filter_results[curr]=filter_results[max--];
                }
            }
        }
@@ -96,7 +93,7 @@ uint64_t *join(SQL *sql,Relations *relations){
                res=results->Join(array1,predicate->get_column(),filter_results[curr],array2,predicate->get_column2());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
-               filter_results[curr]=NULL;
+               filter_results[curr]=filter_results[max--];
            }
            delete predicate;
            continue;
@@ -111,7 +108,7 @@ uint64_t *join(SQL *sql,Relations *relations){
                res=results->Join(array2,predicate->get_column2(),filter_results[curr],array1,predicate->get_column());
                results->update_array(res,filter_results[curr]);
                delete filter_results[curr];
-               filter_results[curr]=NULL;
+               filter_results[curr]=filter_results[max--];
            }
            delete predicate;
            continue;
@@ -134,7 +131,7 @@ uint64_t *join(SQL *sql,Relations *relations){
        results=filter_results[0];
    }
    int res_counter=sql->get_results_counter();
-   uint64_t *sums=new uint64_t[res_counter];
+   auto *sums=new uint64_t[res_counter];
    set *select=sql->get_select();
    for(int i=0; i<res_counter; i++){
        sums[i]=results->get_sum(select[i].getArray(),select[i].getColumn());
@@ -163,19 +160,19 @@ int main(int argc, char *argv[]) {
    }
    filename=argv[1];
 
-   Relations *relations=new Relations(filename);
+   auto *relations=new Relations(filename);
    SQL *sql;
-   results_list *results=new results_list();
+   auto *results=new results_list();
 
     char *outfile=create_outfileName(filename);
     FILE *file;
     file = fopen(outfile,"w");
-    if (file== NULL) {
+    if (file== nullptr) {
         cout<<"file "<<outfile<<" can not be opened"<<endl;
         return -1;
     }
 
-   char *line= NULL;
+   char *line= nullptr;
    size_t size=0;
    while(true){
        getline(&line, &size, stdin);
