@@ -134,6 +134,7 @@ bool Priority_Queue::IsEmpty(){
 Priority_Queue::~Priority_Queue(){
    delete used_arrays;
    delete filtered_arrays;
+   delete head;
 }
 
 bool Priority_Queue::AreUsedArray(int target1,int target2){

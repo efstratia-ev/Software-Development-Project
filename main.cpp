@@ -82,6 +82,7 @@ uint64_t *join(SQL *sql, Relations *relations) {
     list *res;
     while (results_exist && (predicate = sql->getPredicate())) {
         if (results && results->getSize() == 0) {
+            delete predicate;
             results_exist = false;
             break;
         }
