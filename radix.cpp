@@ -30,6 +30,7 @@ radix::radix(uint64_t s, uint64_t *d) {
     this->byte = 1;
     data=d;
     R=NULL;
+    rows=NULL;
 }
 //just a wrapper
 void radix::group() {

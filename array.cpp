@@ -22,3 +22,8 @@ array::array(uint64_t size, uint64_t *values, uint64_t *rs) {
     Array=values;
     rows=rs;
 }
+
+uint64_t array::get_value(uint64_t row) {
+    if(rows) return rows[Array[row]];
+    else return Array[row];
+}

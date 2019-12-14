@@ -237,7 +237,7 @@ list *JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2) {
     setrel(relID1);
     auto arr1 = new array(size,Array[relToBeJoined]);
     auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
-    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
     delete[] arr2->Array;
     delete arr1;
@@ -262,7 +262,7 @@ list *JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,i
     auto arr1 = new array(size,Array[relToBeJoined]);
     array2->setrel(relID2);
     auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
-    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
     delete arr1;
     delete arr2;

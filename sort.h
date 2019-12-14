@@ -7,6 +7,8 @@
 
 list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2);
 
+list *sortedjoin(array *array1,array *array2,uint64_t *column1,uint64_t *column2);
+
 array *sort(radix *r);
 
 
