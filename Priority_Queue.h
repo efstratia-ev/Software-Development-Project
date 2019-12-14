@@ -13,6 +13,7 @@ public:
     Predicate *getPredicate();
     void setNext(Priority_Queue_Node *next);
     ~Priority_Queue_Node();
+    void setPredicateNULL();
 };
 
 class List_Int{
