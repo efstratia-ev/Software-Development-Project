@@ -56,6 +56,7 @@ uint64_t *join(SQL *sql,Relations *relations){
                 if(exists) filter_results[curr]->less_than(predicate->get_column(),predicate->get_value());
                 else filter_results[curr]->create_array(relations->less_than(predicate->get_array(),predicate->get_column(),predicate->get_value()),predicate->get_array());
             }
+            if(filter_results[curr]->getSize()==0) break;
             continue;
        }
        if(exists) filter_results[curr]->compare(predicate->get_array(),predicate->get_column(),predicate->get_column2());
@@ -64,6 +65,7 @@ uint64_t *join(SQL *sql,Relations *relations){
    delete predicate;
    list *res;
    while((predicate=sql->getPredicate())){
+       if(results && results->getSize()==0) break;
        if(predicate->is_filter()){
            results->compare(predicate->get_array(),predicate->get_column(),predicate->get_array2(),predicate->get_column2());
            delete predicate;
@@ -139,10 +141,13 @@ uint64_t *join(SQL *sql,Relations *relations){
        results=filter_results[0];
    }
    int res_counter=sql->get_results_counter();
-   auto *sums=new uint64_t[res_counter];
-   set *select=sql->get_select();
-   for(int i=0; i<res_counter; i++){
-       sums[i]=results->get_sum(select[i].getArray(),select[i].getColumn());
+    uint64_t *sums=NULL;
+   if(results->getSize()!=0){
+       sums=new uint64_t[res_counter];
+       set *select=sql->get_select();
+       for(int i=0; i<res_counter; i++){
+           sums[i]=results->get_sum(select[i].getArray(),select[i].getColumn());
+       }
    }
    delete[] filter_results;
    delete results;
