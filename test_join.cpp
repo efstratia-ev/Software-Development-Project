@@ -35,7 +35,7 @@ uint64_t rel2data[] = {
 
 
 Relations *createRels() {
-    uint64_t rel1rows = 3;
+    /*uint64_t rel1rows = 3;
     uint64_t rel1cols = 4;
     auto rel1 = new Relation(rel1data,rel1rows,rel1cols);
     uint64_t rel2rows = 3;
@@ -43,13 +43,13 @@ Relations *createRels() {
     auto rel2 = new Relation(rel2data,rel2rows,rel2cols);
     int sz = 2;
     Relation **_rels = new Relation*[2];
-    _rels[0] = rel1;_rels[1] = rel2;
-    Relations *rels = new Relations(_rels,sz);
+    _rels[0] = rel1;_rels[1] = rel2;*/
+    Relations *rels = new Relations("../workloads/medium/medium.init");
     return rels;
 }
 
 void testJoin() {
-    char query[] = "0 1|0.0=1.0|0.0";
+    char query[] = "5 1 3 0|0.2=1.0&1.0=2.1&2.2=3.0&0.0<6227353&2.3<8745|3.0 1.0";
     auto sql = new SQL(query);
     auto rels = createRels();
     rels->set_query_rels(sql->get_from_arrays());

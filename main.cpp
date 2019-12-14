@@ -122,9 +122,7 @@ uint64_t *join(SQL *sql,Relations *relations){
            continue;
        }
        auto arr1 = sort(new radix(relations->get_relRows(array1),relations->get_column(array1,predicate->get_column())));
-       sort(new radix(arr1->Size,arr1->Array));
        auto arr2 = sort(new radix(relations->get_relRows(array2),relations->get_column(array2,predicate->get_column2())));
-       sort(new radix(arr2->Size,arr2->Array));
        list *resultlist=join(arr1,arr2,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),0);
        results=new JoinArray(relations);
        results->create_array(resultlist,array1,array2);

@@ -30,11 +30,9 @@ JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int 
     else if ((result = searchFiltered(rel2,max,filtered)) != nullptr) 
         result->joinUpdate(rel2,col2,rel1,col1,searchFiltered(rel1,max,filtered));
     else  {
-       auto arr1 = rels->get_column(rel1,pred->get_column());
-       sort(new radix(arr1->Size,arr1->Array));
-       auto arr2 = rels->get_column(rel2,pred->get_column2());
-       sort(new radix(arr2->Size,arr2->Array));
-       list *resultlist=join(arr1,arr2);
+        auto arr1 = sort(new radix(rels->get_relRows(rel1),rels->get_column(rel1,pred->get_column())));
+        auto arr2 = sort(new radix(rels->get_relRows(rel2),rels->get_column(rel2,pred->get_column2())));
+        list *resultlist=join(arr1,arr2,rels->get_column(rel1,pred->get_column()),rels->get_column(rel2,pred->get_column2()),0);
        result=new JoinArray(rels);
        result->create_array(resultlist,rel1,rel2);
        delete arr1;

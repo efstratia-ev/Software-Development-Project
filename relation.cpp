@@ -66,6 +66,12 @@ uint64_t *Relation::get_col(uint64_t i) {
     return data + i * rows;
 }
 
+
+uint64_t *Relation::col(uint64_t i,uint64_t &size){
+    size=rows;
+    return data + i * rows;
+}
+
 Relation::Relation(uint64_t *data, uint64_t rows, uint64_t cols) {
     this->data = data;
     this->rows = rows;

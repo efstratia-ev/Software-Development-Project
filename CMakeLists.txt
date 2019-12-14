@@ -31,6 +31,7 @@ add_executable(test_relations
 
 add_executable(test_join
         test_join.cpp
+        Priority_Queue.cpp Priority_Queue.h
         join_preds.cpp join_preds.h
         SQLInfo.h SQLInfo.cpp
         radix.cpp radix.h

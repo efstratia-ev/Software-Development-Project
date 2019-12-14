@@ -20,6 +20,7 @@ class Relation {
     uint64_t getRows();
     uint64_t getCols();
     uint64_t *get_col(uint64_t i);
+    uint64_t *col(uint64_t i,uint64_t &size);
     int compare_values(uint64_t row,uint64_t column1,uint64_t column2);
     int compare(uint64_t row,uint64_t column,uint64_t value);
 };
