@@ -31,7 +31,6 @@ public:
     void set_query_rels(int *from_arrays);
     uint64_t get_relRows(uint64_t rel);
     uint64_t *get_column(uint64_t rel,uint64_t col);
-
 };
 
 

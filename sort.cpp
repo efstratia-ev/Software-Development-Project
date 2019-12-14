@@ -16,9 +16,10 @@ list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int c
         uint64_t maxi=i+array1->countKeys(i,column1),maxj=j+array2->countKeys(j,column2);
         for(uint64_t x=i; x<maxi; x++){
             for(uint64_t y=j; y<maxj; y++){
-                if(count_arrays==0) resultlist->add(array1->Array[x],array2->Array[y]);
+                resultlist->add(array1->Array[x],array2->Array[y]);
+                /*if(count_arrays==0) resultlist->add(array1->Array[x],array2->Array[y]);
                 else if(count_arrays==1) resultlist->add(x,array2->Array[y]);
-                else resultlist->add(x,y);
+                else resultlist->add(x,y);*/
             }
         }
         i=maxi;

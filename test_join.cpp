@@ -85,8 +85,7 @@ int main(int argc,char *argv[]) {
       CU_cleanup_registry();
       return CU_get_error();
    }
-   if ((NULL == CU_add_test(pSuite, "test relation",testJoin)))
-         {
+   if ((NULL == CU_add_test(pSuite, "test relation",testJoin))){
          CU_cleanup_registry();
       return CU_get_error();
    }

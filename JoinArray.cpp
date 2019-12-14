@@ -45,7 +45,7 @@ void JoinArray::update_array(list *results,int id) {
         new_array[n][i]=rows->rowid2;   //in every row add the value of the new column (new relation added)
         delete rows;
     }
-    for(uint64_t i=0; i<numRels; i++)delete[] Array[i];
+    for(uint64_t i=0; i<numRels; i++) delete[] Array[i];
     delete[] Array;
     Array=new_array;
     size=new_size;
@@ -85,7 +85,7 @@ void JoinArray::update_array(list *results, JoinArray *array2) {
         for(uint64_t j=0; j<numRels; j++){
             new_array[relationIDs[j]][i]=Array[j][rows->rowid1];
         }
-        new_array[n][i]=array2->Array[0][rows->rowid2];
+        new_array[n][i]=rows->rowid2;
         delete rows;
     }
     for(uint64_t i=0; i<numRels; i++) delete[] Array[i];

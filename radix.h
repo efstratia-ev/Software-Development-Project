@@ -20,9 +20,10 @@ class radix{
     uint32_t Psum[N]{};
     uint64_t *_R;
     int byte;
+    uint64_t *rows;
     uint64_t *data;
 public:
-    radix(uint64_t offset,uint64_t size, uint64_t *r,uint64_t *_r,uint64_t *d,int byte = 1);
+    radix(uint64_t offset,uint64_t size, uint64_t *r,uint64_t *_r,uint64_t *d,uint64_t *rs,int byte = 1);
     radix(uint64_t size,uint64_t *r,uint64_t *d);
     radix(uint64_t size,uint64_t *d);
     void group();

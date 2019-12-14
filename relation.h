@@ -1,6 +1,7 @@
 #ifndef PROJECT_RELATION_H
 #define PROJECT_RELATION_H
 
+#include <fstream>
 #include "array.h"
 
 using namespace std;
