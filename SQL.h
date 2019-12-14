@@ -7,7 +7,9 @@ class SQL{
     char * query;
     int * from_arrays{},from_arrays_sz{},select_result_sz{};
     Priority_Queue * where_predicates;
-    set * select_results{};
+    set * select_results;
+    //how many inner joins the query has
+    int numInnerJoins;
 public:
     explicit SQL(char *line);
     ~SQL();
@@ -22,6 +24,8 @@ public:
     void SplitSelectResults(const string& select);
     void GetSelectResults(const string&,int);
     Predicate *getPredicate();
+    int get_from_arrays_size() { return from_arrays_sz; }
+    int getNumInnerJoins() { return numInnerJoins; }
     int get_filters_num();
     int get_results_counter();
     set *get_select();

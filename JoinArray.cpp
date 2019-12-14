@@ -313,6 +313,17 @@ uint64_t JoinArray::get_sum(int relID, int colID) {
     return sum;
 }
 
+void JoinArray::print() {
+   cout << "results:" << endl;
+   auto arr = Array;
+   for (int i =0; i < size; i++) {
+     cout << endl;
+     for (int j =0; j < numRels; j++)
+        cout << arr[i][j] << ",";
+   }
+   cout << endl;
+}
+
 int JoinArray::getNumRels() {
     return numRels;
 }

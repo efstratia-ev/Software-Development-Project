@@ -8,7 +8,8 @@
 #include "relations.h"
 #include "results_list.h"
 #include "JoinArray.h"
-#include "SQL.h"
+#include "join_preds.h"
+//#include "SQL.h"
 
 // sed -i 's/,/ /g' filename
 
@@ -132,6 +133,7 @@ uint64_t *join(SQL *sql,Relations *relations){
        delete arr2;
        delete predicate;
    }
+   //joinPredicates(filter_results,sql,relations,max);
 
    if(!results){
        results=filter_results[0];

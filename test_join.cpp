@@ -19,49 +19,104 @@
 
 using namespace std;
 
+//the relation is stored column-oriented, so at rel1data the first
+//column is 2,2,3 the second 4,5,6 etc.
 uint64_t rel1data[] = {
-   2,2,3,
-   4,5,6,
+   2,2,1, 
+   1,5,6,
    7,8,9,
-   10,11,12,
+   10,11,1,
 };
 
 uint64_t rel2data[] = {
-   1,2,100,
+   1,2,1,
    133,2,99,
-   8,11,98,
+   8,1,1,
    8,11,101,
+};
+
+uint64_t rel3data[] = {
+   1,1,76,
 };
 
 
 Relations *createRels() {
-    /*uint64_t rel1rows = 3;
+    uint64_t rel1rows = 3;
     uint64_t rel1cols = 4;
     auto rel1 = new Relation(rel1data,rel1rows,rel1cols);
     uint64_t rel2rows = 3;
     uint64_t rel2cols = 4;
     auto rel2 = new Relation(rel2data,rel2rows,rel2cols);
-    int sz = 2;
+    uint64_t rel3rows = 3;
+    uint64_t rel3cols = 1;
+    auto rel3 = new Relation(rel3data,rel3rows,rel3cols);
+    int sz = 3;
     Relation **_rels = new Relation*[2];
-    _rels[0] = rel1;_rels[1] = rel2;*/
-    Relations *rels = new Relations("../workloads/medium/medium.init");
+    _rels[0] = rel1;_rels[1] = rel2;_rels[2] = rel3;
+    Relations *rels = new Relations(_rels,sz);
     return rels;
 }
 
-void testJoin() {
-    char query[] = "5 1 3 0|0.2=1.0&1.0=2.1&2.2=3.0&0.0<6227353&2.3<8745|3.0 1.0";
+JoinArray *JoinQuery(char *query,Relations *rels) {
     auto sql = new SQL(query);
-    auto rels = createRels();
     rels->set_query_rels(sql->get_from_arrays());
-    auto result = joinFirstPredicate(nullptr,sql,rels,0);
-    auto arr = result->getArray();
-    cout << "results:" << endl;
-    for (int j =0; j < result->getNumRels(); j++) {
-        for (int i = 0; i < result->getSize(); i++) {
-            cout << arr[j][i] << endl;
+    auto result = joinPredicates(nullptr,sql,rels,0);
+    return result;
+}
+
+void testJoin() {
+    auto rels = createRels();
+    JoinArray *result;
+    //------------------------------------
+    //first
+    char query[] = "0 1 2|0.0=1.0&1.0=2.0|0.0";
+    result = JoinQuery(query,rels);
+    CU_ASSERT(result->getSize() == 4);
+    CU_ASSERT(result->getNumRels() == 3);
+    //second
+    char query2[] = "1 2|0.2=0.0&0.0=1.0|0.0";
+    result = JoinQuery(query2,rels);
+    CU_ASSERT(result->getSize() == 4);
+    CU_ASSERT(result->getNumRels() == 3);
+    //third
+    char query3[] = "0 0|0.3=0.0|0.1";
+    result = JoinQuery(query3,rels);
+    CU_ASSERT(result->getSize() == 1);
+    CU_ASSERT(result->getNumRels() == 2);
+    //fourth
+    char query4[] = "0 1 2|1.0=1.2&1.0=2.0&0.1=2.0|2.0";
+    result = JoinQuery(query4,rels);
+    CU_ASSERT(result->getNumRels()==4);
+    //---------------------------
+    //instructor's dataset
+    char filename[] = "../workloads/small/small.init";
+    rels = new Relations(filename);
+    char *line= NULL;
+    size_t size=0;
+    SQL *sql;
+    JoinArray *joinRes;
+    while(true) {
+       getline(&line, &size, stdin);
+       cout << "got one" << endl;
+       line=strtok(line,"\n");
+       if (!line) continue;
+       if (strcmp(line, "Done") == 0)
+         break;
+      if (strcmp(line,"F") == 0) 
+         continue; //avoid crush - change afterwards with continue
+       else{
+           sql=new SQL(line);
+           for(int i=0; i < sql->get_filters_num();i++)
+            sql->getPredicate();
+           rels->set_query_rels(sql->get_from_arrays());
+           joinRes = joinPredicates(nullptr,sql,rels,0);
+           if (joinRes->getNumRels() != 0) {
+               cout << sql->getNumInnerJoins() + 1 << "," << joinRes->getNumRels() << endl;
+               CU_ASSERT(sql->getNumInnerJoins() + 1 == joinRes->getNumRels());
+           }
+           delete sql;delete joinRes;
        }
     }
-
 }
 
 
