@@ -17,7 +17,7 @@ Relation::Relation(const char *filename) {
         char err[] = "relation: open: fail";
         handle_errror(err);
     }
-    struct stat sb;
+    struct stat sb{};
     //find length of file - we need for mmap call
     if (fstat(fd, &sb) == -1)  {
         char err[] = "fstat failed";
@@ -44,9 +44,6 @@ Relation::~Relation() {
     munmap(data,fileSz);
 }
 
-array *Relation::get_column(uint64_t i){
-    return new array(rows,data + i * rows);
-}
 
 uint64_t Relation::value(uint64_t row, uint64_t col) {
     return data[col * rows + row];
@@ -56,22 +53,22 @@ uint64_t Relation::getRows() { return rows; }
 
 uint64_t Relation::getCols() { return cols; }
 
-uint64_t *Relation::getData() { return data; }
-
-uint64_t *Relation::get_column(uint64_t i, uint64_t &sz) {
-    sz = rows;
-    return data + i * rows;
-}
 
 int Relation::compare_values(uint64_t row, uint64_t column1, uint64_t column2) {
-    return value(row,column1)-value(row,column2);
+    return (int)(value(row,column1)-value(row,column2));
 }
 
 int Relation::compare(uint64_t row, uint64_t column, uint64_t v) {
-    return value(row,column)-v;
+    return (int)(value(row,column)-v);
 }
 
 uint64_t *Relation::get_col(uint64_t i) {
+    return data + i * rows;
+}
+
+
+uint64_t *Relation::col(uint64_t i,uint64_t &size){
+    size=rows;
     return data + i * rows;
 }
 

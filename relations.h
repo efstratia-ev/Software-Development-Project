@@ -8,11 +8,11 @@ char* concat(const char *s1, const char *s2);
 
 
 class Relations {
-    int *query_rels;
+    int *query_rels{};
     Relation **rels;
     int sz;
 public:
-    Relations(char *filename);
+    explicit Relations(char *filename);
     //for debug
     Relations(Relation **rels,int sz);
     Relation *relation(int i);

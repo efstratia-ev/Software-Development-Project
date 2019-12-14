@@ -1,4 +1,3 @@
-#include<iostream>
 #include <cstring>
 #include <string>
 #include"SQL.h"
@@ -38,7 +37,7 @@ int SQL::CutQueryToParts(){
    return 1;
 }
 
-void SQL::InitFromArrays(string from){
+void SQL::InitFromArrays(const string& from){
    int sum=1;
    for (auto x : from){
       if(x == ' ' ) sum++;
@@ -47,7 +46,7 @@ void SQL::InitFromArrays(string from){
    from_arrays= new int[from_arrays_sz];
 }
 
-void SQL::GetFromArrays(string from){
+void SQL::GetFromArrays(const string& from){
    size_t pos = from.find( ' ' );
    size_t pos_start = 0;
    int i=0;
@@ -59,11 +58,11 @@ void SQL::GetFromArrays(string from){
 
       pos = from.find( ' ', pos_start );
    }
-   from_arrays[i++]=stoi(from.substr( pos_start, std::min( pos, from.size() ) - pos_start + 1),nullptr,10);
+   from_arrays[i]=stoi(from.substr( pos_start, std::min( pos, from.size() ) - pos_start + 1),nullptr,10);
 
 }
 
-void SQL::SplitWherePredicates(string where){
+void SQL::SplitWherePredicates(const string& where){
     size_t pos = where.find( '&' );
     size_t pos_start = 0;
     string predicate;
@@ -79,15 +78,15 @@ void SQL::SplitWherePredicates(string where){
     isFilter(predicate)  ? GetWhereFilters(predicate) : GetWherePredicates(predicate) ;
 }
 
-bool SQL::isFilter(string predicate){
+bool SQL::isFilter(const string& predicate){
     int sum=0;
     for (auto x : predicate){
         if(x == '.' ) sum++;
     }
-    return  sum == 2 ? false :  true;
+    return sum != 2;
 }
 
-void SQL::GetWherePredicates(string predicate) {
+void SQL::GetWherePredicates(const string& predicate) {
     int a1,c1,a2,c2;
     size_t pos_start = 0;
     size_t pos = predicate.find( '.' );
@@ -127,7 +126,7 @@ void SQL::GetWhereFilters(string predicate){
 
 }
 
-void SQL::InitSelectResults(string select){
+void SQL::InitSelectResults(const string& select){
     int sum=1;
     for (auto x : select){
         if(x == ' ' ) sum++;
@@ -136,7 +135,7 @@ void SQL::InitSelectResults(string select){
     select_results= new set[select_result_sz];
 }
 
-void SQL::SplitSelectResults(string select){
+void SQL::SplitSelectResults(const string& select){
     size_t pos = select.find( ' ' );
     size_t pos_start = 0;
     int i=0;
@@ -151,7 +150,7 @@ void SQL::SplitSelectResults(string select){
     GetSelectResults(select.substr( pos_start, std::min( pos, select.size() ) - pos_start + 1),i);
 }
 
-void SQL::GetSelectResults(string select,int i){
+void SQL::GetSelectResults(const string& select,int i){
     int a,c;
     size_t pos_start = 0;
     size_t pos = select.find( '.' );
@@ -166,7 +165,7 @@ void SQL::GetSelectResults(string select,int i){
 }
 
 Predicate *SQL::getPredicate() {
-    if(where_predicates->IsEmpty()) return NULL;
+    if(where_predicates->IsEmpty()) return nullptr;
     return where_predicates->Pop();
 }
 
@@ -180,10 +179,6 @@ int SQL::get_results_counter() {
 
 set *SQL::get_select() {
     return select_results;
-}
-
-bool SQL::same_array(int a, int b) {
-    return from_arrays[a]==from_arrays[b];
 }
 
 int *SQL::get_from_arrays() {

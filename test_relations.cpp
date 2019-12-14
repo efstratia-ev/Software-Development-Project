@@ -17,8 +17,8 @@ void test_Relation() {
     CU_ASSERT(rel->value(0,0) == 1);
     CU_ASSERT(rel->value(0,1) == 8463);
     CU_ASSERT(rel->value(1,2) == 6962);
-    int sz;
-    CU_ASSERT(rel->col(2,&sz)[0] == 582);
+    uint64_t sz;
+    CU_ASSERT(rel->col(2,sz)[0] == 582);
     CU_ASSERT(sz == rel->getRows());
     delete rel;
 }

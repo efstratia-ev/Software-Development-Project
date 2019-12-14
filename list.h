@@ -18,14 +18,13 @@ class listNode{
     uint64_t max;
     bool tuples;
 public:
-    listNode(bool t);
+    explicit listNode(bool t);
     ~listNode();
     bool isFull();
     uint64_t getcount();
     void add(uint64_t rowID1,uint64_t rowID2);
     void add(uint64_t rowID);
-    listNode *createNext(bool tuples);
-    void print();
+    listNode *createNext();
     listNode *getnext();
     void restart_current();
     rowids* pop();

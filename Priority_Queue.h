@@ -30,7 +30,7 @@ class Priority_Queue{
     Priority_Queue_Node * head;
     List_Int * used_arrays;  //needs delete ..
     List_Int * filtered_arrays; //needs delete
-
+    set last_joined[2];
 public:
     Priority_Queue();
     void Push(Predicate *p);

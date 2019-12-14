@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstring>
 #include "radix.h"
 
 using  namespace std;
@@ -25,7 +24,7 @@ radix::radix(uint64_t s,uint64_t *r,uint64_t *d) {
 radix::radix(uint64_t s, uint64_t *d) {
     this->offset = 0;
     this->size = s;
-    this->R = NULL;
+    this->R = nullptr;
     this->_R = new uint64_t[size];
     this->byte = 1;
     data=d;
@@ -39,15 +38,15 @@ void radix::group() {
 }
 
 void radix::histogram() {
-    for (int i = 0; i < N; i++)
-        Hist[i] = 0;
+    for (unsigned int & i : Hist)
+        i = 0;
     for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[R[i]])]++;
 }
 
 void radix::histogram_init() {
     R=new uint64_t[size];
-    for (int i = 0; i < N; i++)
-        Hist[i] = 0;
+    for (unsigned int & i : Hist)
+        i = 0;
     for(uint64_t i=offset; i<offset+size; i++){
         R[i]=i;
         Hist[hash(data[R[i]])]++;
@@ -55,8 +54,8 @@ void radix::histogram_init() {
 }
 
 void radix::prefixSum() {
-    for (int i = 0; i < N; i++)
-        Psum[i] = 0;
+    for (unsigned int & i : Psum)
+        i = 0;
     Psum[0]=offset;
     for(uint64_t i=1; i<N; i++) Psum[i]=Hist[i-1]+Psum[i-1];
 
@@ -64,8 +63,8 @@ void radix::prefixSum() {
 
 void radix::reorderR() {
     uint32_t index,counter[N];
-    for (int i = 0; i < N; i++)
-        counter[i] = 0;
+    for (unsigned int & i : counter)
+        i = 0;
     for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
         index=hash(data[R[i]]);
         _R[Psum[index]+counter[index]]=R[i];
@@ -77,7 +76,7 @@ void radix::reorderR() {
 uint64_t radix::hash(uint64_t value) { //keeps only 1 byte each time
     uint64_t shift=(8-byte)*8;
     value=value>>shift;
-    value=value & 0xFF;
+    value=value & 0xFFu;
     return value;
 }
 
@@ -91,7 +90,8 @@ void radix:: split(stack *Stack) {
     for(uint64_t i=0; i<N; i++){
         if(byte==8) continue;
         //if no more hash is needed
-        if(fitsCache(i)){  
+        if(Psum[i]+Hist[i]==0) continue;
+        if(fitsCache(i)){
             quicksort(Psum[i],Psum[i]+Hist[i]-1);
             //copy only if we wrote to _R
             if ((byte %2) == 1) {
@@ -106,30 +106,30 @@ void radix:: split(stack *Stack) {
     }
 }
 
-void radix::quicksort(int start, int end) {
+void radix::quicksort(uint64_t start, uint64_t end) {
     if(start>=end) return;
-    int pi=partition(start,end);
-    quicksort(start,pi-1);
+    uint64_t pi=partition(start,end);
+    if(pi>0) quicksort(start,pi-1);
     quicksort(pi+1,end);
 }
 
-int radix::partition(int start, int end) {
+uint64_t radix::partition(uint64_t start, uint64_t end) {
     uint64_t pivot=_R[end];
-    int i=start-1;
+    uint64_t i=start;
     uint64_t temp;
 
     for(int j=start; j<end; j++){
         if(data[_R[j]]<data[pivot]){
-            i++;
             temp=_R[i];
             _R[i]=_R[j];
             _R[j]=temp;
+            i++;
         }
     }
-    temp=_R[i+1];
-    _R[i+1]=_R[end];
+    temp=_R[i];
+    _R[i]=_R[end];
     _R[end]=temp;
-    return i+1;
+    return i;
 }
 
 array *radix::getR() {

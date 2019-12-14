@@ -1,38 +1,34 @@
 #include "Priority_Queue.h"
 
-#define COLUMNSPRE 4
-#define COLUMNSRE 2
-
 using namespace std;
 
 class SQL{
-    int filters;
+    int filters{};
     char * query;
-    int * from_arrays,from_arrays_sz,select_result_sz;
+    int * from_arrays{},from_arrays_sz{},select_result_sz{};
     Priority_Queue * where_predicates;
     set * select_results;
     //how many inner joins the query has
     int numInnerJoins;
 public:
-    SQL(char *line);
+    explicit SQL(char *line);
     ~SQL();
     int CutQueryToParts();
-    void InitFromArrays(string);
-    void GetFromArrays(string);
-    void GetWherePredicates(string);
-    void SplitWherePredicates(string);
-    bool isFilter(string predicate);
+    void InitFromArrays(const string&);
+    void GetFromArrays(const string&);
+    void GetWherePredicates(const string&);
+    void SplitWherePredicates(const string&);
+    static bool isFilter(const string& predicate);
     void GetWhereFilters(string);
-    void InitSelectResults(string);
-    void SplitSelectResults(string select);
-    void GetSelectResults(string,int);
+    void InitSelectResults(const string&);
+    void SplitSelectResults(const string& select);
+    void GetSelectResults(const string&,int);
     Predicate *getPredicate();
     int get_from_arrays_size() { return from_arrays_sz; }
     int getNumInnerJoins() { return numInnerJoins; }
     int get_filters_num();
     int get_results_counter();
     set *get_select();
-    bool same_array(int a,int b);
     int *get_from_arrays();
 };
 

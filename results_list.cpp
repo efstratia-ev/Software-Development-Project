@@ -2,7 +2,7 @@
 
 results_list::results_list() {
     counter=0;
-    start=NULL;
+    start=nullptr;
 }
 
 results_list::~results_list() {
@@ -12,7 +12,7 @@ results_list::~results_list() {
 
 void results_list::clear() {
     delete start;
-    start=NULL;
+    start=nullptr;
     counter=0;
 }
 

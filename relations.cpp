@@ -25,13 +25,13 @@ Relations::Relations(char *filename) {
     rels = new Relation*[count];
     ifstream _infile(filename);
     char *suffix = strrchr(filename,'/');
-    char *prefix=NULL;
+    char *prefix;
     count = 0;
-    if (suffix != NULL) {
+    if (suffix) {
         prefix = new char[suffix-filename+2];
         strncpy(prefix,filename,suffix-filename+1);
         prefix[suffix-filename+1]='\0';
-        char *fname=NULL;
+        char *fname;
         while (getline(_infile,line)) {
             fname = concat(prefix,line.c_str());
             rels[count] = new Relation(fname);
@@ -42,7 +42,7 @@ Relations::Relations(char *filename) {
         delete[] prefix;
         return;
     }
-    const char *fname=NULL;
+    const char *fname;
     while (getline(_infile,line)) {
         fname = line.c_str();
         rels[count] = new Relation(fname);

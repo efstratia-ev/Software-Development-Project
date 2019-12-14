@@ -30,7 +30,7 @@ list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int c
 
 
 array *sort(radix *r) {
-    stack *Stack=new stack();
+    auto *Stack=new stack();
     Stack->push(r);
     radix *currentRadix;
     while(Stack->notEmpty()){

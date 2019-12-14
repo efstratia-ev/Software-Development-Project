@@ -6,7 +6,7 @@ set::set(int a, int c) {
     column=c;
 }
 
-set::set() {}
+set::set() = default;
 
 int set::getArray(){
     return array;
@@ -22,6 +22,15 @@ void set::setColumn(int c) {
 
 int set::getColumn(){
     return column;
+}
+
+bool set::equal(set a) {
+    return array==a.array && column==a.column;
+}
+
+void set::copy(set *a) {
+    array=a->array;
+    column=a->column;
 }
 
 
@@ -66,7 +75,7 @@ uint64_t comparison::get_value() {
     return num;
 }
 
-set *comparison::getArray2() {return NULL;}
+set *comparison::getArray2() {return nullptr;}
 
 int comparison::get_array2() {
     return -1;
@@ -76,9 +85,18 @@ int comparison::get_column2() {
     return -1;
 }
 
+bool comparison::getSorted() {
+    return false;
+}
+
+void comparison::setSorted(bool s) {
+    return;
+}
+
 join::join(int a1, int c1, int a2, int c2) :Predicate(a1,c1){
     array2=new set(a2,c2);
     isfilter = false;
+    isSorted=false;
 }
 
 char join::get_comp() {
@@ -115,4 +133,12 @@ void join::setfilter(bool filter) {
 
 join::~join() {
     delete array2;
+}
+
+bool join::getSorted() {
+    return isSorted;
+}
+
+void join::setSorted(bool s) {
+    isSorted=s;
 }

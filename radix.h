@@ -16,8 +16,8 @@ class radix{
     uint64_t offset;
     uint64_t size;
     uint64_t *R;
-    uint32_t Hist[N];
-    uint32_t Psum[N];
+    uint32_t Hist[N]{};
+    uint32_t Psum[N]{};
     uint64_t *_R;
     int byte;
     uint64_t *data;
@@ -33,8 +33,8 @@ public:
     uint64_t hash(uint64_t value);
     bool fitsCache(uint64_t i);
     void split(stack *Stack);
-    void quicksort(int start,int end);
-    int partition(int start,int end);
+    void quicksort(uint64_t start,uint64_t end);
+    uint64_t partition(uint64_t start,uint64_t end);
     array *getR();
     void delete_R();
 };

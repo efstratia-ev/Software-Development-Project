@@ -5,13 +5,13 @@
 using namespace std;
 listNode::listNode(bool t) {
     buffer=(char*)malloc(1024*1024);
-    if(buffer==NULL){
+    if(buffer==nullptr){
         std::cout<<"error"<<std::endl;
     }
     max=(1024*1024)/(sizeof(uint64_t));  //max size of results in the buffer
     count=0;   //current number of results in the buffer
     current=buffer;
-    next=NULL;
+    next=nullptr;
     tuples=t;
 }
 
@@ -29,22 +29,9 @@ bool listNode::isFull() {
 }
 
 
-listNode *listNode::createNext(bool tuples) {  //new list node
+listNode *listNode::createNext() {  //new list node
     next=new listNode(tuples);
     return next;
-}
-
-void listNode::print() { //print the results
-    uint64_t temp;
-    char *current_item=buffer;
-    for(uint64_t i=0; i<count; i++){
-        memcpy(&temp,current_item, sizeof(uint64_t));
-        current_item+= sizeof(uint64_t);
-        std::cout<<temp<<",";
-        memcpy(&temp,current_item, sizeof(uint64_t));
-        current_item+= sizeof(uint64_t);
-        std::cout<<temp<<std::endl;
-    }
 }
 
 listNode *listNode::getnext() {
@@ -57,14 +44,14 @@ uint64_t listNode::getcount(){
 }
 
 rowids* listNode::pop() {
-    if(count==0) return NULL;
+    if(count==0) return nullptr;
     count-=1;
     uint64_t temp1,temp2;
     memcpy(&temp1,current, sizeof(uint64_t));
     current+= sizeof(uint64_t);
     memcpy(&temp2,current, sizeof(uint64_t));
-    current+= sizeof(uint64_t);
-    rowids *first=new rowids(temp1,temp2);
+    if(count!=max/2) current+= sizeof(uint64_t);
+    auto *first=new rowids(temp1,temp2);
     return first;
 }
 
@@ -78,7 +65,7 @@ uint64_t listNode::pop_element() {
     count--;
     uint64_t temp;
     memcpy(&temp,current, sizeof(uint64_t));
-    current+= sizeof(uint64_t);
+    if(count!=max) current+= sizeof(uint64_t);
     return temp;
 }
 
@@ -89,12 +76,12 @@ void listNode::restart_current() {
 
 listNode::~listNode() {
     free(buffer);
-    if(next) delete next;
+    delete next;
 }
 
 list::list() {
     size=0;
-    start=NULL;
+    start=nullptr;
     current=start;
 }
 
@@ -105,7 +92,7 @@ void list::add(uint64_t rowID1, uint64_t rowID2) {
     }
     size++;
     if(current->isFull())
-        current=current->createNext(true);  //new list node
+        current=current->createNext();  //new list node
     current->add(rowID1,rowID2);  //add the result
 }
 
@@ -146,6 +133,6 @@ void list::add(uint64_t rowID) {
     }
     size++;
     if(current->isFull())
-        current=current->createNext(false);  //new list node
+        current=current->createNext();  //new list node
     current->add(rowID);  //add the result
 }

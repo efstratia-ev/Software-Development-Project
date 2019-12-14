@@ -6,7 +6,6 @@
 #include <string>
 #include "radix.h"
 #include "stack.h"
-#include "inputFunctions.h"
 #include "sort.h"
 
 static FILE* temp_file = NULL;
