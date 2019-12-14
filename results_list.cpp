@@ -40,8 +40,14 @@ void results_node::print(FILE *file) {
     if(next) next->print(file);
     if(!sums){
         for(int i=0; i<size; i++){
-            if(i==size-1) cout<<"NULL"<<endl;
-            else cout<<"NULL"<<" ";
+            if(i==size-1){
+                cout<<"NULL"<<endl;
+                fprintf(file,"NULL\n");
+            }
+            else{
+                cout<<"NULL"<<" ";
+                fprintf(file,"NULL ");
+            }
         }
         return;
     }

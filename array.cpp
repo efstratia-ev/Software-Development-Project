@@ -27,3 +27,6 @@ uint64_t array::get_value(uint64_t row) {
     if(rows) return rows[Array[row]];
     else return Array[row];
 }
+
+array::~array() {}
+
