@@ -36,7 +36,7 @@ JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int 
        sort(new radix(arr1->Size,arr1->Array));
        auto arr2 = sort(new radix(rels->get_relRows(rel2),rels->get_column(rel2,pred->get_column2())));
        sort(new radix(arr2->Size,arr2->Array));
-       list *resultlist=join(arr1,arr2,rels->get_column(rel1,pred->get_column()),rels->get_column(rel2,pred->get_column2()),0);
+       list *resultlist=join(arr1,arr2,rels->get_column(rel1,pred->get_column()),rels->get_column(rel2,pred->get_column2()));
        result=new JoinArray(rels);
        result->create_array(resultlist,rel1,rel2);
        delete[] arr1->Array;
