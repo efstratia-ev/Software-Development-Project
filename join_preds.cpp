@@ -37,7 +37,6 @@ JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int 
        result->create_array(resultlist,rel1,rel2);
        delete arr1;
        delete arr2;
-       delete resultlist;
     }
     return result;
 }

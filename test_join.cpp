@@ -56,9 +56,9 @@ void testJoin() {
     auto result = joinFirstPredicate(nullptr,sql,rels,0);
     auto arr = result->getArray();
     cout << "results:" << endl;
-    for (int i = 0; i < result->getSize(); i++) {
-       for (int j =0; j < result->getNumRels(); j++) {
-            cout << arr[i][j] << endl;
+    for (int j =0; j < result->getNumRels(); j++) {
+        for (int i = 0; i < result->getSize(); i++) {
+            cout << arr[j][i] << endl;
        }
     }
 
