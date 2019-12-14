@@ -137,7 +137,7 @@ uint64_t radix::partition(uint64_t start, uint64_t end) {
 }
 
 array *radix::getR() {
-    return new array(size,R);
+    return new array(size,R,rows);
 }
 
 void radix::delete_R() {
