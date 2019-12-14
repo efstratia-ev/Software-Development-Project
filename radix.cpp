@@ -86,7 +86,6 @@ uint64_t radix::hash(uint64_t value) { //keeps only 1 byte each time
 }
 
 
-
 bool radix::fitsCache(uint64_t i) {
     return Hist[i]*sizeof(uint64_t)<L1size;
 }

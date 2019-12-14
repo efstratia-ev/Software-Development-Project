@@ -29,7 +29,6 @@ list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2,int c
     return resultlist;
 }
 
-
 array *sort(radix *r) {
     auto *Stack=new stack();
     Stack->push(r);

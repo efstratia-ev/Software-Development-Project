@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <iostream>
 
-
 struct array {
     uint64_t Size;
     uint64_t *Array;

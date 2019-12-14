@@ -54,6 +54,7 @@ void JoinArray::update_array(list *results,int id) {
     relationIDs=new_arrayID;
     delete results;
 }
+
 //it is similar to the above function, the only difference is that the new results are from array2
 void JoinArray::update_array(list *results, JoinArray *array2) {
     uint64_t new_size=results->get_size();
