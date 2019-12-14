@@ -103,7 +103,7 @@ void testJoin() {
        if (strcmp(line, "Done") == 0)
          break;
       if (strcmp(line,"F") == 0) 
-         break; //avoid crush - change afterwards with continue
+         continue; //avoid crush - change afterwards with continue
        else{
            sql=new SQL(line);
            for(int i=0; i < sql->get_filters_num();i++)
