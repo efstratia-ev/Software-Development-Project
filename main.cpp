@@ -168,6 +168,7 @@ uint64_t *join(SQL *sql, Relations *relations) {
     }
     //joinPredicates(filter_results,sql,relations,max);
     if (!results_exist) {
+        for(int i=0; i<max; i++) delete filter_results[i];
         delete[] filter_results;
         delete results;
         return sums;
