@@ -89,7 +89,7 @@ void testJoin() {
     CU_ASSERT(result->getNumRels()==4);
     //---------------------------
     //instructor's dataset
-    char filename[] = "../workloads/medium/medium.init";
+    char filename[] = "../workloads/small/small.init";
     rels = new Relations(filename);
     char *line= NULL;
     size_t size=0;
