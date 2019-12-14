@@ -12,6 +12,7 @@ public:
     Priority_Queue_Node* get_next();
     Predicate *getPredicate();
     void setNext(Priority_Queue_Node *next);
+    ~Priority_Queue_Node();
 };
 
 class List_Int{

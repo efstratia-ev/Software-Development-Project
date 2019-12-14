@@ -20,6 +20,7 @@ Predicate* Priority_Queue::Pop(){
     Predicate *predicate=head->getPredicate();
     Priority_Queue_Node *temp=head;
     head=head->get_next();
+    temp->setNext(NULL);
     delete temp;
     size--;
     if(size==0) return predicate;
@@ -209,4 +210,8 @@ Predicate *Priority_Queue_Node::getPredicate() {
 
 void Priority_Queue_Node::setNext(Priority_Queue_Node *n) {
     Priority_Queue_Node::next = n;
+}
+
+Priority_Queue_Node::~Priority_Queue_Node() {
+    delete next;
 }
