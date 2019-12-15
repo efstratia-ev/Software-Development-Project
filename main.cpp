@@ -33,10 +33,10 @@ uint64_t *join(SQL *sql, Relations *relations) {
     int filters = sql->get_filters_num(), max = 0;
     filter_results = new JoinArray *[filters];
     bool exists;
-    for (int i = 0; i < filters; i++) {
+    for (int i = 0; i < filters; i++) { //filters arrays
         int curr;
         delete predicate;
-        predicate = sql->getPredicate();
+        predicate = sql->getPredicate();  //next filter
         exists = false;
         if ((curr = isRelationFiltered(filter_results, max, predicate->get_array())) >= 0) exists = true;
         if (!exists) {
@@ -80,7 +80,7 @@ uint64_t *join(SQL *sql, Relations *relations) {
     }
     delete predicate;
     list *res;
-    while (results_exist && (predicate = sql->getPredicate())) {
+    while (results_exist && (predicate = sql->getPredicate())) {  //joins between relation
         if (results && results->getSize() == 0) {
             delete predicate;
             results_exist = false;
@@ -201,17 +201,17 @@ char *create_outfileName(char *filename) {
 int main(int argc, char *argv[]) {
 
     char *filename;
-    if (argc != 2) {  //get filenames
+    if (argc != 2) {  //get filename for init
         cout << "Wrong amount of arguments\n";
         exit(-1);
     }
     filename = argv[1];
 
-    auto *relations = new Relations(filename);
+    auto *relations = new Relations(filename);  //data
     SQL *sql;
     auto *results = new results_list();
 
-    char *outfile = create_outfileName(filename);
+    char *outfile = create_outfileName(filename);  //makes output file
     FILE *file;
     file = fopen(outfile, "w");
     if (file == nullptr) {
@@ -230,9 +230,9 @@ int main(int argc, char *argv[]) {
             results->print(file);
             results->clear();
         } else {
-            sql = new SQL(line);
-            relations->set_query_rels(sql->get_from_arrays());
-            results->add(sql->get_results_counter(), join(sql, relations));
+            sql = new SQL(line);  //translate query
+            relations->set_query_rels(sql->get_from_arrays()); //keeps query arrays
+            results->add(sql->get_results_counter(), join(sql, relations)); // keeps results from join
             delete sql;
         }
     }

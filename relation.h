@@ -9,7 +9,7 @@ using namespace std;
 void handle_errror(char *msg);
 
 class Relation {
-    uint64_t *data;
+    uint64_t *data;  //arrays data by column
     uint64_t rows;
     uint64_t cols;
     uint64_t fileSz{};

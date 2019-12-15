@@ -14,7 +14,7 @@ public:
     void print(FILE *file);
 };
 
-class results_list {
+class results_list {  //keeps all the results from queries
     results_node *start;
     int counter;
 public:

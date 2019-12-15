@@ -1,7 +1,7 @@
 #include <iostream>
 #include "sort.h"
 using namespace std;
-list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2) { //counts how many arrays are already in join results
+list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2) {  //does the final comparison between two sorted arrays
     list *resultlist=new list();
     uint64_t i=0,j=0;
     while(i<array1->Size && j<array2->Size){
@@ -26,7 +26,7 @@ list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2) { //
     return resultlist;
 }
 
-array *sort(radix *r) {
+array *sort(radix *r) {  //function that sort arrays by quantum
     auto *Stack=new stack();
     Stack->push(r);
     radix *currentRadix;
@@ -43,7 +43,7 @@ array *sort(radix *r) {
     return sortedR;
 }
 
-list *sortedjoin(array *array1, array *array2, uint64_t *column1, uint64_t *column2) { //counts how many arrays are already in join results
+list *sortedjoin(array *array1, array *array2, uint64_t *column1, uint64_t *column2) {
     list *resultlist=new list();
     uint64_t i=0,j=0;
     while(i<array1->Size && j<array2->Size){

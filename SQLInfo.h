@@ -14,7 +14,7 @@ public:
     void copy(set *a);
 };
 
-class Predicate{
+class Predicate{  //this is a predicate
     set *array1;
 public:
     Predicate(int a,int c);
@@ -34,7 +34,7 @@ public:
     set *getArray1();
 };
 
-class comparison:public Predicate{
+class comparison:public Predicate{  //a comparison can be <,> or =
     char comp;
     uint64_t num;
 public:
@@ -51,7 +51,7 @@ public:
     void setSorted(bool s);
 };
 
-class join:public Predicate{
+class join:public Predicate{  // a join is a = between two relations
     set *array2;
     bool isfilter;
     bool isSorted;

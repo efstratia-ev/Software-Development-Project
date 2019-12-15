@@ -8,7 +8,7 @@ char* concat(const char *s1, const char *s2);
 
 
 class Relations {
-    int *query_rels{};
+    int *query_rels{}; //keeps all the relations
     Relation **rels;
     int sz;
 public:

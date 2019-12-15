@@ -16,7 +16,7 @@ void Priority_Queue::Push(Predicate *p){
     size++;
 
 }
-Predicate* Priority_Queue::Pop(){
+Predicate* Priority_Queue::Pop(){  //pop a predicate
     Predicate *predicate=head->getPredicate();
     Priority_Queue_Node *temp=head;
     head=head->get_next();
@@ -39,10 +39,11 @@ Predicate* Priority_Queue::Pop(){
         if(!IsFilteredArray(array)) filtered_arrays= new List_Int(array,filtered_arrays);
         Rearrange();
     }
+
     return predicate;
 }
 
-void Priority_Queue::Rearrange(){
+void Priority_Queue::Rearrange(){  //bring the best next option at the start of the queue
     Priority_Queue_Node *current=head,*previous=nullptr;
     Priority_Queue_Node * tmp,*priority_node= nullptr;
     int priority_code=0;

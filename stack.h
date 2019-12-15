@@ -6,7 +6,7 @@
 
 class radix;
 
-class stack_node {
+class stack_node {  //used for doing recursion
     radix *Radix;
     stack_node *next;
 public:

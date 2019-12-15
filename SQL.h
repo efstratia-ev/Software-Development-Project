@@ -2,7 +2,7 @@
 
 using namespace std;
 
-class SQL{
+class SQL{  //keeps all the information needed from the query
     int filters{};
     char * query;
     int * from_arrays{},from_arrays_sz{},select_result_sz{};
