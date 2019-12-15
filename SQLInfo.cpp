@@ -95,7 +95,7 @@ void comparison::setSorted(bool s) {
 
 join::join(int a1, int c1, int a2, int c2) :Predicate(a1,c1){
     array2=new set(a2,c2);
-    isfilter = false;
+    isfilter = a1 == a2;
     isSorted=false;
 }
 
