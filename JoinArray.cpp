@@ -1,6 +1,9 @@
+#include <iostream>
 #include "JoinArray.h"
 #include "array.h"
 #include "sort.h"
+
+using namespace std;
 
 JoinArray::JoinArray(Relations *r) {
     rels=r;

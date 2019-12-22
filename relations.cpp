@@ -2,6 +2,7 @@
 #include <cstring>
 #include "relations.h"
 
+using namespace std;
 
 char *concat(const char *s1, const char *s2) {
     char *result = (char *)malloc(strlen(s1) + strlen(s2) + 1);

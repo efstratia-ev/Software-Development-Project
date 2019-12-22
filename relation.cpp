@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include "relation.h"
 
+using namespace std; 
+
 void handle_errror(char *msg) {
     cout << msg << endl;
     exit(-1);

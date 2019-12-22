@@ -13,7 +13,6 @@ class Relations {
     int sz;
 public:
     explicit Relations(char *filename);
-    //for debug
     Relations(Relation **rels,int sz);
     Relation *relation(int i);
     int getSize();
@@ -31,6 +30,7 @@ public:
     void set_query_rels(int *from_arrays);
     uint64_t get_relRows(uint64_t rel);
     uint64_t *get_column(uint64_t rel,uint64_t col);
+    Relation **getRels() { return rels; }
 };
 
 

@@ -1,4 +1,7 @@
+#include <iostream>
 #include "results_list.h"
+
+using namespace std;
 
 results_list::results_list() {
     counter=0;

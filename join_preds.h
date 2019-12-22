@@ -13,5 +13,8 @@
 JoinArray *searchFiltered(int relation,int max,JoinArray **filtered);
 JoinArray *joinFirstPredicate(JoinArray **filtered,SQL *sql,Relations *rels,int max);
 JoinArray *joinPredicates(JoinArray **filtered,SQL *sql,Relations *rels,int max);
+uint64_t *join(SQL *sql, Relations *relations);
+int isRelationFiltered(JoinArray **filtered, int max, int relation);
+
 
 #endif

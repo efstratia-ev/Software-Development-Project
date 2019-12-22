@@ -4,7 +4,7 @@
 #include <fstream>
 #include "array.h"
 
-using namespace std;
+//using namespace std;
 
 void handle_errror(char *msg);
 
