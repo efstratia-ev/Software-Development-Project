@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "relation.h"
+#include "bitmap.h"
 
 using namespace std; 
 
@@ -38,6 +39,9 @@ Relation::Relation(const char *filename) {
     cols = data[1];
     //data should point to actual data - not metadata
     data++;data++;
+    statistics = new stats*[cols];
+    for (int i =0; i < cols; i++)
+        statistics[i] = calculateStats(i);
 }
 
 Relation::~Relation() {
@@ -46,6 +50,24 @@ Relation::~Relation() {
     munmap(data,fileSz);
 }
 
+stats *Relation::calculateStats(int col) {
+    auto colData = get_col(col);
+    uint64_t min = colData[0];
+    uint64_t max = 0;
+    for (int i = 0; i < rows; i++) {
+        if (colData[i] < min) {
+            min = colData[i];
+        }
+        if (colData[i] > max) {
+            max = colData[i];
+        }
+    }
+    auto bm = new BitMap(min - max + 1);
+    for (int i = 0; i < rows; i++) {
+        bm->set(colData[i]);
+    }
+    return new stats(min,max,bm->countSetBits());
+}
 
 uint64_t Relation::value(uint64_t row, uint64_t col) {
     return data[col * rows + row];

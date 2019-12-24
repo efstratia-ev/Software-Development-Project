@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 project(Project2019)
-add_compile_options(-O3)
+#add_compile_options(-O3)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -27,7 +27,10 @@ add_executable(Project2019
 add_executable(test_radix
         radix.cpp
         radix.h
-        test_radix.cpp stack.cpp stack.h sort.cpp sort.h)
+        test_radix.cpp stack.cpp stack.h sort.cpp sort.h
+        relation.h relation.cpp
+        list.h list.cpp
+        array.h array.cpp)
 
 add_executable(test_relations
         test_relations.cpp

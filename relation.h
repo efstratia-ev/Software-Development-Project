@@ -3,16 +3,18 @@
 
 #include <fstream>
 #include "array.h"
+#include "stats.h"
 
 //using namespace std;
 
 void handle_errror(char *msg);
 
 class Relation {
-    uint64_t *data;  //arrays data by column
+    uint64_t *data;  //relations data by column
     uint64_t rows;
     uint64_t cols;
     uint64_t fileSz{};
+    stats **statistics;
     public:
     explicit Relation(const char *filename); //loads file into memory with mmap
     Relation(uint64_t *data,uint64_t rows,uint64_t cols);
@@ -24,6 +26,8 @@ class Relation {
     uint64_t *col(uint64_t i,uint64_t &size);
     int compare_values(uint64_t row,uint64_t column1,uint64_t column2);
     int compare(uint64_t row,uint64_t column,uint64_t value);
+    stats *calculateStats(int col);
+    stats *getColStats(int i) { return statistics[i]; }
 };
 
 
