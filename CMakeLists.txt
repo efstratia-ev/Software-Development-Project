@@ -67,5 +67,10 @@ add_executable(test_jobscheduler
         job.h 
 )
 
+add_executable(test_bitmap
+        test_bitmap.cpp 
+        bitmap.h
+)
+
 target_link_libraries(Project2019 Threads::Threads)
 target_link_libraries(test_jobscheduler Threads::Threads)

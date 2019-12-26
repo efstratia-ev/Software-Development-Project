@@ -10,7 +10,7 @@ using namespace std;
 #define MAX_SIZE 50000000 //in bits
 
 //population count of `byte`.
-int popcount(char byte) {
+int popcount(uint8_t byte) {
     int sum = 0;
     while (byte > 0) {
         sum += byte&1;
@@ -20,9 +20,9 @@ int popcount(char byte) {
 }
 
 class BitMap {
-    char *bytes;
-    int bytesSize;
-    int size;
+    uint8_t *bytes;
+    int size; //size in bits
+    int bytesSize; //  == size/8+1 (+1 here is like ceil)
     uint64_t min;
     public:
     BitMap(int sz,int min) {
@@ -31,21 +31,23 @@ class BitMap {
             size = MAX_SIZE;
         else 
             size = sz;
-        bytesSize = size/8+1; //+1 here is like ceil
-        bytes = new char[bytesSize]; 
+        bytesSize = size/8+1; 
+        bytes = new uint8_t[bytesSize]; 
         memset(bytes,0,bytesSize);
     }
+    ~BitMap() { delete bytes; }
+    uint8_t *getBytes() { return bytes; }
     void set(int i) {
         i = zeroBased(i);
         int index = i/8;
-        char mask = char(1 << 7 - (i%8));
+        uint8_t mask = 1 << 7 - (i%8);
         bytes[index] |= mask;
     }
     bool get(int i) {
         i = zeroBased(i);
         int index = i/8;
-        char mask = char(1 << 7 - (i%8));
-        return bytes[index]&mask > 0;
+        uint8_t mask = 1 << 7 - (i%8);
+        return uint8_t(bytes[index]&mask) > 0;
     }
     int zeroBased(int i) {
         i = i - min;
