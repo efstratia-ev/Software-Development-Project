@@ -25,7 +25,8 @@ class BitMap {
     int size;
     uint64_t min;
     public:
-    BitMap(int sz) {
+    BitMap(int sz,int min) {
+        this->min = min;
         if (sz > MAX_SIZE) 
             size = MAX_SIZE;
         else 

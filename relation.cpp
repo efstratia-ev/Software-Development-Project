@@ -42,6 +42,7 @@ Relation::Relation(const char *filename) {
     statistics = new stats*[cols];
     for (int i =0; i < cols; i++)
         statistics[i] = calculateStats(i);
+    
 }
 
 Relation::~Relation() {
@@ -62,7 +63,7 @@ stats *Relation::calculateStats(int col) {
             max = colData[i];
         }
     }
-    auto bm = new BitMap(min - max + 1);
+    auto bm = new BitMap(max - min + 1,min);
     for (int i = 0; i < rows; i++) {
         bm->set(colData[i]);
     }
