@@ -1,6 +1,8 @@
 #ifndef JOB
 #define JOB
-#include "join_preds.h"
+#include "relations.h"
+#include "SQL.h"
+//#include "do_query.h"
 
 class Job { 
     public:
@@ -18,9 +20,7 @@ class QueryJob : public Job {
         this->rels = rels;
         this->sums = sums;
     }
-    int Run() {
-        *sums = join(sql,rels);
-    }
+    int Run();
 };
 
 #endif
