@@ -9,16 +9,6 @@ using namespace std;
 
 #define MAX_SIZE 50000000 //in bits
 
-//population count of `byte`.
-int popcount(uint8_t byte) {
-    int sum = 0;
-    while (byte > 0) {
-        sum += byte&1;
-        byte = byte >> 1;
-    }
-    return sum;
-}
-
 class BitMap {
     uint8_t *bytes;
     int size; //size in bits
@@ -58,7 +48,16 @@ class BitMap {
     uint64_t countSetBits() {
         uint64_t sum = 0;
         for (int i =0; i < bytesSize; i++) {
-            sum += popcount(bytes[i]);
+            sum += myPopcount(bytes[i]);
+        }
+        return sum;
+    }
+    //population count of `byte`.
+    int myPopcount(uint8_t byte) {
+        int sum = 0;
+        while (byte > 0) {
+            sum += byte&1;
+            byte = byte >> 1;
         }
         return sum;
     }

@@ -15,6 +15,7 @@ public:
     explicit Relations(char *filename);
     Relations(Relation **rels,int sz);
     Relation *relation(int i);
+    Relation *relationRaw(int i) { return rels[i]; }
     int getSize();
     ~Relations();
     list *filter(int array,uint64_t column1,uint64_t column2);

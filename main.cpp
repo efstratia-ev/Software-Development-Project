@@ -46,13 +46,14 @@ void DoQueries(Relations *rels) {
             int i = 0;
             //SQL *sql;
             for (auto line: lines) {
-                auto sql = new SQL(line);
-                sqlVec.push_back(sql);
                 //we need to create a new Relations instance for each query
                 //because query_rels field varies between them and we need to process
                 //queries in parallel.
                 auto tmpRels = new Relations(rels->getRels(),rels->getSize());
-                tmpRels->set_query_rels(sql->get_from_arrays()); 
+                //TODO:maybe give threads the task of parsing the query? 
+                //If there is much complexity, we should definetely.
+                auto sql = new SQL(line,tmpRels);
+                sqlVec.push_back(sql);
                 auto job = new QueryJob(sql,tmpRels,&sumsArr[i]);
                 js->Schedule(job);
                 i++;

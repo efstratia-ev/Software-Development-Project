@@ -19,9 +19,11 @@ add_executable(Project2019
         JoinArray.h JoinArray.cpp
         relations.cpp relation.cpp
         results_list.cpp results_list.h
-        join_preds.h join_preds.cpp
+        #join_preds.h join_preds.cpp
         SQL.h SQL.cpp Priority_Queue.cpp Priority_Queue.h
         queue.h queue.cpp 
+        do_query.cpp do_query.h
+        job.cpp
         jobscheduler.h jobscheduler.cpp)
 
 add_executable(test_radix

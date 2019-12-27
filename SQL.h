@@ -1,4 +1,7 @@
+#ifndef SQLO
+#define SQLO
 #include "Priority_Queue.h"
+#include "relations.h"
 
 using namespace std;
 
@@ -10,8 +13,9 @@ class SQL{  //keeps all the information needed from the query
     set * select_results;
     //how many inner joins the query has
     int numInnerJoins;
+    Relations *rels;
 public:
-    explicit SQL(char *line);
+    explicit SQL(char *line,Relations *rels);
     ~SQL();
     int CutQueryToParts();
     void InitFromArrays(const string&);
@@ -32,5 +36,4 @@ public:
     int *get_from_arrays();
 };
 
-
-
+#endif

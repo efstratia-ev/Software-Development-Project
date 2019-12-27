@@ -67,7 +67,7 @@ stats *Relation::calculateStats(int col) {
     for (int i = 0; i < rows; i++) {
         bm->set(colData[i]);
     }
-    return new stats(min,max,bm->countSetBits());
+    return new stats(min,max,bm,rows,bm->countSetBits());
 }
 
 uint64_t Relation::value(uint64_t row, uint64_t col) {
@@ -101,4 +101,5 @@ Relation::Relation(uint64_t *data, uint64_t rows, uint64_t cols) {
     this->data = data;
     this->rows = rows;
     this->cols = cols;
+    this->statistics = nullptr;
 }

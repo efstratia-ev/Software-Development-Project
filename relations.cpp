@@ -126,9 +126,14 @@ uint64_t Relations::get_value(int array, uint64_t row, int column) {
     return rels[query_rels[array]]->value(row,column);
 }
 
+//point to the same data and copy statistics
 Relations::Relations(Relation **rels, int sz) {
-    this->rels = rels;
     this->sz = sz;
+    this->rels = new Relation*[sz];
+    for (int i = 0; i <sz; i++) {
+        this->rels[i] = new Relation(rels[i]->getData(),rels[i]->getRows(),rels[i]->getCols());
+        this->rels[i]->setStats(rels[i]->getStatsCopy()); 
+    }
 }
 
 void Relations::set_query_rels(int *from_arrays) {

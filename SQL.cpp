@@ -1,9 +1,12 @@
+#include <iostream>
 #include <cstring>
 #include <string>
+#include <math.h>
 #include"SQL.h"
 
 
-SQL::SQL(char *line) {
+SQL::SQL(char *line,Relations *rels) {
+    this->rels = rels;
     query = new char[(strlen(line)+1)];
     strcpy(query,line);
     query[strlen(line)]='\0';
@@ -22,6 +25,7 @@ int SQL::CutQueryToParts(){
    from = q.substr (0,pos);
    InitFromArrays(from);
    GetFromArrays(from);
+   rels->set_query_rels(from_arrays);
 
    //get where
    q = q.substr(pos+1);
@@ -106,6 +110,28 @@ void SQL::GetWherePredicates(const string& predicate) {
     numInnerJoins++;
 }
 
+void updatRemainingColStats(Relation *rel,uint64_t prevTotalValues,int updatedCol) {
+    auto sz = rel->getCols();
+    auto st = rel->getColStats(updatedCol);
+    stats *restStats;
+    for (int i =0; i < sz; i++) {
+        if (i == updatedCol)
+            continue;
+        restStats = rel->getColStats(i);
+        if (st->getTotalValues() == 0) {
+            restStats->setDistinctValues(0);
+        } else {
+            double totalVal = (double)st->getTotalValues();
+            double prevTotalVal = (double)prevTotalValues;
+            double restTotalVal = (double)restStats->getTotalValues();
+            double restDistinctVal = (double)restStats->getDistinctValues();
+            double temp = pow(1.0 - totalVal/prevTotalVal,restTotalVal/restDistinctVal);
+            restStats->setDistinctValues(restDistinctVal * (1.0- temp));
+            restStats->setTotalValues(st->getTotalValues());
+        }
+    }
+}
+
 void SQL::GetWhereFilters(string predicate){
     int a,c,number;
     char comp;
@@ -122,8 +148,44 @@ void SQL::GetWhereFilters(string predicate){
     pos_start = pos + 1;
     number=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
+    auto rel = rels->relation(a);
+    auto st = rel->getColStats(c);
+    auto bm = st->getBitMap();
+    auto prevTotalValues = st->getTotalValues();
+    double temp;
+    switch (comp) {
+        case '=': 
+            st->setMax(number);        
+            st->setMin(number);        
+            if (bm->get(number)) {
+                st->setTotalValues(st->getTotalValues()/st->getDistinctValues());
+                st->setDistinctValues(1);
+            } else  {
+                st->setDistinctValues(0);
+                st->setTotalValues(0);
+            }
+            break;
+        case '>': 
+            if (number < st->getMin()) 
+                number = st->getMin();
+            temp = (double)(st->getMax()-number)/(st->getMax()-st->getMin());
+            st->setDistinctValues(st->getDistinctValues()*temp);
+            st->setTotalValues(st->getTotalValues()*temp);
+            st->setMin(number);
+            break;
+        case '<': 
+            if (number > st->getMax())
+                number = st->getMax();
+            temp = (double)(number-st->getMin())/(st->getMax()-st->getMin());
+            st->setDistinctValues(st->getDistinctValues()*temp);
+            st->setTotalValues(st->getTotalValues()*temp);
+            st->setMax(number);
+            break;
+        default:
+            throw exception();
+    }
+    updatRemainingColStats(rel,prevTotalValues,c);
     where_predicates->Push(new comparison(a,c,comp,number));
-
 }
 
 void SQL::InitSelectResults(const string& select){
