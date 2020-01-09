@@ -14,7 +14,7 @@ add_executable(Project2019
         main.cpp
         stack.cpp stack.h
         sort.cpp sort.h
-        array.cpp array.h
+        rows_array.cpp rows_array.h
         list.cpp list.h
         JoinArray.h JoinArray.cpp
         relations.cpp relation.cpp
@@ -24,7 +24,7 @@ add_executable(Project2019
         queue.h queue.cpp 
         do_query.cpp do_query.h
         job.cpp
-        jobscheduler.h jobscheduler.cpp)
+        jobscheduler.h jobscheduler.cpp query.cpp query.h)
 
 add_executable(test_radix
         radix.cpp
@@ -32,7 +32,7 @@ add_executable(test_radix
         test_radix.cpp stack.cpp stack.h sort.cpp sort.h
         relation.h relation.cpp
         list.h list.cpp
-        array.h array.cpp)
+        rows_array.h rows_array.cpp)
 
 add_executable(test_relations
         test_relations.cpp
@@ -48,7 +48,7 @@ add_executable(test_join
         radix.cpp radix.h
         stack.cpp stack.h
         sort.cpp sort.h
-        array.cpp array.h
+        rows_array.cpp rows_array.h
         list.cpp list.h
         JoinArray.h JoinArray.cpp
         relations.cpp relation.cpp

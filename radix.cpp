@@ -3,14 +3,13 @@
 
 using  namespace std;
 
-radix::radix(uint64_t offset,uint64_t s, uint64_t *r,uint64_t *_r,uint64_t *d,uint64_t *rs,int b){
+radix::radix(uint64_t offset,uint64_t s, uint64_t *r,uint64_t *_r,uint64_t *d,int b){
     this->offset=offset;
     this->size=s;
     R=r;
     _R=_r;
     this->byte=b;
     data=d;
-    rows=rs;
 }
 
 radix::radix(uint64_t s,uint64_t *r,uint64_t *d) {
@@ -19,8 +18,7 @@ radix::radix(uint64_t s,uint64_t *r,uint64_t *d) {
     this->_R = new uint64_t[size];
     this->byte = 1;
     data=d;
-    R=NULL;
-    rows=r;
+    R=r;
 }
 
 radix::radix(uint64_t s, uint64_t *d) {
@@ -30,12 +28,11 @@ radix::radix(uint64_t s, uint64_t *d) {
     this->byte = 1;
     data=d;
     R=NULL;
-    rows=NULL;
 }
 //just a wrapper
 void radix::group() {
-    if(!R) histogram_init();
-    else histogram();
+    if(!R) this->histogram_init();
+    else this->histogram();
     prefixSum();
     reorderR();
 }
@@ -43,8 +40,7 @@ void radix::group() {
 void radix::histogram() {
     for (unsigned int & i : Hist)
         i = 0;
-    if(rows) for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[rows[R[i]]])]++;
-    else for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[R[i]])]++;
+    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[R[i]])]++;
 }
 
 void radix::histogram_init() {
@@ -53,8 +49,7 @@ void radix::histogram_init() {
         i = 0;
     for(uint64_t i=offset; i<offset+size; i++){
         R[i]=i;
-        if(rows) Hist[hash(data[rows[R[i]]])]++;
-        else Hist[hash(data[R[i]])]++;
+        Hist[hash(data[R[i]])]++;
     }
 }
 
@@ -71,8 +66,7 @@ void radix::reorderR() {
     for (unsigned int & i : counter)
         i = 0;
     for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
-        if(rows) index=hash(data[rows[R[i]]]);
-        else index=hash(data[R[i]]);
+        index=hash(data[R[i]]);
         _R[Psum[index]+counter[index]]=R[i];
         counter[index]++;
     }
@@ -106,7 +100,7 @@ void radix:: split(stack *Stack) {
         }
         else{
             if(Hist[i]==0) continue;
-            Stack->push(new radix(Psum[i],Hist[i],_R,R,data,rows,byte+1)); //hash again
+            Stack->push(new radix(Psum[i],Hist[i],_R,R,data,byte+1)); //hash again
         }
     }
 }
@@ -124,10 +118,10 @@ uint64_t radix::partition(uint64_t start, uint64_t end) {
     uint64_t temp;
 
     for(int j=start; j<end; j++){
-        if((rows && data[rows[_R[j]]]<data[rows[pivot]])|| (!rows && data[_R[j]]<data[pivot])){
-            temp=_R[i];
-            _R[i]=_R[j];
-            _R[j]=temp;
+        if(data[_R[j]] < data[pivot]) {
+            temp = _R[i];
+            _R[i] = _R[j];
+            _R[j] = temp;
             i++;
         }
     }
@@ -137,12 +131,92 @@ uint64_t radix::partition(uint64_t start, uint64_t end) {
     return i;
 }
 
-array *radix::getR() {
-    return new array(size,R,rows);
+rows_array *radix::getR() {
+    return new rows_array(size,R,NULL);
 }
 
 void radix::delete_R() {
     delete[] _R;
+}
+
+void sorted_radix::histogram() {
+    for (unsigned int & i : Hist)
+        i = 0;
+    for(uint64_t i=offset; i<offset+size; i++) Hist[hash(data[rows[R[i]]])]++;
+}
+
+void sorted_radix::histogram_init() {
+    R=new uint64_t[size];
+    for (unsigned int & i : Hist)
+        i = 0;
+    for(uint64_t i=offset; i<offset+size; i++){
+        R[i]=i;
+        Hist[hash(data[rows[R[i]]])]++;
+    }
+}
+
+
+void sorted_radix::reorderR() {
+    uint32_t index,counter[N];
+    for (unsigned int & i : counter)
+        i = 0;
+    for(uint64_t i=offset; i<offset+size; i++){  //for a part of the array
+        index=hash(data[rows[R[i]]]);
+        _R[Psum[index]+counter[index]]=R[i];
+        counter[index]++;
+    }
+}
+
+
+void sorted_radix:: split(stack *Stack) {
+    for(uint64_t i=0; i<N; i++){
+        if(byte==8) continue;
+        //if no more hash is needed
+        if(Psum[i]+Hist[i]==0) continue;
+        if(fitsCache(i)){
+            quicksort(Psum[i],Psum[i]+Hist[i]-1);
+            //copy only if we wrote to _R
+            if ((byte %2) == 1) {
+                for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
+                    R[j]=_R[j];
+            }
+        }
+        else{
+            if(Hist[i]==0) continue;
+            Stack->push(new sorted_radix(Psum[i],Hist[i],_R,R,data,rows,byte+1)); //hash again
+        }
+    }
+}
+
+uint64_t sorted_radix::partition(uint64_t start, uint64_t end) {
+    uint64_t pivot=_R[end];
+    uint64_t i=start;
+    uint64_t temp;
+
+    for(int j=start; j<end; j++){
+        if (data[rows[_R[j]]] < data[rows[pivot]]) {
+            temp = _R[i];
+            _R[i] = _R[j];
+            _R[j] = temp;
+            i++;
+        }
+    }
+    temp=_R[i];
+    _R[i]=_R[end];
+    _R[end]=temp;
+    return i;
+}
+
+rows_array *sorted_radix::getR() {
+    return new rows_array(size,R,rows);
+}
+
+sorted_radix::sorted_radix(uint64_t offset, uint64_t s, uint64_t *r, uint64_t *_r, uint64_t *d, uint64_t *rs, int b) :radix(offset,s,r,_r,d,b){
+    rows=rs;
+}
+
+sorted_radix::sorted_radix(uint64_t s, uint64_t *r, uint64_t *d) :radix(s,NULL,d){
+    rows=r;
 }
 
 

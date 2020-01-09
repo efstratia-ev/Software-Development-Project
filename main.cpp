@@ -16,6 +16,7 @@
 // sed -i 's/,/ /g' filename
 
 //using namespace std;
+JobScheduler *js;
 
 char *create_outfileName(char *filename) {
     int i;
@@ -31,7 +32,7 @@ char *create_outfileName(char *filename) {
 void DoQueries(Relations *rels) {
     char *line = nullptr;
     size_t size = 0;
-    auto js = new JobScheduler();
+    js = new JobScheduler();
     js->Init(4);
     //TODO: forget about vectors and use lists or be a bad boy 
     vector<char *> lines;
@@ -54,7 +55,7 @@ void DoQueries(Relations *rels) {
                 //If there is much complexity, we should definetely.
                 auto sql = new SQL(line,tmpRels);
                 sqlVec.push_back(sql);
-                auto job = new QueryJob(sql,tmpRels,&sumsArr[i]);
+                auto job = new QueryJob(sql, tmpRels, sumsArr[i]);
                 js->Schedule(job);
                 i++;
             }
@@ -62,7 +63,7 @@ void DoQueries(Relations *rels) {
             for (int i =0; i < lines.size(); i++) {
                 cout << endl;
                 for (int j = 0; j < sqlVec[i]->get_results_counter();j++)  {
-                    if (sumsArr[i] == nullptr) 
+                    if (sumsArr[i] == nullptr || sumsArr[i][j]==0)
                         cout << "NULL ";
                     else 
                         cout << sumsArr[i][j] << " ";
@@ -70,7 +71,8 @@ void DoQueries(Relations *rels) {
             }
             lines.clear();
             sqlVec.clear();
-        } else {
+        }
+        else {
             auto _line = new char[strlen(line)+1];
             strcpy(_line,line);
             lines.push_back(_line); 
@@ -100,20 +102,11 @@ int main(int argc, char *argv[]) {
     SQL *sql;
     auto *results = new results_list();
 
-    char *outfile = create_outfileName(filename);  //makes output file
-    FILE *file;
-    file = fopen(outfile, "w");
-    if (file == nullptr) {
-        cout << "file " << outfile << " can not be opened" << endl;
-        return -1;
-    }
-
     char *line = nullptr;
     size_t size = 0;
     DoQueries(relations);
     delete results;
     delete relations;
-    delete[] outfile;
     //free(line);
     //fclose(file);
     return 0;

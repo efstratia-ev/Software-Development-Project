@@ -2,5 +2,7 @@
 #include "job.h"
 
 int QueryJob::Run() {
-    *sums = DoQuery(sql,rels);
+    s=query->DoQuery();
 }
+
+

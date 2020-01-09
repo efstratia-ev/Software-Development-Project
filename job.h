@@ -2,25 +2,35 @@
 #define JOB
 #include "relations.h"
 #include "SQL.h"
+#include "query.h"
+
+class radix;
+class sorted_radix;
+class JobScheduler;
+
 //#include "do_query.h"
+extern JobScheduler *js;
 
 class Job { 
     public:
     virtual int Run() = 0;
-    //virtual ~Job() {};
+   // ~Job() {};
 };
 
 class QueryJob : public Job {
-    SQL *sql;
-    Relations *rels;
-    uint64_t **sums;
+    Query *query;
+    uint64_t *&s;
     public:
-    QueryJob(SQL *sql,Relations *rels,uint64_t **sums) {
-        this->sql = sql;
-        this->rels = rels;
-        this->sums = sums;
+    QueryJob(SQL *sql, Relations *rels, uint64_t *&sums) : s(sums) {
+        query=new Query(rels,sql);
     }
     int Run();
+};
+
+class SortJob:public Job{
+    radix *Radix;
+public:
+
 };
 
 #endif

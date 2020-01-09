@@ -11,7 +11,7 @@
 #include "radix.h"
 #include "stack.h"
 #include "sort.h"
-#include "array.h"
+#include "rows_array.h"
 #include "relations.h"
 #include "results_list.h"
 #include "JoinArray.h"

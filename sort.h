@@ -1,15 +1,15 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include "array.h"
+#include "rows_array.h"
 #include "list.h"
 #include "radix.h"
 
-list *join(array *array1,array *array2,uint64_t *column1,uint64_t *column2);
+list *join(rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2);
 
-list *sortedjoin(array *array1,array *array2,uint64_t *column1,uint64_t *column2);
+list *sortedjoin(rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2);
 
-array *sort(radix *r);
+rows_array *sort(radix *r);
 
 
 

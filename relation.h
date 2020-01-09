@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "array.h"
+#include "rows_array.h"
 #include "stats.h"
 
 //using namespace std;

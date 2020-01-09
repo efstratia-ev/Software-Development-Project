@@ -1,6 +1,6 @@
 #include <iostream>
 #include "JoinArray.h"
-#include "array.h"
+#include "rows_array.h"
 #include "sort.h"
 
 using namespace std;
@@ -226,7 +226,7 @@ void JoinArray::joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *
 //to add in ResultsArray after join.
 list *JoinArray::Join(int relID1,int colID1,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto arr1 = sort(new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
     auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
     list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
@@ -239,7 +239,7 @@ list *JoinArray::Join(int relID1,int colID1,int relID2,int colID2) {
 
 list *JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = new array(size,Array[relToBeJoined]);
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
     auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
     list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
@@ -251,9 +251,9 @@ list *JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2) {
 
 list *JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto arr1 = sort(new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
     array2->setrel(relID2);
-    auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    auto arr2 = sort(new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
     list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
     delete[] arr1->Array;
@@ -265,9 +265,9 @@ list *JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int col
 
 list *JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
     setrel(relID1);
-    auto arr1 = new array(size,Array[relToBeJoined]);
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
     array2->setrel(relID2);
-    auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    auto arr2 = sort(new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
     list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
     results->restart_current();
     delete[] arr2->Array;
