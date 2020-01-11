@@ -1,7 +1,8 @@
 #include <iostream>
 #include "sort.h"
-#include "jobscheduler.h"
+
 using namespace std;
+
 list *join(rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2) {  //does the final comparison between two sorted rows_arrays
     list *resultlist=new list();
     uint64_t i=0,j=0;
@@ -27,21 +28,15 @@ list *join(rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uin
     return resultlist;
 }
 
-rows_array *sort(radix *r) {  //function that sort rows_arrays by quantum
-    auto *Stack=new stack();
-    Stack->push(r);
-    radix *currentRadix;
-    while(Stack->notEmpty()){
-        currentRadix=Stack->pop();
-        currentRadix->group();  //make histogram+prefixSum and reorder rows_array
-        currentRadix->split(Stack);
-        if(currentRadix!=r) delete currentRadix;
+rows_array *sort(sem_t *semaphore,Query *Q,radix *r) {  //function that sort rows_arrays by quantum
+    r->group();
+    int count = 0;
+    for(int i=0; i<NUMJOBS; i++) {
+        //js->Schedule(new SortJob(semaphore, Q, r, N / NUMJOBS * i, N / NUMJOBS * (i + 1)));
+        js->Schedule(new SortJob(semaphore, Q, r, count, count+N/NUMJOBS));
+        count += N /NUMJOBS;
     }
-    delete Stack;
-    rows_array *sortedR=r->getR();
-    r->delete_R();
-    delete r;
-    return sortedR;
+    return r->getR();
 }
 
 list *sortedjoin(rows_array *rows_array1, rows_array *rows_array2, uint64_t *column1, uint64_t *column2) {

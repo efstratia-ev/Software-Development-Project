@@ -25,6 +25,13 @@ class JobScheduler {
     bool Destroy();
     void Barrier();
     void Schedule(Job *job);
+    void Schedule(Job *job,sem_t *sem,int val) {
+        addActiveJobs();
+        unique_lock<mutex> lk(queuMu);
+        q->push(job,sem,val);
+        lk.unlock();
+        cv.notify_one();
+    }
     void Stop();
     void runJobs();
     void addActiveJobs();

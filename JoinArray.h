@@ -5,6 +5,9 @@
 #include "list.h"
 #include "relations.h"
 
+
+class Query;
+
 class JoinArray {
     Relations *rels; //Join needs this
     uint64_t size{}; //size of joinResults
@@ -34,11 +37,10 @@ public:
     void less_than(uint64_t column,uint64_t value);
     void equal(uint64_t column,uint64_t value);
     bool exists(int arrayID);
-    list *Join(int relID1,int col1,int relID2,int colID2);
-    list *sortedJoin(int relID1,int col1,int relID2,int colID2);
-    list *Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
-    list *sortedJoin(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
-    void joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *array2);
+    void Join(int relID1,int col1,int relID2,int colID2,Query *Q);
+    void sortedJoin(int relID1,int col1,int relID2,int colID2,Query *Q);
+    void Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2,Query *Q);
+    void sortedJoin(int relID1,int col1,JoinArray *array2,int relID2,int colID2,Query *Q);
     uint64_t get_sum(int relID,int colID);
     void print();
 };

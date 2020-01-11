@@ -210,70 +210,49 @@ bool JoinArray::exists(int relation) { //check if relation exists in join array
 //wraps join and update. If array2 isn't nil it performs a join 
 //with two JoinArrays. Otherwise performs join with one JoinArray
 //and one relation (simple array).
-void JoinArray::joinUpdate(int relID1,int col1,int relID2,int colID2,JoinArray *array2) {
-    list *lst;
-    if (array2 != nullptr) {
-        lst = Join(relID1,col1,array2,relID2,colID2);
-        update_array(lst,array2);
-    } else {
-        lst = Join(relID1,col1,relID2,colID2);
-        update_array(lst,relID2);
-    }
-}
 
 //relID1 is the relation that already exists in ResultsArray and we 
 //will call sortRel on. relID2 is the relation that we are willing
 //to add in ResultsArray after join.
-list *JoinArray::Join(int relID1,int colID1,int relID2,int colID2) {
+void JoinArray::Join(int relID1,int colID1,int relID2,int colID2,Query *Q) {
     setrel(relID1);
-    auto arr1 = sort(new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
-    auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
-    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
-    results->restart_current();
-    delete[] arr1->Array;
-    delete[] arr2->Array;
-    delete arr1;
-    delete arr2;
-    return results;
+    sem_t *sem=new sem_t;
+    sem_init(sem, 1, 0);
+    auto arr1 = sort(sem,Q,new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto arr2 = sort(sem,Q,new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,2*NUMJOBS);
 }
 
-list *JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2) {
+void JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2,Query *Q) {
     setrel(relID1);
+    sem_t *sem=new sem_t;
+    sem_init(sem, 1, 0);
     auto arr1 = new rows_array(size,Array[relToBeJoined]);
-    auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
-    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
-    results->restart_current();
-    delete[] arr2->Array;
-    delete arr1;
-    delete arr2;
-    return results;
+    auto arr2 = sort(sem,Q,new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,NUMJOBS);
+
 }
 
-list *JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
+void JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colID2,Query *Q) {
     setrel(relID1);
-    auto arr1 = sort(new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    sem_t *sem=new sem_t;
+    sem_init(sem, 1, 0);
+    auto arr1 = sort(sem,Q,new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
     array2->setrel(relID2);
-    auto arr2 = sort(new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
-    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
-    results->restart_current();
-    delete[] arr1->Array;
-    delete[] arr2->Array;
-    delete arr1;
-    delete arr2;
-    return results;
+    auto arr2 = sort(sem,Q,new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,2*NUMJOBS);
+
 }
 
-list *JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
+void JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2,Query *Q) {
     setrel(relID1);
+    sem_t *sem=new sem_t;
+    sem_init(sem, 1, 0);
     auto arr1 = new rows_array(size,Array[relToBeJoined]);
     array2->setrel(relID2);
-    auto arr2 = sort(new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
-    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
-    results->restart_current();
-    delete[] arr2->Array;
-    delete arr1;
-    delete arr2;
-    return results;
+    auto arr2 = sort(sem,Q,new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    int val;
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,NUMJOBS);
 }
 
 void JoinArray::grater_than(uint64_t column, uint64_t value) {

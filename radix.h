@@ -3,8 +3,8 @@
 
 #include "rows_array.h"
 #include "list.h"
-#include "stack.h"
 #include "relation.h"
+#include "stack.h"
 
 #define N 512
 #define L1size 640
@@ -33,6 +33,7 @@ public:
     uint64_t hash(uint64_t value);
     bool fitsCache(uint64_t i);
     virtual void split(stack *Stack);
+    virtual void split(stack *Stack,int offset,int size);
     void quicksort(uint64_t start,uint64_t end);
     virtual uint64_t partition(uint64_t start,uint64_t end);
     virtual rows_array *getR();
@@ -50,5 +51,6 @@ public:
     uint64_t partition(uint64_t start,uint64_t end);
     void split(stack *Stack);
     rows_array *getR();
+    void split(stack *Stack,int offset,int size);
 };
 #endif

@@ -10,10 +10,11 @@ class qnode {
     public:
     Job *job;
     qnode *next;
-    qnode(Job *job) {
-        this->job = job;
-        this->next = nullptr;
-    }
+    sem_t *sem;
+    int val;
+    qnode(Job *job);
+    qnode(Job *job,sem_t *sem,int val);
+    bool is_ready();
 };
 
 class queue {
@@ -21,12 +22,9 @@ class queue {
     qnode *tail;
     int size;
     public:
-    queue() {
-        head = nullptr;
-        tail = nullptr;
-        size = 0;
-    }
-    void push(Job *job); 
+    queue();
+    void push(Job *job);
+    void push(Job *job,sem_t *sem,int val);
     Job *pop();
     bool empty();
     //getters and print for debug only

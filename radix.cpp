@@ -139,6 +139,26 @@ void radix::delete_R() {
     delete[] _R;
 }
 
+void radix::split(stack *Stack, int offset, int size) {
+    for(uint64_t i=offset; i<size; i++){
+        if(byte==8) continue;
+        //if no more hash is needed
+        if(Psum[i]+Hist[i]==0) continue;
+        if(fitsCache(i)){
+            quicksort(Psum[i],Psum[i]+Hist[i]-1);
+            //copy only if we wrote to _R
+            if ((byte %2) == 1) {
+                for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
+                    R[j]=_R[j];
+            }
+        }
+        else{
+            if(Hist[i]==0) continue;
+            Stack->push(new radix(Psum[i],Hist[i],_R,R,data,byte+1)); //hash again
+        }
+    }
+}
+
 void sorted_radix::histogram() {
     for (unsigned int & i : Hist)
         i = 0;
@@ -217,6 +237,26 @@ sorted_radix::sorted_radix(uint64_t offset, uint64_t s, uint64_t *r, uint64_t *_
 
 sorted_radix::sorted_radix(uint64_t s, uint64_t *r, uint64_t *d) :radix(s,NULL,d){
     rows=r;
+}
+
+void sorted_radix::split(stack *Stack, int offset, int size) {
+    for(uint64_t i=offset; i<size; i++){
+        if(byte==8) continue;
+        //if no more hash is needed
+        if(Psum[i]+Hist[i]==0) continue;
+        if(fitsCache(i)){
+            quicksort(Psum[i],Psum[i]+Hist[i]-1);
+            //copy only if we wrote to _R
+            if ((byte %2) == 1) {
+                for(int j=Psum[i]; j<Psum[i]+Hist[i]; j++)
+                    R[j]=_R[j];
+            }
+        }
+        else{
+            if(Hist[i]==0) continue;
+            Stack->push(new sorted_radix(Psum[i],Hist[i],_R,R,data,rows,byte+1)); //hash again
+        }
+    }
 }
 
 
