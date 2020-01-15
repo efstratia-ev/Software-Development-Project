@@ -222,3 +222,15 @@ void Query::update_array(list *res, uint64_t offset) {
         results->update_array(res,filter_results[max-1],offset);
     }
 }
+
+void Query::update_array_element(uint64_t num1, uint64_t num2, uint64_t i) {
+    if(type==create){
+        results->set_array(i,num1,num2);
+    }
+    else if(type==update){
+        results->set_newArray(i,num1,num2);
+    }
+    else{
+        results->set_newArray(i,num1,num2,filter_results[max-1]);
+    }
+}

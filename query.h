@@ -22,6 +22,7 @@ public:
     void DoQuery(bool filters);
     void add_joined_array(uint64_t size,int array1,int array2);
     void update_array(list *res,uint64_t offset);
+    void update_array_element(uint64_t num1,uint64_t num2,uint64_t i);
 };
 
 

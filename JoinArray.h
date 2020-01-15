@@ -50,6 +50,24 @@ public:
     void sortedJoin(int relID1,int col1,JoinArray *array2,int relID2,int colID2,Query *Q);
     uint64_t get_sum(int relID,int colID);
     void print();
+    void set_array(uint64_t i,uint64_t num1,uint64_t num2){
+        Array[i][0]=num1;
+        Array[i][1]=num2;
+    }
+    void set_newArray(uint64_t i,uint64_t num1,uint64_t num2){
+        for(uint64_t j=0; j<numRels; j++){
+            int temp=relationIDs[j];
+            new_array[temp][i]=Array[j][num1]; //keep from the old array the rows that are extracted from the list
+        }
+        new_array[n][i]=num2;   //in every row add the value of the new column (new relation added)
+    }
+    void set_newArray(uint64_t i,uint64_t num1,uint64_t num2,JoinArray *array2){
+        for(uint64_t j=0; j<numRels; j++){
+            int temp=relationIDs[j];
+            new_array[temp][i]=Array[j][num1]; //keep from the old array the rows that are extracted from the list
+        }
+        new_array[n][i]=array2->Array[0][num2];   //in every row add the value of the new column (new relation added)
+    }
 };
 
 

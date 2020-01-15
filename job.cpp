@@ -58,11 +58,21 @@ JoinJob::JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2
 }
 
 int JoinJob::Run() {
-    list *resultlist=new list();
-    if(sorted) add_sortjoin_results(offset1,size1,offset2,size2,array2,resultlist);
-    else add_join_results(offset1,size1,offset2,size2,array1,array2,resultlist);
-    resultlist->restart_current();
-    query->update_array(resultlist,res_counter);
+    int curr=0;
+    if(sorted){
+        for(uint64_t x=offset1; x<size1; x++){
+            for(uint64_t y=offset2; y<size2; y++){
+                query->update_array_element(x,array2->Array[y],res_counter+curr++);
+            }
+        }
+    }
+    else {
+        for(uint64_t x=offset1; x<size1; x++){
+            for(uint64_t y=offset2; y<size2; y++){
+                query->update_array_element(array1->Array[x],array2->Array[y],res_counter+curr++);
+            }
+        }
+    }
     sem_post(sem);
 }
 
