@@ -8,6 +8,7 @@ Query::Query(Relations *rels, SQL *s,uint64_t *&sm):sums(sm) {
     sums= NULL;
     results= nullptr;
     max=0;
+    type=create;
 }
 
 int Query::isRelationFiltered(int relation) {
@@ -78,11 +79,13 @@ bool Query::execute_filters() {
 
 void Query::DoQuery(bool filters) {
     Predicate *predicate = nullptr;
+    if(results) results->keep_new_results();
+    if(type==update_filtered){
+        delete filter_results[max-1];
+        max--;
+    }
+    type=create;
     if (filters && (predicate = sql->getPredicate())) {  //joins between relation
-        if (results && results->getSize() == 0) {
-            delete predicate;
-            return;
-        }
         if (predicate->is_filter()) {
             results->compare(predicate->get_array(), predicate->get_column(), predicate->get_array2(),
                              predicate->get_column2());
@@ -148,7 +151,10 @@ void Query::DoQuery(bool filters) {
                 new radix(relations->get_relRows(array1), relations->get_column(array1, predicate->get_column())));
         auto arr2 = sort(sem,this,
                 new radix(relations->get_relRows(array2), relations->get_column(array2, predicate->get_column2())));
-        js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2),sem,2*NUMJOBS);
+        if(array1<array2)
+            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2),sem,2*NUMJOBS);
+        else
+            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1),sem,2*NUMJOBS);
         delete predicate;
     }
     //joinPredicates(filter_results,sql,relations,max);
@@ -168,34 +174,51 @@ void Query::DoQuery(bool filters) {
     delete results;
 }
 
-void Query::update_results(list *res, int array1, int array2) {
-    res->restart_current();
+void Query::add_joined_array(uint64_t size, int array1, int array2) {
     if(!results){
         results = new JoinArray(relations);
-        results->create_array(res, array1, array2);
+        if(array1<array2) results->add_relations(array1, array2,size);
+        else results->add_relations(array2, array1,size);
+        type=create;
     }
     else if(results->exists(array1)){
         int curr = isRelationFiltered(array2);
         if (curr == -1) {
-            results->update_array(res, array2);
+            results->add_relation(array2,size);
+            type=update;
         }
         else {
-            results->update_array(res, filter_results[curr]);
-            delete filter_results[curr];
+            results->add_relation(array2,size);
+            JoinArray *temp=filter_results[curr];
             filter_results[curr] = filter_results[max - 1];
-            max--;
+            filter_results[max - 1]=temp;
+            type=update_filtered;
         }
     }
     else if(results->exists(array2)){
         int curr = isRelationFiltered(array1);
         if (curr == -1) {
-            results->update_array(res, array1);
+            results->add_relation(array1,size);
+            type=update;
         }
         else {
-            results->update_array(res, filter_results[curr]);
-            delete filter_results[curr];
+            results->add_relation(array1,size);
+            type=update_filtered;
+            JoinArray *temp=filter_results[curr];
             filter_results[curr] = filter_results[max - 1];
-            max--;
+            filter_results[max - 1]=temp;
         }
+    }
+}
+
+void Query::update_array(list *res, uint64_t offset) {
+    if(type==create){
+        results->create_array(res,offset);
+    }
+    else if(type==update){
+        results->update_array(res,offset);
+    }
+    else{
+        results->update_array(res,filter_results[max-1],offset);
     }
 }

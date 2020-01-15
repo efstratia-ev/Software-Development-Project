@@ -25,6 +25,7 @@ class queue {
     queue();
     void push(Job *job);
     void push(Job *job,sem_t *sem,int val);
+    void push(queue *q);
     Job *pop();
     bool empty();
     //getters and print for debug only

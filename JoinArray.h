@@ -14,6 +14,10 @@ class JoinArray {
     uint64_t **Array{};
     int numRels; //how many rels are in JoinArray
     int *relationIDs{}; //which rels
+    int *newrelationIDs{};
+    uint64_t new_size;
+    uint64_t **new_array;
+    int n;
     //relation belonging to relationIDs array that we 
     //will apply the next join on.
     int relToBeJoined{};
@@ -25,10 +29,13 @@ public:
     explicit JoinArray(Relations *r);
     ~JoinArray();
     uint64_t get_value(uint64_t i);
-    void update_array(list *results,int id);
-    void update_array(list *results,JoinArray *array2);
+    void keep_new_results();
+    void add_relation(int id,uint64_t newsize);
+    void add_relations(int id1,int id2,uint64_t newsize);
+    void update_array(list *results,uint64_t offset);
+    void update_array(list *results,JoinArray *array2,uint64_t offset);
     void create_array(list *results,int id);
-    void create_array(list *results,int id1,int id2);
+    void create_array(list *results,uint64_t offset);
     int get_column(int arrayID);
     void filter_update(list *results);
     void compare(int arrayID,uint64_t column1,uint64_t column2);

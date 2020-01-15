@@ -115,6 +115,7 @@ rowids *list::pop() {
     rowids *temp=current->pop();
     if(temp) return temp;
     current=current->getnext();
+    if(!current) return nullptr;
     return current->pop();
 }
 

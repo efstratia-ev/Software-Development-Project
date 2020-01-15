@@ -19,13 +19,17 @@ bool JobScheduler::Init(int numThreads) {
 
 void JobScheduler::runJobs() {
     while (true) {
-        unique_lock<mutex> lk(queuMu);
-        while (q->empty() && !stop)
-            cv.wait(lk);
-        if (stop)
-            return;
-        auto job = q->pop();
-        lk.unlock();
+        Job *job;
+        while(true) {
+            unique_lock<mutex> lk(queuMu);
+            while (q->empty() && !stop)
+                cv.wait(lk);
+            if (stop)
+                return;
+            job = q->pop();
+            lk.unlock();
+            if(job) break;
+        }
         job->Run();
         removeActiveJobs();
     }

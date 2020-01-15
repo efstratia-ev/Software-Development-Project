@@ -4,12 +4,11 @@
 void queue::push(Job *job) {
     auto node = new qnode(job);
     if (empty()) 
-        head = node;
+        tail= node;
     else 
-        tail->next = node;
-    tail = node;
+        node->next=head;
+    head = node;
     size++;
-
 }
 
 void queue::push(Job *job,sem_t *sem,int val) {
@@ -20,23 +19,34 @@ void queue::push(Job *job,sem_t *sem,int val) {
         tail->next = node;
     tail = node;
     size++;
-
 }
 
 Job *queue::pop() {
     if (empty()) 
         return nullptr;
-    auto tmp = &head;
-    while(true) {
-        if((*tmp)->is_ready()) break;
-        tmp=&((*tmp)->next);
-        if(!(*tmp)) tmp = &head;
+    if(head->is_ready()){
+        if(tail==head) tail= nullptr;
+        auto temp=head->job;
+        auto tmp=head;
+        head=tmp->next;
+        delete tmp;
+        size--;
+        return temp;
     }
-    auto temp=(*tmp)->job;
-    *tmp=(*tmp)->next;
+    auto tmp = head;
+    while(tmp->next){
+        if(tmp->next->is_ready()){
+            break;
+        }
+        tmp=tmp->next;
+    }
+    if(!tmp->next) return nullptr;
+    if(tmp->next==tail) tail=tmp;
+    auto temp=tmp->next->job;
+    auto del=tmp->next;
+    tmp->next=del->next;
+    delete del;
     size--;
-    if (empty())
-        tail = nullptr;
     return temp;
 }
 
@@ -48,6 +58,20 @@ queue::queue() {
     head = nullptr;
     tail = nullptr;
     size = 0;
+}
+
+void queue::push(queue *q) {
+    if (empty()) {
+        head = q->head;
+        tail = q->tail;
+    }
+    else{
+        tail->next = q->head;
+        tail=q->tail;
+    }
+    size+=q->size;
+    if(size>0 && tail==NULL)
+        cout<<"S"<<endl;
 }
 
 qnode::qnode(Job *job) {

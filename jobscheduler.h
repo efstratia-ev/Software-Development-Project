@@ -32,9 +32,21 @@ class JobScheduler {
         lk.unlock();
         cv.notify_one();
     }
+    void Schedule(queue *Q) {
+        addActiveJobs(Q->getSize());
+        unique_lock<mutex> lk(queuMu);
+        q->push(Q);
+        lk.unlock();
+        cv.notify_one();
+    }
     void Stop();
     void runJobs();
     void addActiveJobs();
+    void addActiveJobs(int jobs) {
+        unique_lock<mutex> lk(activeJobsMu);
+        activeJobs+=jobs;
+        lk.unlock();
+    }
     void removeActiveJobs();
     //getters for debug
     int getActiveJobs() {

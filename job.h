@@ -57,4 +57,33 @@ public:
     MergeJob(Query *q,rows_array *a1,rows_array *a2,bool s,uint64_t *c1,uint64_t *c2,int id1,int id2);
     int Run();
 };
+
+class JoinJob:public Job{
+    sem_t *sem;
+    Query *query;
+    rows_array *array1;
+    rows_array *array2;
+    bool sorted;
+    uint64_t offset1;
+    uint64_t size1;
+    uint64_t offset2;
+    uint64_t size2;
+    uint64_t res_counter;
+public:
+    JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2, bool sorted, uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter);
+    int Run();
+};
+
+class PredicateJob:public Job{
+    Query *query;
+    bool results_exist;
+public:
+    PredicateJob(Query *query,bool results_exist){
+        this->query=query;
+        this->results_exist=results_exist;
+    }
+    int Run(){
+        query->DoQuery(results_exist);
+    }
+};
 #endif

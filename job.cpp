@@ -1,4 +1,5 @@
 #include "job.h"
+#include "sort.h"
 
 int QueryJob::Run() {
     query->DoQuery(query->execute_filters());
@@ -40,12 +41,37 @@ MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c
 }
 
 int MergeJob::Run() {
-    list *res;
-    if(sorted) res=sortedjoin(array1,array2,column1,column2);
-    else res=join(array1,array2,column1,column2);
-    delete array1;
-    delete array2;
-    bool results_exist=(res->get_size()>0);
-    query->update_results(res,arrayID1,arrayID2);
-    query->DoQuery(results_exist);
+    join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
 }
+
+JoinJob::JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2, bool sorted,  uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter) {
+    this->sem=sem;
+    this->query=query;
+    this->array1=array1;
+    this->array2=array2;
+    this->sorted=sorted;
+    this->offset1=offset1;
+    this->size1=size1;
+    this->offset2=offset2;
+    this->size2=size2;
+    this->res_counter=res_counter;
+}
+
+int JoinJob::Run() {
+    list *resultlist=new list();
+    if(sorted) add_sortjoin_results(offset1,size1,offset2,size2,array2,resultlist);
+    else add_join_results(offset1,size1,offset2,size2,array1,array2,resultlist);
+    resultlist->restart_current();
+    query->update_array(resultlist,res_counter);
+    sem_post(sem);
+}
+
+/*
+int JoinJob::Run() {
+    list *resultlist=new list();
+    if(sorted) add_sortjoin_results(offset1,size1,offset2,size2,array2,resultlist);
+    else add_join_results(offset1,size1,offset2,size2,array1,array2,resultlist);
+    resultlist->restart_current();
+    query->update_array(resultlist,res_counter);
+    sem_post(sem);
+}*/
