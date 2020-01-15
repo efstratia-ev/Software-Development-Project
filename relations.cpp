@@ -15,6 +15,7 @@ Relation *Relations::relation(int i) {
     return rels[query_rels[i]];
 }
 
+
 Relations::Relations(char *filename) {
     ifstream infile(filename);
     string line;

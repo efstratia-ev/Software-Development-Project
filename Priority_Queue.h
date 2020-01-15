@@ -3,6 +3,7 @@
 
 
 #include "SQLInfo.h"
+#define STATS false
 
 class Priority_Queue_Node{
     Predicate *predicate;
@@ -14,6 +15,8 @@ public:
     void setNext(Priority_Queue_Node *next);
     ~Priority_Queue_Node();
     void setPredicateNULL();
+
+    void setPredicate(Predicate *predicate);
 };
 
 class List_Int{
@@ -44,6 +47,10 @@ public:
     bool AreUsedArray(int,int);
     bool AreFilteredArray(int,int);
     bool IsFilteredArray(int);
+    Predicate * getPredicateI(int i);
+    void DeletePQ();
+    void RearrangeStats(int * indices,int size);
+
     ~Priority_Queue();
 };
 

@@ -2,6 +2,8 @@
 #include <cstring>
 #include <string>
 #include <math.h>
+#include <vector>
+#include <limits.h>
 #include"SQL.h"
 
 
@@ -12,6 +14,7 @@ SQL::SQL(char *line,Relations *rels) {
     query[strlen(line)]='\0';
     where_predicates = new Priority_Queue();
     numInnerJoins = 0;
+    QueryMinCost = LONG_MAX ;
     CutQueryToParts();
 }
 
@@ -33,7 +36,22 @@ int SQL::CutQueryToParts(){
    where = q.substr (0,pos);
    SplitWherePredicates(where);
    filters=where_predicates->InitRearrange();
-
+   //stats
+   if(STATS) {
+       auto indices = new int[numInnerJoins];
+       for (int i = 0; i < numInnerJoins; i++) {
+           indices[i] = i;
+       }
+       for (int i = 0; i < numInnerJoins; i++) {
+           auto pr = where_predicates->getPredicateI(i);
+           uint64_t garbage;
+           pr->stats = applyJoinStats(rels, pr, garbage);
+           cout << "" << endl;
+       }
+       JoinsPermutations(indices, numInnerJoins, LONG_MAX);
+       print();
+       where_predicates->RearrangeStats(joinOrder, numInnerJoins);
+   }
    //get select
    select = q.substr(pos+1);
    InitSelectResults(select);
@@ -80,6 +98,7 @@ void SQL::SplitWherePredicates(const string& where){
     }
     predicate=where.substr( pos_start, std::min( pos, where.size() ) - pos_start + 1);
     isFilter(predicate)  ? GetWhereFilters(predicate) : GetWherePredicates(predicate) ;
+    joinOrder = new int[numInnerJoins];
 }
 
 bool SQL::isFilter(const string& predicate){
@@ -88,26 +107,6 @@ bool SQL::isFilter(const string& predicate){
         if(x == '.' ) sum++;
     }
     return sum != 2;
-}
-
-void SQL::GetWherePredicates(const string& predicate) {
-    int a1,c1,a2,c2;
-    size_t pos_start = 0;
-    size_t pos = predicate.find( '.' );
-    a1=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
-
-    pos_start = pos + 1;
-    pos = predicate.find( '=' , pos_start );
-    c1=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
-
-    pos_start = pos + 1;
-    pos = predicate.find( '.' , pos_start );
-    a2=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
-
-    pos_start = pos + 1;
-    c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
-    where_predicates->Push(new join(a1,c1,a2,c2));
-    numInnerJoins++;
 }
 
 void updatRemainingColStats(Relation *rel,uint64_t prevTotalValues,int updatedCol) {
@@ -130,6 +129,206 @@ void updatRemainingColStats(Relation *rel,uint64_t prevTotalValues,int updatedCo
             restStats->setTotalValues(st->getTotalValues());
         }
     }
+}
+
+void updatRemainingColStatsJoin(Relation *rel,int updatedCol,uint64_t prevTotalValues,uint64_t prevDisValues,uint64_t DisValues) {
+    auto sz = rel->getCols();
+    auto st = rel->getColStats(updatedCol);
+    stats *restStats;
+    for (int i =0; i < sz; i++) {
+        if (i == updatedCol)
+            continue;
+        restStats = rel->getColStats(i);
+        if (st->getTotalValues() == 0 ) {
+            restStats->setDistinctValues(0);
+        } else {
+            if(prevDisValues==0 || restStats->getDistinctValues()==0)
+                restStats->setDistinctValues(0);
+            else{
+                double temp = pow(1.0 - (double)DisValues/(double)prevDisValues ,(double)restStats->getTotalValues()/(double)restStats->getDistinctValues());
+                restStats->setDistinctValues(restStats->getDistinctValues()*(1.0- temp));
+            }
+            restStats->setTotalValues(prevTotalValues);
+        }
+    }
+}
+
+
+void updatRemainingColStatsSelfJoin(Relation *rel,int updatedCol,uint64_t TotalValues) {
+    auto sz = rel->getCols();
+    auto st = rel->getColStats(updatedCol);
+    stats *restStats;
+    for (int i =0; i < sz; i++) {
+        if (i == updatedCol)
+            continue;
+        restStats = rel->getColStats(i);
+        if (st->getTotalValues() == 0) {
+            restStats->setDistinctValues(0);
+        } else {
+            st->setTotalValues(TotalValues);
+        }
+    }
+}
+
+void swap(int &a, int &b){
+    int temp=a;
+    a=b;
+    b=temp;
+}
+
+//evaluate new stats after join with predidcate `pr`
+Relations *SQL::applyJoinStats(Relations *relsStats,Predicate * pr,uint64_t &cost ){
+    Relations * results = new Relations(relsStats->getRels(),relsStats->getSize()); //TODO deletion TT
+    results->set_query_rels(relsStats->getQueryRels());
+    int a1=pr->getArray1()->getArray(),a2=pr->getArray2()->getArray();
+    int c1=pr->getArray1()->getColumn(),c2=pr->getArray2()->getColumn();
+    auto rel1 = relsStats->relation(a1),rel2 = relsStats->relation(a2);  //the arrays
+    auto st1 = rel1->getColStats(c1),st2 = rel2->getColStats(c2); //the statistics
+    auto prevDistValues1 = st1->getDistinctValues(), prevDistValues2 = st2->getDistinctValues();
+    auto prevTotalValues1 = st1->getTotalValues(), prevTotalValues2 = st2->getTotalValues();
+    auto preMin1=st1->getMin(),prevMin2=st2->getMin();
+    auto preMax1=st1->getMax(),prevMax2=st2->getMax();
+    //set new min and max
+    auto tmpMin=st1->getMin() > st2->getMin() ? st1->getMin() : st2->getMin() ;
+    auto tmpMax= st1->getMax() > st2->getMax() ? st2->getMax() : st1->getMax() ;
+    results->relation(a1)->getColStats(c1)->setMax(tmpMax);
+    results->relation(a1)->getColStats(c1)->setMin(tmpMin);
+    results->relation(a2)->getColStats(c2)->setMax(tmpMax);
+    results->relation(a2)->getColStats(c2)->setMin(tmpMin);
+    auto n_tmp = st1->getMax()-st1->getMin()+1;
+    if(a1==a2){
+        if(c1==c2){
+            results->relation(a1)->getColStats(c1)->setTotalValues(prevTotalValues1*prevTotalValues1/n_tmp);
+            updatRemainingColStatsSelfJoin(results->relation(a1),c1,results->relation(a1)->getColStats(c1)->getTotalValues());
+        }
+        else{
+            if(prevTotalValues1==0 || prevDistValues1==0)
+                st1->setDistinctValues(0);
+            else {
+                auto temp = pow(1.0 - (double)st1->getTotalValues() / (double)prevTotalValues1, (double)prevTotalValues1 / (double)prevDistValues1);
+                results->relation(a1)->getColStats(c1)->setDistinctValues(prevTotalValues1 * (1 - temp));
+            }
+            updatRemainingColStats(results->relation(a1),prevDistValues1,c1);
+
+        }
+    }
+    else{
+        auto x = prevTotalValues1*prevTotalValues2/n_tmp ;
+        results->relation(a1)->getColStats(c1)->setTotalValues(x);
+        results->relation(a2)->getColStats(c2)->setTotalValues(x);
+        x=prevDistValues1*prevDistValues2/n_tmp;
+        results->relation(a1)->getColStats(c1)->setDistinctValues(x);
+        results->relation(a2)->getColStats(c2)->setDistinctValues(x);
+        updatRemainingColStatsJoin(results->relation(a1),c1,prevTotalValues1,prevDistValues1,results->relation(a1)->getColStats(c1)->getDistinctValues());
+        updatRemainingColStatsJoin(results->relation(a2),c2,prevTotalValues1,prevDistValues2,results->relation(a2)->getColStats(c2)->getDistinctValues());
+    }
+    ///////////////////////////////TEST
+    auto nDistValues1 = results->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = results->relation(a2)->getColStats(c2)->getDistinctValues();
+    auto nTotalValues1 = results->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = results->relation(a2)->getColStats(c2)->getTotalValues();
+    auto nMin1=results->relation(a1)->getColStats(c1)->getMin(),nMin2=results->relation(a2)->getColStats(c2)->getMin();
+    auto nMax1= results->relation(a1)->getColStats(c1)->getMax(),nMax2=results->relation(a2)->getColStats(c2)->getMax();
+
+
+    /////////////////////////
+    cost=results->relation(a1)->getColStats(c1)->getTotalValues();
+    return results;
+}
+
+
+void SQL::JoinsPermutations(int *indices,int size,uint64_t min) {
+    if (size == 1 && CheckConnection(indices)) { //
+        Relations *res;
+        uint64_t cost=0;
+        res = where_predicates->getPredicateI(indices[0])->stats;  //get the first stats
+//        int a1=where_predicates->getPredicateI(indices[0])->getArray1()->getArray(),a2=1;
+//        int c1=2,c2=0;
+//        auto nDistValues1 = res->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = res->relation(a2)->getColStats(c2)->getDistinctValues();
+//        auto nTotalValues1 = res->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = res->relation(a2)->getColStats(c2)->getTotalValues();
+//        auto nMin1=res->relation(a1)->getColStats(c1)->getMin(),nMin2=res->relation(a2)->getColStats(c2)->getMin();
+//        auto nMax1= res->relation(a1)->getColStats(c1)->getMax(),nMax2=res->relation(a2)->getColStats(c2)->getMax();
+
+        for (int i =1; i < numInnerJoins; i++) {
+            res = applyJoinStats(res,where_predicates->getPredicateI(indices[i]),cost);  //apply all the stats until the end
+//            a1=where_predicates->getPredicateI(indices[i])->getArray1()->getArray(),a2=where_predicates->getPredicateI(indices[i])->getArray2()->getArray();
+//            c1=where_predicates->getPredicateI(indices[i])->getArray1()->getColumn(),c2=where_predicates->getPredicateI(indices[i])->getArray2()->getColumn();
+//            nDistValues1 = res->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = res->relation(a2)->getColStats(c2)->getDistinctValues();
+//            nTotalValues1 = res->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = res->relation(a2)->getColStats(c2)->getTotalValues();
+//            nMin1=res->relation(a1)->getColStats(c1)->getMin(),nMin2=res->relation(a2)->getColStats(c2)->getMin();
+        }
+        if (cost < QueryMinCost) {
+            QueryMinCost = cost;
+            for (int i = 0; i < numInnerJoins; i++)
+                joinOrder[i] = indices[i];
+
+        }
+    }
+    for (int i=0; i < size; i++) {
+        JoinsPermutations(indices,size-1,min);
+        if(size%2==1){
+            swap(indices[0],indices[size-1]
+            );
+        }
+        else {
+            swap(indices[i], indices[size - 1]);
+        }
+    }
+}
+
+
+void SQL::GetWherePredicates(const string& predicate) {
+    int a1,c1,a2,c2;
+    size_t pos_start = 0;
+    size_t pos = predicate.find( '.' );
+    a1=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
+
+    pos_start = pos + 1;
+    pos = predicate.find( '=' , pos_start );
+    c1=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
+
+    pos_start = pos + 1;
+    pos = predicate.find( '.' , pos_start );
+    a2=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
+
+    pos_start = pos + 1;
+    c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
+    //statistics
+//    auto rel1 = rels->relation(a1),rel2 = rels->relation(a2);  //the arrays
+//    auto st1 = rel1->getColStats(c1),st2 = rel2->getColStats(c2); //the statistics
+//    auto prevDistValues1 = st1->getDistinctValues(), prevDistValues2 = st2->getDistinctValues();
+//    auto prevTotalValues1 = st1->getTotalValues(), prevTotalValues2 = st2->getTotalValues();
+//    //set new min and max
+//    auto tmpMin=st1->getMin() > st2->getMin() ? st1->getMin() : st2->getMin() ;
+//    auto tmpMax= st1->getMax() > st2->getMax() ? st2->getMax() : st1->getMax() ;
+//    st1->setMax(tmpMax);
+//    st1->setMin(tmpMin);
+//    st2->setMax(tmpMax);
+//    st2->setMin(tmpMin);
+//    auto n_tmp = st1->getMax()-st1->getMin()+1;
+//    if(a1==a2){
+//        if(c1==c2){
+//            st1->setTotalValues(prevTotalValues1*prevTotalValues1/n_tmp);
+//            updatRemainingColStatsSelfJoin(rel1,c1,st1->getTotalValues());
+//        }
+//        else{
+//            if(prevTotalValues1==0 || prevDistValues1==0) st1->setDistinctValues(0);
+//            else {
+//                auto temp = pow(1.0 - st1->getTotalValues() / prevTotalValues1, prevTotalValues1 / prevDistValues1);
+//                st1->setDistinctValues(prevTotalValues1 * (1 - temp));
+//            }
+//            updatRemainingColStats(rel1,prevDistValues1,c1);
+//
+//        }
+//    }
+//    else{
+//        st1->setTotalValues(prevTotalValues1*prevTotalValues2/n_tmp);
+//        st1->setDistinctValues(prevDistValues1*prevDistValues2/n_tmp);
+//        st2->setTotalValues(prevTotalValues1*prevTotalValues2/n_tmp);
+//        st2->setDistinctValues(prevDistValues1*prevDistValues2/n_tmp);
+//        updatRemainingColStatsJoin(rel1,c1,prevTotalValues1,prevDistValues1,st1->getDistinctValues());
+//        updatRemainingColStatsJoin(rel2,c2,prevTotalValues1,prevDistValues2,st2->getDistinctValues());
+//    }
+    where_predicates->Push(new join(a1,c1,a2,c2));
+    numInnerJoins++;
 }
 
 void SQL::GetWhereFilters(string predicate){
@@ -252,4 +451,25 @@ SQL::~SQL() {
     delete[] from_arrays;
     delete where_predicates;
     delete[] select_results;
+}
+
+bool SQL::CheckConnection(int *indices){
+    bool * existance = new bool[numInnerJoins];
+    for (int i=0; i < numInnerJoins; i++) {
+        existance[i]=false;
+    }
+    Predicate * current=where_predicates->getPredicateI(indices[0]);
+    existance[current->getArray1()->getArray()]=true;
+    existance[current->getArray2()->getArray()]=true;
+    for (int i=1; i < numInnerJoins; i++) {
+        current=where_predicates->getPredicateI(indices[i]);
+        if(existance[current->getArray1()->getArray()]==false && existance[current->getArray2()->getArray()]==false){
+            delete[] existance;
+            return false;
+        }
+        existance[current->getArray1()->getArray()]=true;
+        existance[current->getArray2()->getArray()]=true;
+    }
+    delete[] existance;
+    return true;
 }

@@ -1,4 +1,5 @@
 #include <cstdint>
+#include "relations.h"
 
 class set{
     int array{};
@@ -17,6 +18,7 @@ public:
 class Predicate{  //this is a predicate
     set *array1;
 public:
+    Relations * stats;
     Predicate(int a,int c);
     virtual ~Predicate();
     virtual bool is_filter()=0;

@@ -24,22 +24,25 @@ Predicate* Priority_Queue::Pop(){  //pop a predicate
     temp->setNext(NULL);
     delete temp;
     size--;
-    if(size==0) return predicate;
-    if(!predicate->is_filter()){
-        int array1=predicate->getArray1()->getArray();
-        int array2=predicate->getArray2()->getArray();
-        if(!IsUsedArray(array1)) used_arrays= new List_Int(array1,used_arrays);
-        if(!IsUsedArray(array2)) used_arrays= new List_Int(array2,used_arrays);
+
+    if (size == 0) return predicate;
+    if (!predicate->is_filter()) {
+        int array1 = predicate->getArray1()->getArray();
+        int array2 = predicate->getArray2()->getArray();
+        if (!IsUsedArray(array1)) used_arrays = new List_Int(array1, used_arrays);
+        if (!IsUsedArray(array2)) used_arrays = new List_Int(array2, used_arrays);
         last_joined[0].copy(predicate->getArray1());
         last_joined[1].copy(predicate->getArray2());
-        Rearrange();
-    }
-    else {
-        int array=predicate->getArray1()->getArray();
-        if(!IsFilteredArray(array)) filtered_arrays= new List_Int(array,filtered_arrays);
-        Rearrange();
+        if(!STATS) Rearrange();
+    } else {
+        int array = predicate->getArray1()->getArray();
+        if (!IsFilteredArray(array)) filtered_arrays = new List_Int(array, filtered_arrays);
+        if(!STATS) Rearrange();
     }
 
+//    cout<<"predicate "<< predicate->getArray1()->getArray()<<"."<<predicate->getArray1()->getColumn();
+//    if(predicate->is_filter()) cout<<predicate->get_comp()<<predicate->get_value()<<endl;
+//    else cout<<"="<< predicate->getArray2()->getArray()<<"."<<predicate->getArray2()->getColumn()<<endl;
     return predicate;
 }
 
@@ -219,6 +222,48 @@ Priority_Queue_Node::~Priority_Queue_Node() {
     delete predicate;
 }
 
+Predicate * Priority_Queue::getPredicateI(int who){
+    Priority_Queue_Node *current=head;
+    int i=0;
+    while(current){
+        if(!current->getPredicate()->is_filter()){
+            if(i==who) return current->getPredicate();
+            i++;
+        }
+        current=current->get_next();
+    }
+    return nullptr;
+}
+
+void Priority_Queue::DeletePQ(){
+    Priority_Queue_Node *current=head;
+    while(!this->IsEmpty()){
+        this->Pop();
+    }
+}
+void Priority_Queue::RearrangeStats(int * joinOrder,int size){
+    Predicate ** storePredicates= new Predicate *[size];
+//    joinOrder[0]=0; thelei to 2 kai meta ta alla opws na nai.
+//    joinOrder[1]=1;
+//    joinOrder[2]=2;
+    for(int i=0; i<size; i++){
+        storePredicates[i]=this->getPredicateI(joinOrder[i]);
+    }
+    Priority_Queue_Node *current=head;
+    while(current->getPredicate()->is_filter()){
+        current=current->get_next();
+    }
+    for(int i=0; i<size; i++){
+        current->setPredicate(storePredicates[i]);
+        current=current->get_next();
+    }
+    delete[] storePredicates;
+}
+
 void Priority_Queue_Node::setPredicateNULL() {
     predicate=NULL;
+}
+
+void Priority_Queue_Node::setPredicate(Predicate *predicate) {
+    Priority_Queue_Node::predicate = predicate;
 }

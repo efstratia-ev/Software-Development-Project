@@ -14,6 +14,9 @@ class SQL{  //keeps all the information needed from the query
     //how many inner joins the query has
     int numInnerJoins;
     Relations *rels;
+    int *joinOrder;
+    uint64_t QueryMinCost;
+    int initJoinStatsSz;
 public:
     explicit SQL(char *line,Relations *rels);
     ~SQL();
@@ -34,6 +37,17 @@ public:
     int get_results_counter();
     set *get_select();
     int *get_from_arrays();
-};
+    void EvaluateMinCost();
+    void  JoinsPermutations(int *indices,int size,uint64_t min);
+    Relations *applyJoinStats(Relations *relsStats,Predicate * pr,uint64_t &cost );
+    void print(){
+        for(int i=0;i<numInnerJoins;i++) cout<<joinOrder[i] <<" ";
+        cout<<endl;
+    }
+    bool CheckConnection(int *indices);
+
+
+
+    };
 
 #endif

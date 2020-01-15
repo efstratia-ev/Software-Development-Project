@@ -32,7 +32,10 @@ public:
     uint64_t get_relRows(uint64_t rel);
     uint64_t *get_column(uint64_t rel,uint64_t col);
     Relation **getRels() { return rels; }
-};
+    int * getQueryRels(){
+        return query_rels;
+    }
+    };
 
 
 #endif
