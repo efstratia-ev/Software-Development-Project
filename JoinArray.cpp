@@ -279,7 +279,7 @@ void JoinArray::add_relation(int id, uint64_t newsize) {
 }
 
 void JoinArray::add_relations(int id1, int id2, uint64_t newsize) {
-    new_size=newsize;
+    size=newsize;
     Array = new uint64_t *[2];
     Array[0] = new uint64_t[size];
     Array[1] = new uint64_t[size];

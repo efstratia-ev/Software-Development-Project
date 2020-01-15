@@ -46,10 +46,9 @@ int SQL::CutQueryToParts(){
            auto pr = where_predicates->getPredicateI(i);
            uint64_t garbage;
            pr->stats = applyJoinStats(rels, pr, garbage);
-           cout << "" << endl;
        }
        JoinsPermutations(indices, numInnerJoins, LONG_MAX);
-       print();
+       //print();
        where_predicates->RearrangeStats(joinOrder, numInnerJoins);
    }
    //get select

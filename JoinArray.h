@@ -51,8 +51,8 @@ public:
     uint64_t get_sum(int relID,int colID);
     void print();
     void set_array(uint64_t i,uint64_t num1,uint64_t num2){
-        Array[i][0]=num1;
-        Array[i][1]=num2;
+        Array[0][i]=num1;
+        Array[1][i]=num2;
     }
     void set_newArray(uint64_t i,uint64_t num1,uint64_t num2){
         for(uint64_t j=0; j<numRels; j++){

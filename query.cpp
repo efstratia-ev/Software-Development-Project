@@ -156,6 +156,7 @@ void Query::DoQuery(bool filters) {
         else
             js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1),sem,2*NUMJOBS);
         delete predicate;
+        return;
     }
     //joinPredicates(filter_results,sql,relations,max);
     if (!results ) {
