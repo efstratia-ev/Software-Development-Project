@@ -55,6 +55,7 @@ JoinJob::JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2
     this->offset2=offset2;
     this->size2=size2;
     this->res_counter=res_counter;
+    this->next=NULL;
 }
 
 int JoinJob::Run() {
@@ -74,6 +75,15 @@ int JoinJob::Run() {
         }
     }
     sem_post(sem);
+    if(next)
+        next->Run();
+}
+
+bool JoinJob::add(JoinJob *job) {
+    if(get_counter()>=MIN) return false;
+    job->next=next;
+    next=job;
+    return true;
 }
 
 /*

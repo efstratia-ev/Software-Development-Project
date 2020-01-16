@@ -23,6 +23,7 @@ class queue {
     int size;
     public:
     queue();
+    void pushJoin(Job *job);
     void push(Job *job);
     void push(Job *job,sem_t *sem,int val);
     void push(queue *q);

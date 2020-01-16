@@ -19,9 +19,9 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
             continue;
         }
         uint64_t maxi=i+rows_array1->countKeys(i,column1),maxj=j+rows_array2->countKeys(j,column2);
-        joins->push(new JoinJob(sem,Q,rows_array1,rows_array2,sorted,i,maxi,j,maxj,count_results));
-        count_results+=(maxi-i)*(maxj-j);
+        joins->pushJoin(new JoinJob(sem,Q,rows_array1,rows_array2,sorted,i,maxi,j,maxj,count_results));
         count_jobs++;
+        count_results+=(maxi-i)*(maxj-j);
         i=maxi;
         j=maxj;
     }
