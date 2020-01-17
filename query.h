@@ -10,12 +10,12 @@ enum jointype_t {create=0,update=1,update_filtered=2};
 class Query {
     Relations *relations;
     SQL *sql;
-    uint64_t *&sums;
+    uint64_t *sums;
     JoinArray *results, **filter_results;
     int max;
     jointype_t type;
 public:
-    Query(Relations *rels,SQL* s,uint64_t *&sm);
+    Query(Relations *rels,SQL* s,uint64_t *sm);
     int isRelationFiltered(int relation);
     bool execute_filter(Predicate *predicate);
     bool execute_filters();

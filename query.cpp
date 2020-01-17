@@ -2,10 +2,9 @@
 #include "sort.h"
 #include "radix.h"
 
-Query::Query(Relations *rels, SQL *s,uint64_t *&sm):sums(sm) {
+Query::Query(Relations *rels, SQL *s,uint64_t *sm):sums(sm) {
     relations=rels;
     sql=s;
-    sums= NULL;
     results= nullptr;
     max=0;
     type=create;
@@ -166,7 +165,6 @@ void Query::DoQuery(bool filters) {
         return;
     }
     int res_counter = sql->get_results_counter();
-    sums = new uint64_t[res_counter];
     set *select = sql->get_select();
     for (int i = 0; i < res_counter; i++) {
         sums[i] = results->get_sum(select[i].getArray(), select[i].getColumn());

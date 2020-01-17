@@ -1,6 +1,6 @@
 #ifndef JOB
 #define JOB
-#define MIN 10
+#define MIN 1
 #include <semaphore.h>
 #include "relations.h"
 #include "SQL.h"
@@ -29,7 +29,7 @@ class Job {
 class QueryJob : public Job {
     Query *query;
     public:
-    QueryJob(SQL *sql, Relations *rels, uint64_t *&sums) {
+    QueryJob(SQL *sql, Relations *rels, uint64_t *sums) {
         query=new Query(rels,sql,sums);
     }
     int Run();
