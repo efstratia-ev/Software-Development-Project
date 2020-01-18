@@ -76,7 +76,7 @@ bool Query::execute_filters() {
     return true;
 }
 
-void Query::DoQuery(bool filters) {
+bool Query::DoQuery(bool filters) {
     Predicate *predicate = nullptr;
     if(results) results->keep_new_results();
     if(type==update_filtered){
@@ -90,7 +90,7 @@ void Query::DoQuery(bool filters) {
                              predicate->get_column2());
             delete predicate;
             DoQuery(results->getSize()>0);
-            return;
+            return false;
         }
         int array1 = predicate->get_array(), array2 = predicate->get_array2();
         if (!results) {
@@ -125,7 +125,7 @@ void Query::DoQuery(bool filters) {
                                         predicate->get_column2(),this);
             }
             delete predicate;
-            return;
+            return false;
         }
         if (results && results->exists(array2)) {
             int curr = isRelationFiltered(array1);
@@ -142,7 +142,7 @@ void Query::DoQuery(bool filters) {
                                         predicate->get_column(),this);
             }
             delete predicate;
-            return;
+            return false;
         }
         sem_t *sem=new sem_t;
         sem_init(sem, 1, 0);
@@ -155,22 +155,19 @@ void Query::DoQuery(bool filters) {
         else
             js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1),sem,2*NUMJOBS);
         delete predicate;
-        return;
+        return false;
     }
     //joinPredicates(filter_results,sql,relations,max);
     if (!results ) {
-        for(int i=0; i<max; i++) delete filter_results[i];
-        delete[] filter_results;
         results = filter_results[0];
-        return;
+        return true;
     }
     int res_counter = sql->get_results_counter();
     set *select = sql->get_select();
     for (int i = 0; i < res_counter; i++) {
         sums[i] = results->get_sum(select[i].getArray(), select[i].getColumn());
     }
-    delete[] filter_results;
-    delete results;
+    return true;
 }
 
 void Query::add_joined_array(uint64_t size, int array1, int array2) {
@@ -232,4 +229,12 @@ void Query::update_array_element(uint64_t num1, uint64_t num2, uint64_t i) {
     else{
         results->set_newArray(i,num1,num2,filter_results[max-1]);
     }
+}
+
+Query::~Query() {
+    delete relations;
+    delete sql;
+    for(int i=0; i<max; i++) delete filter_results[i];
+    delete[] filter_results;
+   // delete results;
 }

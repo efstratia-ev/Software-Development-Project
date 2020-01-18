@@ -28,10 +28,10 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
     Q->add_joined_array(count_results,arr1,arr2);
     if(joins->getSize()>0) {
         js->Schedule(joins);
-        js->Schedule(new PredicateJob(Q, true), sem, count_jobs);
+        js->Schedule(new PredicateJob(Q, true,rows_array1,rows_array2), sem, count_jobs);
         return;
     }
-    js->Schedule(new PredicateJob(Q, false));
+    js->Schedule(new PredicateJob(Q, false,rows_array1,rows_array2));
     delete sem;
 }
 
@@ -63,4 +63,54 @@ void add_sortjoin_results(uint64_t offset1, uint64_t size1, uint64_t offset2, ui
             resultlist->add(x,rows_array2->Array[y]);
         }
     }
+}
+
+list *join(rows_array *array1, rows_array *array2, uint64_t *column1, uint64_t *column2) { //counts how many arrays are already in join results
+    list *resultlist = new list();
+    uint64_t i = 0, j = 0;
+    while (i < array1->Size && j < array2->Size) {
+        if (column1[array1->get_value(i)] > column2[array2->get_value(j)]) {
+            j += array2->countKeys(j, column2);
+            continue;
+        }
+        if (column1[array1->get_value(i)] < column2[array2->get_value(j)]) {
+            i += array1->countKeys(i, column1);
+            continue;
+        }
+        uint64_t maxi = i + array1->countKeys(i, column1), maxj = j + array2->countKeys(j, column2);
+        for (uint64_t x = i; x < maxi; x++) {
+            for (uint64_t y = j; y < maxj; y++) {
+                resultlist->add(array1->Array[x], array2->Array[y]);
+            }
+        }
+        i = maxi;
+        j = maxj;
+    }
+    resultlist->restart_current();
+    return resultlist;
+}
+
+list *sortedjoin(rows_array *array1, rows_array *array2, uint64_t *column1, uint64_t *column2) { //counts how many arrays are already in join results
+    list *resultlist = new list();
+    uint64_t i = 0, j = 0;
+    while (i < array1->Size && j < array2->Size) {
+        if (column1[array1->get_value(i)] > column2[array2->get_value(j)]) {
+            j += array2->countKeys(j, column2);
+            continue;
+        }
+        if (column1[array1->get_value(i)] < column2[array2->get_value(j)]) {
+            i += array1->countKeys(i, column1);
+            continue;
+        }
+        uint64_t maxi = i + array1->countKeys(i, column1), maxj = j + array2->countKeys(j, column2);
+        for (uint64_t x = i; x < maxi; x++) {
+            for (uint64_t y = j; y < maxj; y++) {
+                resultlist->add(x, array2->Array[y]);
+            }
+        }
+        i = maxi;
+        j = maxj;
+    }
+    resultlist->restart_current();
+    return resultlist;
 }

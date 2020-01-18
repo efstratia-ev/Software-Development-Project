@@ -46,9 +46,8 @@ Relation::Relation(const char *filename) {
 }
 
 Relation::~Relation() {
-    //set data pointer to be equal to what mmap gave us at constructor
-    data--;data--;
-    munmap(data,fileSz);
+    for(int i=0;  i<cols; i++) delete statistics[i];
+    delete[] statistics;
 }
 
 stats *Relation::calculateStats(int col) {
@@ -102,4 +101,10 @@ Relation::Relation(uint64_t *data, uint64_t rows, uint64_t cols) {
     this->rows = rows;
     this->cols = cols;
     this->statistics = nullptr;
+}
+
+void Relation::delete_map() {
+    //set data pointer to be equal to what mmap gave us at constructor
+    data--;data--;
+    munmap(data,fileSz);
 }

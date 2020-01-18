@@ -295,7 +295,8 @@ void JoinArray::keep_new_results() {
     delete relationIDs;
     relationIDs=newrelationIDs;
     newrelationIDs= nullptr;
-    delete Array;
+    for(int i=0; i<numRels; i++) delete[] Array[i];
+    delete[] Array;
     Array=new_array;
     new_array=nullptr;
     size=new_size;

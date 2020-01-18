@@ -50,6 +50,8 @@ class Relation {
         }
 
     }
+    void delete_map();
+
 };
 
 

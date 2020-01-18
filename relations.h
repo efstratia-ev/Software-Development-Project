@@ -35,7 +35,10 @@ public:
     int * getQueryRels(){
         return query_rels;
     }
-    };
+    void delete_map(){
+        for(int i=0; i<sz; i++) rels[i]->delete_map();
+    }
+};
 
 
 #endif

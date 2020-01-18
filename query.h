@@ -16,13 +16,17 @@ class Query {
     jointype_t type;
 public:
     Query(Relations *rels,SQL* s,uint64_t *sm);
+    ~Query();
     int isRelationFiltered(int relation);
     bool execute_filter(Predicate *predicate);
     bool execute_filters();
-    void DoQuery(bool filters);
+    bool DoQuery(bool filters);
     void add_joined_array(uint64_t size,int array1,int array2);
     void update_array(list *res,uint64_t offset);
     void update_array_element(uint64_t num1,uint64_t num2,uint64_t i);
+    jointype_t get_type(){
+        return type;
+    }
 };
 
 

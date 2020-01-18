@@ -2,7 +2,11 @@
 #include "sort.h"
 
 int QueryJob::Run() {
-    query->DoQuery(query->execute_filters());
+    if(query->DoQuery(query->execute_filters())) delete query;
+}
+
+QueryJob::QueryJob(SQL *sql, Relations *rels, uint64_t *sums) {
+    query=new Query(rels,sql,sums);
 }
 
 
@@ -24,8 +28,13 @@ int SortJob::Run() {
         currentRadix->split(Stack);
         delete currentRadix;
     }
-    delete Stack;
     sem_post(finished);
+    int val;
+    int v=sem_getvalue(finished,&val);
+    if(v==NUMJOBS){
+        R->delete_R();
+        delete R;
+    }
 }
 
 MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c1, uint64_t *c2, int id1,
@@ -75,8 +84,9 @@ int JoinJob::Run() {
         }
     }
     sem_post(sem);
-    if(next)
+    if(next){
         next->Run();
+    }
 }
 
 bool JoinJob::add(JoinJob *job) {

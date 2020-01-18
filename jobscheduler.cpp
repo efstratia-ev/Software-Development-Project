@@ -27,10 +27,13 @@ void JobScheduler::runJobs() {
             if (stop)
                 return;
             job = q->pop();
-            lk.unlock();
             if(job) break;
+            cv.wait(lk);
+            lk.unlock();
         }
         job->Run();
+        delete job;
+        cv.notify_one();
         removeActiveJobs();
     }
 }

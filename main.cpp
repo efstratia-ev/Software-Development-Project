@@ -59,6 +59,7 @@ void DoQueries(Relations *rels) {
             js->Schedule(job);
         }
     }
+    delete js;
     delete resultsList;
     free(line);
 }
@@ -74,6 +75,7 @@ int main(int argc, char *argv[]) {
 
     auto *relations = new Relations(filename);  //data
     DoQueries(relations);
+    relations->delete_map();
     delete relations;
     return 0;
 }

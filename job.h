@@ -1,6 +1,6 @@
 #ifndef JOB
 #define JOB
-#define MIN 1
+#define MIN 10
 #include <semaphore.h>
 #include "relations.h"
 #include "SQL.h"
@@ -29,13 +29,12 @@ class Job {
 class QueryJob : public Job {
     Query *query;
     public:
-    QueryJob(SQL *sql, Relations *rels, uint64_t *sums) {
-        query=new Query(rels,sql,sums);
-    }
+    QueryJob(SQL *sql, Relations *rels, uint64_t *sums);
     int Run();
     bool add(JoinJob *job){
         return false;
     }
+    ~QueryJob(){}
 };
 
 class SortJob:public Job{
@@ -50,6 +49,9 @@ public:
     int Run();
     bool add(JoinJob *job){
         return false;
+    }
+    ~SortJob(){
+        delete Stack;
     }
 };
 
@@ -68,6 +70,7 @@ public:
     bool add(JoinJob *job){
         return false;
     }
+    ~MergeJob(){}
 };
 
 class JoinJob:public Job{
@@ -86,7 +89,9 @@ public:
     JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2, bool sorted, uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter);
     int Run();
     bool add(JoinJob *job);
-    ~JoinJob(){};
+    ~JoinJob(){
+        delete next;
+    };
     uint64_t get_counter(){
         if(next) return next->get_counter()+(size1-offset1)*(size2-offset2);
         else return (size1-offset1)*(size2-offset2);
@@ -96,16 +101,24 @@ public:
 class PredicateJob:public Job{
     Query *query;
     bool results_exist;
+    rows_array *array1;
+    rows_array *array2;
 public:
-    PredicateJob(Query *query,bool results_exist){
+    PredicateJob(Query *query,bool results_exist,rows_array *array1,rows_array *array2){
+        this->array1=array1;
+        this->array2=array2;
         this->query=query;
         this->results_exist=results_exist;
     }
     int Run(){
-        query->DoQuery(results_exist);
+        if(query->DoQuery(results_exist)) delete query;
     }
     bool add(JoinJob *job){
         return false;
+    }
+    ~PredicateJob(){
+        delete array1;
+        delete array2;
     }
 };
 #endif
