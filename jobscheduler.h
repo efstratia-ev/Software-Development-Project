@@ -63,6 +63,9 @@ class JobScheduler {
         auto tmp = q->getSize();
         lk.unlock();
     }
+    ~JobScheduler(){
+        delete q;
+    }
 };
 
 #endif

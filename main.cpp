@@ -58,19 +58,23 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             qe->runQuery(query);
         }
     }
+    js->Stop();
+    delete js;
     delete qe;
     free(line);
 }
 
 int main(int argc, char *argv[]) {
+
     char *filename;
     if (argc != 2) {  //get filename for init
         cout << "Wrong amount of arguments\n";
         exit(-1);
     }
     filename = argv[1];
+
     auto *relations = new Relations(filename);  //data
-    DoQueries(relations,new SequentialQueriesExecutor());
+    DoQueries(relations,new ParallelQueriesExecutor());
     relations->delete_map();
     delete relations;
     return 0;

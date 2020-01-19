@@ -9,7 +9,7 @@ results_list::results_list() {
 }
 
 results_list::~results_list() {
-    delete start;
+    if(start) delete start;
 }
 
 
