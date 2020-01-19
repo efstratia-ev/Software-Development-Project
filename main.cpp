@@ -11,6 +11,7 @@
 #include "join_preds.h"
 #include "job.h"
 #include "jobscheduler.h"
+#include "queriesExecutor.h"
 //#include "SQL.h"
 
 // sed -i 's/,/ /g' filename
@@ -29,21 +30,19 @@ char *create_outfileName(char *filename) {
 }
 
 //process every batch (each batch is seperated by 'F') of queries in parallel.
-void DoQueries(Relations *rels) {
+void DoQueries(Relations *rels,QueriesExecutor *qe) {
     char *line = nullptr;
     size_t size = 0;
-    js = new JobScheduler();
-    js->Init(4);
-    auto *resultsList=new results_list();
+    //use this to control whether each query will run sort/join in parallel
+    struct ParallelismOpts allParallelInsideQuery = {true,true};
+    struct ParallelismOpts  noneParallelInsideQuery = {false,false};
     while (true) {
         getline(&line, &size, stdin);
         line = strtok(line, "\n");
         if (!line) continue;
         if (strcmp(line, "Done") == 0) break;
         else if (strcmp(line, "F") == 0) {
-            js->Barrier();
-            resultsList->print();
-            resultsList->clear();
+            qe->flush();
         }
         else {
             //we need to create a new Relations instance for each query
@@ -54,13 +53,12 @@ void DoQueries(Relations *rels) {
             //If there is much complexity, we should definetely.
             auto sql = new SQL(line,tmpRels);
             uint64_t *sums=new uint64_t[sql->get_results_counter()];
-            auto job = new QueryJob(sql, tmpRels,sums);
-            resultsList->add(sql->get_results_counter(),sums);
-            js->Schedule(job);
+            auto query = new Query(tmpRels,sql,sums,noneParallelInsideQuery);
+            cout << line << endl;
+            qe->runQuery(query);
         }
     }
-    delete js;
-    delete resultsList;
+    delete qe;
     free(line);
 }
 
@@ -74,7 +72,7 @@ int main(int argc, char *argv[]) {
     filename = argv[1];
 
     auto *relations = new Relations(filename);  //data
-    DoQueries(relations);
+    DoQueries(relations,new ParallelQueriesExecutor());
     relations->delete_map();
     delete relations;
     return 0;

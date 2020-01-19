@@ -24,6 +24,7 @@ add_executable(Project2019
         queue.h queue.cpp 
         do_query.cpp do_query.h
         job.cpp
+        queriesExecutor.h
         jobscheduler.h jobscheduler.cpp query.cpp query.h)
 
 add_executable(test_radix
