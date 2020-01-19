@@ -6,6 +6,6 @@
 #include "relations.h"
 #include <cstdint>
 
-uint64_t *DoQuery(SQL *sql, Relations *relations);
+uint64_t *RunQueryWithoutParallelism(SQL *sql, Relations *relations);
 
 #endif

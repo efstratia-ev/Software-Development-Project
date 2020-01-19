@@ -29,7 +29,7 @@ class Job {
 class QueryJob : public Job {
     Query *query;
     public:
-    QueryJob(SQL *sql, Relations *rels, uint64_t *sums);
+    QueryJob(Query *query);
     int Run();
     bool add(JoinJob *job){
         return false;

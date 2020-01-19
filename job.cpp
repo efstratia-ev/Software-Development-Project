@@ -5,8 +5,8 @@ int QueryJob::Run() {
     if(query->DoQuery(query->execute_filters())) delete query;
 }
 
-QueryJob::QueryJob(SQL *sql, Relations *rels, uint64_t *sums) {
-    query=new Query(rels,sql,sums);
+QueryJob::QueryJob(Query *query) {
+    this->query=query;
 }
 
 
