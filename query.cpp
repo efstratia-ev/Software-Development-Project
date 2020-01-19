@@ -284,11 +284,11 @@ bool Query::RunQueryWithoutParallelism(bool filters) {
         for(int i=0; i<max; i++) delete filter_results[i];
         delete[] filter_results;
         delete results;
-        return sums;
+        return false;
     }
     if (!results) {
         results = filter_results[0];
-        return false;
+        //return false;
     }
     int res_counter = sql->get_results_counter();
     //sums = new uint64_t[res_counter];
