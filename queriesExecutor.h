@@ -21,6 +21,7 @@ class QueriesExecutor {
       resultsList->add(query->getSQL()->get_results_counter(),query->getSums());
     }
     virtual void flush() {
+        js->Barrier();
         resultsList->print();
         resultsList->clear();
     }
@@ -37,10 +38,6 @@ class ParallelQueriesExecutor : public QueriesExecutor {
         QueriesExecutor::prepareResults(query);
         auto job = new QueryJob(query);
         js->Schedule(job);
-    }
-    void flush() {
-        js->Barrier();
-        QueriesExecutor::flush();
     }
 };
 

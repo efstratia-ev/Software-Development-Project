@@ -54,6 +54,7 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             auto sql = new SQL(line,tmpRels);
             uint64_t *sums=new uint64_t[sql->get_results_counter()];
             auto query = new Query(tmpRels,sql,sums,allParallelInsideQuery);
+            cout << line << endl;
             qe->runQuery(query);
         }
     }
@@ -62,16 +63,14 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
 }
 
 int main(int argc, char *argv[]) {
-
     char *filename;
     if (argc != 2) {  //get filename for init
         cout << "Wrong amount of arguments\n";
         exit(-1);
     }
     filename = argv[1];
-
     auto *relations = new Relations(filename);  //data
-    DoQueries(relations,new ParallelQueriesExecutor());
+    DoQueries(relations,new SequentialQueriesExecutor());
     relations->delete_map();
     delete relations;
     return 0;
