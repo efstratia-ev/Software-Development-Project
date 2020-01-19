@@ -53,8 +53,7 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             //If there is much complexity, we should definetely.
             auto sql = new SQL(line,tmpRels);
             uint64_t *sums=new uint64_t[sql->get_results_counter()];
-            auto query = new Query(tmpRels,sql,sums,noneParallelInsideQuery);
-            cout << line << endl;
+            auto query = new Query(tmpRels,sql,sums,allParallelInsideQuery);
             qe->runQuery(query);
         }
     }
