@@ -68,6 +68,14 @@ public:
         }
         new_array[n][i]=array2->Array[0][num2];   //in every row add the value of the new column (new relation added)
     }
+    list *sortedJoin(int relID1,int col1,int relID2,int colID2);
+    list *Join(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
+    list *sortedJoin(int relID1,int col1,JoinArray *array2,int relID2,int colID2);
+    list *Join(int relID1,int col1,int relID2,int colID2);
+    void update_array(list *results,int id);
+    void update_array(list *results,JoinArray *array2);
+    //void create_array(list *results,int id);
+    void create_array(list *results,int id1,int id2);
 };
 
 

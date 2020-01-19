@@ -21,4 +21,7 @@ void add_sortjoin_results(uint64_t offset1, uint64_t size1, uint64_t offset2, ui
 list *sortedjoin(rows_array *array1, rows_array *array2, uint64_t *column1, uint64_t *column2);
 
 list *join(rows_array *array1, rows_array *array2, uint64_t *column1, uint64_t *column2);
+
+rows_array *sort(radix *r);
+
 #endif

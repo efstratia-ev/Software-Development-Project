@@ -114,3 +114,22 @@ list *sortedjoin(rows_array *array1, rows_array *array2, uint64_t *column1, uint
     resultlist->restart_current();
     return resultlist;
 }
+
+
+//sort from part2
+rows_array *sort(radix *r) {  //function that sort rows_arrays by quantum
+    auto *Stack=new stack();
+    Stack->push(r);
+    radix *currentRadix;
+    while(Stack->notEmpty()){
+        currentRadix=Stack->pop();
+        currentRadix->group();  //make histogram+prefixSum and reorder rows_array
+        currentRadix->split(Stack);
+        if(currentRadix!=r) delete currentRadix;
+    }
+    delete Stack;
+    rows_array *sortedR=r->getR();
+    r->delete_R();
+    delete r;
+    return sortedR;
+}

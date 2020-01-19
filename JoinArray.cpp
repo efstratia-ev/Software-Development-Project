@@ -303,5 +303,179 @@ void JoinArray::keep_new_results() {
     numRels++;
 }
 
+//The following methods are the ones used at part2 when we had no parallelism
 
+//relID1 is the relation that already exists in ResultsArray and we 
+//will call sortRel on. relID2 is the relation that we are willing
+//to add in ResultsArray after join.
+list *JoinArray::Join(int relID1,int colID1,int relID2,int colID2) {
+    setrel(relID1);
+    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
+    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    results->restart_current();
+    delete[] arr1->Array;
+    delete[] arr2->Array;
+    delete arr1;
+    delete arr2;
+    return results;
+}
 
+list *JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2) {
+    setrel(relID1);
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
+    auto arr2 = sort(new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
+    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    results->restart_current();
+    delete[] arr2->Array;
+    delete arr1;
+    delete arr2;
+    return results;
+}
+
+list *JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
+    setrel(relID1);
+    auto arr1 = sort(new radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    array2->setrel(relID2);
+    auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    list *results=join(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    results->restart_current();
+    delete[] arr1->Array;
+    delete[] arr2->Array;
+    delete arr1;
+    delete arr2;
+    return results;
+}
+
+list *JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2) {
+    setrel(relID1);
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
+    array2->setrel(relID2);
+    auto arr2 = sort(new radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
+    list *results=sortedjoin(arr1,arr2,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2));
+    results->restart_current();
+    delete[] arr2->Array;
+    delete arr1;
+    delete arr2;
+    return results;
+}
+
+void JoinArray::update_array(list *results,int id) {
+    uint64_t new_size=results->get_size();
+    auto **new_array=new uint64_t*[numRels+1];
+    for(int j=0; j<numRels+1; j++) new_array[j]=new uint64_t[new_size];
+    rowids *rows;
+    int *new_arrayID=new int[numRels+1]; //will contain every element of relationIDs and id
+    int n=-1;
+    for(int j=0; j<numRels; j++){   //add elements in the right order
+        if(n<0 && relationIDs[j]>id){
+            new_arrayID[j]=id;
+            n=j;
+        }
+        if(n>=0){
+            new_arrayID[j+1]=relationIDs[j];
+            relationIDs[j]=j+1;
+        }
+        else{
+            new_arrayID[j]=relationIDs[j];
+            relationIDs[j]=j;
+        }
+    }
+    if(n==-1){  //new element is the largest and it is not added to the array
+        n=numRels;
+        new_arrayID[n]=id;
+    }
+    for(uint64_t i=0; i<new_size; i++){
+        rows=results->pop();            //pop every element
+        for(uint64_t j=0; j<numRels; j++){
+            int temp=relationIDs[j];
+            new_array[temp][i]=Array[j][rows->rowid1]; //keep from the old array the rows that are extracted from the list
+        }
+        new_array[n][i]=rows->rowid2;   //in every row add the value of the new column (new relation added)
+        delete rows;
+    }
+    for(uint64_t i=0; i<numRels; i++) delete[] Array[i];
+    delete[] Array;
+    Array=new_array;
+    size=new_size;
+    numRels+=1;
+    delete[] relationIDs;
+    relationIDs=new_arrayID;
+    delete results;
+}
+
+//it is similar to the above function, the only difference is that the new results are from array2
+void JoinArray::update_array(list *results, JoinArray *array2) {
+    uint64_t new_size=results->get_size();
+    auto **new_array=new uint64_t*[numRels+1];
+    for(int j=0; j<numRels+1; j++) new_array[j]=new uint64_t[new_size];
+    rowids *rows;
+    int *new_arrayID=new int[numRels+1];
+    int n=-1;
+    for(int j=0; j<numRels; j++){
+        if(n<0 && relationIDs[j]>array2->relationIDs[0]){
+            new_arrayID[j]=array2->relationIDs[0]; //array2 can't have more than one relation
+            n=j;
+        }
+        if(n>=0){
+            new_arrayID[j+1]=relationIDs[j];
+            relationIDs[j]=j+1;
+        }
+        else{
+            new_arrayID[j]=relationIDs[j];
+            relationIDs[j]=j;
+        }
+    }
+    if(n==-1){
+        n=numRels;
+        new_arrayID[n]=array2->relationIDs[0];
+    }
+    for(uint64_t i=0; i<new_size; i++){
+        rows=results->pop();
+        for(uint64_t j=0; j<numRels; j++){
+            new_array[relationIDs[j]][i]=Array[j][rows->rowid1];
+        }
+        new_array[n][i]=array2->Array[0][rows->rowid2];
+        delete rows;
+    }
+    for(uint64_t i=0; i<numRels; i++) delete[] Array[i];
+    delete[] Array;
+    Array=new_array;
+    size=new_size;
+    numRels+=1;
+    delete[] relationIDs;
+    relationIDs=new_arrayID;
+    delete results;
+}
+
+//creates the array after the first join (if no filter is used before)
+void JoinArray::create_array(list *results,int id1,int id2) {
+    size = results->get_size();
+    Array = new uint64_t *[2];
+    Array[0] = new uint64_t[size];
+    Array[1] = new uint64_t[size];
+    relationIDs = new int[2];
+    bool op=false;
+    numRels=2;
+    if(id1<id2) { //id's must be in order
+        relationIDs[0] = id1;
+        relationIDs[1] = id2;
+    }
+    else{
+        relationIDs[0] = id2;
+        relationIDs[1] = id1;
+        op=true;
+    }
+    for (uint64_t i = 0; i < size; i++) {
+        rowids* temp= results->pop(); //extract every element from the list to the array
+        if(op){
+            Array[0][i] = temp->rowid2;
+            Array[1][i] = temp->rowid1;
+        }
+        else{
+            Array[0][i] = temp->rowid1;
+            Array[1][i] = temp->rowid2;
+        }
+    }
+    delete results;
+}
