@@ -1,15 +1,19 @@
 #include "queue.h"
 
 void queue::pushJoin(Job *job) {
-    auto node = new qnode(job);
     if (empty()){
+        auto node = new qnode(job);
+        head = node;
         tail= node;
     }
     else if(head->job->add((JoinJob*)job)){
         return;
     }
-    else node->next=head;
-    head = node;
+    else{
+        auto node = new qnode(job);
+        node->next=head;
+        head = node;
+    }
     size++;
 }
 

@@ -15,6 +15,9 @@ class qnode {
     qnode(Job *job);
     qnode(Job *job,sem_t *sem,int val);
     bool is_ready();
+    ~qnode(){
+        delete sem;
+    }
 };
 
 class queue {
