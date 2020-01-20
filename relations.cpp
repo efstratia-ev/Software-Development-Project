@@ -1,6 +1,7 @@
 #include <fstream>
 #include <cstring>
 #include "relations.h"
+#include "Priority_Queue.h"
 
 using namespace std;
 
@@ -133,7 +134,7 @@ Relations::Relations(Relation **rels, int sz) {
     this->rels = new Relation*[sz];
     for (int i = 0; i <sz; i++) {
         this->rels[i] = new Relation(rels[i]->getData(),rels[i]->getRows(),rels[i]->getCols());
-        this->rels[i]->setStats(rels[i]->getStatsCopy()); 
+        if(STATS) this->rels[i]->setStats(rels[i]->getStatsCopy());
     }
 }
 

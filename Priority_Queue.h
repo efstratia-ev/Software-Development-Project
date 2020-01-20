@@ -3,7 +3,7 @@
 
 
 #include "SQLInfo.h"
-#define STATS false
+#define STATS true
 
 class Priority_Queue_Node{
     Predicate *predicate;

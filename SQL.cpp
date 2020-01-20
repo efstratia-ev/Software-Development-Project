@@ -185,9 +185,6 @@ Relations *SQL::applyJoinStats(Relations *relsStats,Predicate * pr,uint64_t &cos
     auto st1 = rel1->getColStats(c1),st2 = rel2->getColStats(c2); //the statistics
     auto prevDistValues1 = st1->getDistinctValues(), prevDistValues2 = st2->getDistinctValues();
     auto prevTotalValues1 = st1->getTotalValues(), prevTotalValues2 = st2->getTotalValues();
-    auto preMin1=st1->getMin(),prevMin2=st2->getMin();
-    auto preMax1=st1->getMax(),prevMax2=st2->getMax();
-    //set new min and max
     auto tmpMin=st1->getMin() > st2->getMin() ? st1->getMin() : st2->getMin() ;
     auto tmpMax= st1->getMax() > st2->getMax() ? st2->getMax() : st1->getMax() ;
     results->relation(a1)->getColStats(c1)->setMax(tmpMax);
@@ -221,14 +218,6 @@ Relations *SQL::applyJoinStats(Relations *relsStats,Predicate * pr,uint64_t &cos
         updatRemainingColStatsJoin(results->relation(a1),c1,prevTotalValues1,prevDistValues1,results->relation(a1)->getColStats(c1)->getDistinctValues());
         updatRemainingColStatsJoin(results->relation(a2),c2,prevTotalValues1,prevDistValues2,results->relation(a2)->getColStats(c2)->getDistinctValues());
     }
-    ///////////////////////////////TEST
-    auto nDistValues1 = results->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = results->relation(a2)->getColStats(c2)->getDistinctValues();
-    auto nTotalValues1 = results->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = results->relation(a2)->getColStats(c2)->getTotalValues();
-    auto nMin1=results->relation(a1)->getColStats(c1)->getMin(),nMin2=results->relation(a2)->getColStats(c2)->getMin();
-    auto nMax1= results->relation(a1)->getColStats(c1)->getMax(),nMax2=results->relation(a2)->getColStats(c2)->getMax();
-
-
-    /////////////////////////
     cost=results->relation(a1)->getColStats(c1)->getTotalValues();
     return results;
 }
@@ -239,20 +228,9 @@ void SQL::JoinsPermutations(int *indices,int size,uint64_t min) {
         Relations *res;
         uint64_t cost=0;
         res = where_predicates->getPredicateI(indices[0])->stats;  //get the first stats
-//        int a1=where_predicates->getPredicateI(indices[0])->getArray1()->getArray(),a2=1;
-//        int c1=2,c2=0;
-//        auto nDistValues1 = res->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = res->relation(a2)->getColStats(c2)->getDistinctValues();
-//        auto nTotalValues1 = res->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = res->relation(a2)->getColStats(c2)->getTotalValues();
-//        auto nMin1=res->relation(a1)->getColStats(c1)->getMin(),nMin2=res->relation(a2)->getColStats(c2)->getMin();
-//        auto nMax1= res->relation(a1)->getColStats(c1)->getMax(),nMax2=res->relation(a2)->getColStats(c2)->getMax();
 
         for (int i =1; i < numInnerJoins; i++) {
             res = applyJoinStats(res,where_predicates->getPredicateI(indices[i]),cost);  //apply all the stats until the end
-//            a1=where_predicates->getPredicateI(indices[i])->getArray1()->getArray(),a2=where_predicates->getPredicateI(indices[i])->getArray2()->getArray();
-//            c1=where_predicates->getPredicateI(indices[i])->getArray1()->getColumn(),c2=where_predicates->getPredicateI(indices[i])->getArray2()->getColumn();
-//            nDistValues1 = res->relation(a1)->getColStats(c1)->getDistinctValues(), nDistValues2 = res->relation(a2)->getColStats(c2)->getDistinctValues();
-//            nTotalValues1 = res->relation(a1)->getColStats(c1)->getTotalValues(), nTotalValues2 = res->relation(a2)->getColStats(c2)->getTotalValues();
-//            nMin1=res->relation(a1)->getColStats(c1)->getMin(),nMin2=res->relation(a2)->getColStats(c2)->getMin();
         }
         if (cost < QueryMinCost) {
             QueryMinCost = cost;
@@ -290,42 +268,6 @@ void SQL::GetWherePredicates(const string& predicate) {
 
     pos_start = pos + 1;
     c2=stoi(predicate.substr( pos_start,  predicate.size()  - pos_start + 1),nullptr,10);
-    //statistics
-//    auto rel1 = rels->relation(a1),rel2 = rels->relation(a2);  //the arrays
-//    auto st1 = rel1->getColStats(c1),st2 = rel2->getColStats(c2); //the statistics
-//    auto prevDistValues1 = st1->getDistinctValues(), prevDistValues2 = st2->getDistinctValues();
-//    auto prevTotalValues1 = st1->getTotalValues(), prevTotalValues2 = st2->getTotalValues();
-//    //set new min and max
-//    auto tmpMin=st1->getMin() > st2->getMin() ? st1->getMin() : st2->getMin() ;
-//    auto tmpMax= st1->getMax() > st2->getMax() ? st2->getMax() : st1->getMax() ;
-//    st1->setMax(tmpMax);
-//    st1->setMin(tmpMin);
-//    st2->setMax(tmpMax);
-//    st2->setMin(tmpMin);
-//    auto n_tmp = st1->getMax()-st1->getMin()+1;
-//    if(a1==a2){
-//        if(c1==c2){
-//            st1->setTotalValues(prevTotalValues1*prevTotalValues1/n_tmp);
-//            updatRemainingColStatsSelfJoin(rel1,c1,st1->getTotalValues());
-//        }
-//        else{
-//            if(prevTotalValues1==0 || prevDistValues1==0) st1->setDistinctValues(0);
-//            else {
-//                auto temp = pow(1.0 - st1->getTotalValues() / prevTotalValues1, prevTotalValues1 / prevDistValues1);
-//                st1->setDistinctValues(prevTotalValues1 * (1 - temp));
-//            }
-//            updatRemainingColStats(rel1,prevDistValues1,c1);
-//
-//        }
-//    }
-//    else{
-//        st1->setTotalValues(prevTotalValues1*prevTotalValues2/n_tmp);
-//        st1->setDistinctValues(prevDistValues1*prevDistValues2/n_tmp);
-//        st2->setTotalValues(prevTotalValues1*prevTotalValues2/n_tmp);
-//        st2->setDistinctValues(prevDistValues1*prevDistValues2/n_tmp);
-//        updatRemainingColStatsJoin(rel1,c1,prevTotalValues1,prevDistValues1,st1->getDistinctValues());
-//        updatRemainingColStatsJoin(rel2,c2,prevTotalValues1,prevDistValues2,st2->getDistinctValues());
-//    }
     where_predicates->Push(new join(a1,c1,a2,c2));
     numInnerJoins++;
 }
@@ -346,43 +288,46 @@ void SQL::GetWhereFilters(string predicate){
     pos_start = pos + 1;
     number=stoi(predicate.substr(pos_start, pos-pos_start ),nullptr,10);
 
-    auto rel = rels->relation(a);
-    auto st = rel->getColStats(c);
-    auto bm = st->getBitMap();
-    auto prevTotalValues = st->getTotalValues();
-    double temp;
-    switch (comp) {
-        case '=': 
-            st->setMax(number);        
-            st->setMin(number);        
-            if (bm->get(number)) {
-                st->setTotalValues(st->getTotalValues()/st->getDistinctValues());
-                st->setDistinctValues(1);
-            } else  {
-                st->setDistinctValues(0);
-                st->setTotalValues(0);
-            }
-            break;
-        case '>': 
-            if (number < st->getMin()) 
-                number = st->getMin();
-            temp = (double)(st->getMax()-number)/(st->getMax()-st->getMin());
-            st->setDistinctValues(st->getDistinctValues()*temp);
-            st->setTotalValues(st->getTotalValues()*temp);
-            st->setMin(number);
-            break;
-        case '<': 
-            if (number > st->getMax())
-                number = st->getMax();
-            temp = (double)(number-st->getMin())/(st->getMax()-st->getMin());
-            st->setDistinctValues(st->getDistinctValues()*temp);
-            st->setTotalValues(st->getTotalValues()*temp);
-            st->setMax(number);
-            break;
-        default:
-            throw exception();
+    if(STATS){
+        auto rel = rels->relation(a);
+        auto st = rel->getColStats(c);
+        auto bm = st->getBitMap();
+        auto prevTotalValues = st->getTotalValues();
+        double temp;
+        switch (comp) {
+            case '=':
+                st->setMax(number);
+                st->setMin(number);
+                if (bm->get(number)) {
+                    st->setTotalValues(st->getTotalValues()/st->getDistinctValues());
+                    st->setDistinctValues(1);
+                } else  {
+                    st->setDistinctValues(0);
+                    st->setTotalValues(0);
+                }
+                break;
+            case '>':
+                if (number < st->getMin())
+                    number = st->getMin();
+                temp = (double)(st->getMax()-number)/(st->getMax()-st->getMin());
+                st->setDistinctValues(st->getDistinctValues()*temp);
+                st->setTotalValues(st->getTotalValues()*temp);
+                st->setMin(number);
+                break;
+            case '<':
+                if (number > st->getMax())
+                    number = st->getMax();
+                temp = (double)(number-st->getMin())/(st->getMax()-st->getMin());
+                st->setDistinctValues(st->getDistinctValues()*temp);
+                st->setTotalValues(st->getTotalValues()*temp);
+                st->setMax(number);
+                break;
+            default:
+                throw exception();
+        }
+        updatRemainingColStats(rel,prevTotalValues,c);
+
     }
-    updatRemainingColStats(rel,prevTotalValues,c);
     where_predicates->Push(new comparison(a,c,comp,number));
 }
 

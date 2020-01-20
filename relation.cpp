@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "relation.h"
 #include "bitmap.h"
+#include "Priority_Queue.h"
 
 using namespace std; 
 
@@ -39,17 +40,21 @@ Relation::Relation(const char *filename) {
     cols = data[1];
     //data should point to actual data - not metadata
     data++;data++;
-    statistics = new stats*[cols];
-    for (int i =0; i < cols; i++)
-        statistics[i] = calculateStats(i);
+    if(STATS) {
+        statistics = new stats *[cols];
+        for (int i = 0; i < cols; i++)
+            statistics[i] = calculateStats(i);
+    }
     
 }
 
 Relation::~Relation() {
-    for(int i=0;  i<cols; i++){
-        delete statistics[i];
+    if(STATS) {
+        for (int i = 0; i < cols; i++) {
+            delete statistics[i];
+        }
+        delete[] statistics;
     }
-    delete[] statistics;
 }
 
 stats *Relation::calculateStats(int col) {
@@ -108,6 +113,7 @@ Relation::Relation(uint64_t *data, uint64_t rows, uint64_t cols) {
 void Relation::delete_map() {
     //set data pointer to be equal to what mmap gave us at constructor
     data--;data--;
-    for(int i=0; i<cols; i++) statistics[i]->delete_bit_map();
+    if(STATS)
+        for(int i=0; i<cols; i++) statistics[i]->delete_bit_map();
     munmap(data,fileSz);
 }
