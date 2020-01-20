@@ -160,14 +160,16 @@ bool Query::RunQuery(bool filters) {
         }
         sem_t *sem=new sem_t;
         sem_init(sem, 1, 0);
+        auto r1=new radix(relations->get_relRows(array1), relations->get_column(array1, predicate->get_column()));
+        auto r2=new radix(relations->get_relRows(array2), relations->get_column(array2, predicate->get_column2()));
         auto arr1 = sort(sem,this,
-                new radix(relations->get_relRows(array1), relations->get_column(array1, predicate->get_column())));
+                r1);
         auto arr2 = sort(sem,this,
-                new radix(relations->get_relRows(array2), relations->get_column(array2, predicate->get_column2())));
+                r2);
         if(array1<array2)
-            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2),sem,2*NUMJOBS);
+            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2,r1,r2),sem,2*NUMJOBS);
         else
-            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1),sem,2*NUMJOBS);
+            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1,r1,r2),sem,2*NUMJOBS);
         delete predicate;
         return false;
     }

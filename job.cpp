@@ -29,16 +29,10 @@ int SortJob::Run() {
         delete currentRadix;
     }
     sem_post(finished);
-    int val;
-    int v=sem_getvalue(finished,&val);
-    if(v==NUMJOBS){
-        R->delete_R();
-        delete R;
-    }
 }
 
 MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c1, uint64_t *c2, int id1,
-                   int id2) {
+                   int id2,radix *R1,radix *R2) {
     query=q;
     array1=a1;
     array2=a2;
@@ -47,6 +41,8 @@ MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c
     arrayID2=id2;
     column1=c1;
     column2=c2;
+    this->R1=R1;
+    this->R2=R2;
 }
 
 int MergeJob::Run() {

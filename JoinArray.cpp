@@ -145,18 +145,22 @@ void JoinArray::Join(int relID1,int colID1,int relID2,int colID2,Query *Q) {
     setrel(relID1);
     sem_t *sem=new sem_t;
     sem_init(sem, 1, 0);
-    auto arr1 = sort(sem,Q,new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
-    auto arr2 = sort(sem,Q,new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
-    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,2*NUMJOBS);
+    auto r1=new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1));
+    auto r2=new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2));
+    auto arr1 = sort(sem,Q,r1);
+    auto arr2 = sort(sem,Q,r2);
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,r1,r2),sem,2*NUMJOBS);
 }
 
 void JoinArray::sortedJoin(int relID1,int colID1,int relID2,int colID2,Query *Q) {
     setrel(relID1);
     sem_t *sem=new sem_t;
     sem_init(sem, 1, 0);
+    auto r=new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2));
     auto arr1 = new rows_array(size,Array[relToBeJoined]);
-    auto arr2 = sort(sem,Q,new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2)));
-    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,NUMJOBS);
+    auto arr2 = sort(sem,Q,r);
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,r,
+                              nullptr),sem,NUMJOBS);
 
 }
 
@@ -164,10 +168,12 @@ void JoinArray::Join(int relID1,int colID1,JoinArray *array2,int relID2,int colI
     setrel(relID1);
     sem_t *sem=new sem_t;
     sem_init(sem, 1, 0);
-    auto arr1 = sort(sem,Q,new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1)));
+    auto r1=new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1));
+    auto r2=new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2));
+    auto arr1 = sort(sem,Q,r1);
     array2->setrel(relID2);
-    auto arr2 = sort(sem,Q,new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
-    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,2*NUMJOBS);
+    auto arr2 = sort(sem,Q,r2);
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,r1,r2),sem,2*NUMJOBS);
 
 }
 
@@ -175,10 +181,12 @@ void JoinArray::sortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,in
     setrel(relID1);
     sem_t *sem=new sem_t;
     sem_init(sem, 1, 0);
+    auto r=new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2));
     auto arr1 = new rows_array(size,Array[relToBeJoined]);
     array2->setrel(relID2);
-    auto arr2 = sort(sem,Q,new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2)));
-    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2),sem,NUMJOBS);
+    auto arr2 = sort(sem,Q,r);
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,r,
+                              nullptr),sem,NUMJOBS);
 }
 
 void JoinArray::grater_than(uint64_t column, uint64_t value) {

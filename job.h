@@ -64,13 +64,20 @@ class MergeJob:public Job{
     uint64_t *column1;
     uint64_t *column2;
     bool sorted;
+    radix *R1;
+    radix *R2;
 public:
-    MergeJob(Query *q,rows_array *a1,rows_array *a2,bool s,uint64_t *c1,uint64_t *c2,int id1,int id2);
+    MergeJob(Query *q,rows_array *a1,rows_array *a2,bool s,uint64_t *c1,uint64_t *c2,int id1,int id2,radix *R1,radix *R2);
     int Run();
     bool add(JoinJob *job){
         return false;
     }
-    ~MergeJob(){}
+    ~MergeJob(){
+        if(R1) R1->delete_R();
+        if(R2) R2->delete_R();
+        delete R1;
+        delete R2;
+    }
 };
 
 class JoinJob:public Job{

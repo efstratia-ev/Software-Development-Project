@@ -54,7 +54,6 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             auto sql = new SQL(line,tmpRels);
             uint64_t *sums=new uint64_t[sql->get_results_counter()];
             auto query = new Query(tmpRels,sql,sums,allParallelInsideQuery);
-            cout << line << endl;
             qe->runQuery(query);
         }
     }
