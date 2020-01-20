@@ -26,7 +26,10 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
         j=maxj;
     }
     Q->add_joined_array(count_results,arr1,arr2);
-    if(sorted) rows_array1= nullptr;
+    if(sorted) {
+        rows_array1->Array= nullptr;
+        delete rows_array1;
+    }
     if(joins->getSize()>0) {
         js->Schedule(joins);
         js->Schedule(new PredicateJob(Q, true,rows_array1,rows_array2), sem, count_jobs);
