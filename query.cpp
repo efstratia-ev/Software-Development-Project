@@ -103,8 +103,7 @@ bool Query::RunQuery(bool filters) {
             results->compare(predicate->get_array(), predicate->get_column(), predicate->get_array2(),
                              predicate->get_column2());
             delete predicate;
-            RunQuery(results->getSize()>0);
-            return false;
+            return RunQuery(results->getSize()>0);
         }
         int array1 = predicate->get_array(), array2 = predicate->get_array2();
         if (!results) {

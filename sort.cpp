@@ -29,6 +29,7 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
     if(sorted) {
         rows_array1->Array= nullptr;
         delete rows_array1;
+        rows_array1= nullptr;
     }
     if(joins->getSize()>0) {
         js->Schedule(joins);
