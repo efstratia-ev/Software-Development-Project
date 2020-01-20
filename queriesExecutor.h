@@ -28,6 +28,7 @@ class QueriesExecutor {
     virtual void runQuery(Query *query) {}
     ~QueriesExecutor() {
       delete resultsList;
+      js->Stop();
       delete js;
     }
 };

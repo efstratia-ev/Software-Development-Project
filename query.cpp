@@ -172,8 +172,7 @@ bool Query::RunQuery(bool filters) {
         return false;
     }
     //joinPredicates(filter_results,sql,relations,max);
-    if (!results ) {
-        results = filter_results[0];
+    if (!results) {
         return true;
     }
     int res_counter = sql->get_results_counter();
@@ -367,5 +366,5 @@ Query::~Query() {
     delete sql;
     for(int i=0; i<max; i++) delete filter_results[i];
     delete[] filter_results;
-   // delete results;
+    delete results;
 }

@@ -9,6 +9,9 @@ JoinArray::JoinArray(Relations *r) {
     rels=r;
     numRels=0;
     newrelationIDs= nullptr;
+    relationIDs= nullptr;
+    Array= nullptr;
+    new_array= nullptr;
 }
 
 uint64_t JoinArray::get_value(uint64_t i) {

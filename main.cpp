@@ -58,8 +58,6 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             qe->runQuery(query);
         }
     }
-    js->Stop();
-    delete js;
     delete qe;
     free(line);
 }
