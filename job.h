@@ -1,6 +1,6 @@
 #ifndef JOB
 #define JOB
-#define MIN 10
+#define MIN 1
 #include <semaphore.h>
 #include "relations.h"
 #include "SQL.h"

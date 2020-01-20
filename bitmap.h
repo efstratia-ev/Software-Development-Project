@@ -25,7 +25,7 @@ class BitMap {
         bytes = new uint8_t[bytesSize]; 
         memset(bytes,0,bytesSize);
     }
-    ~BitMap() { delete bytes; }
+    ~BitMap() { delete[] bytes; }
     uint8_t *getBytes() { return bytes; }
     void set(int i) {
         i = zeroBased(i);

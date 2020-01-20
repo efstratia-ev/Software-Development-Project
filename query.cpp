@@ -185,13 +185,7 @@ bool Query::RunQuery(bool filters) {
 }
 
 bool Query::RunQueryWithoutParallelism(bool filters) {
-    //bool results_exist = true;
-    //uint64_t *sums = NULL;
     Predicate *predicate = nullptr;
-    //JoinArray *results = nullptr;
-    //int filters = sql->get_filters_num(), max = 0;
-    //filter_results = new JoinArray *[filters];
-    //bool exists;
     list *res;
     while (filters && (predicate = sql->getPredicate())) {  //joins between relation
         if (results && results->getSize() == 0) {
@@ -283,18 +277,11 @@ bool Query::RunQueryWithoutParallelism(bool filters) {
     if (!results) {
         return true;
     }
-    if (!results) {
-        results = filter_results[0];
-        //return false;
-    }
     int res_counter = sql->get_results_counter();
-    //sums = new uint64_t[res_counter];
     set *select = sql->get_select();
     for (int i = 0; i < res_counter; i++) {
         sums[i] = results->get_sum(select[i].getArray(), select[i].getColumn());
     }
-    delete[] filter_results;
-    delete results;
     return true;
 }
 

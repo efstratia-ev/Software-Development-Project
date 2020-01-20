@@ -86,8 +86,7 @@ void queue::push(queue *q) {
         tail=q->tail;
     }
     size+=q->size;
-    if(size>0 && tail==NULL)
-        cout<<"S"<<endl;
+    delete q;
 }
 
 qnode::qnode(Job *job) {

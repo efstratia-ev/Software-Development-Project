@@ -29,6 +29,6 @@ uint64_t rows_array::get_value(uint64_t row) {
 }
 
 rows_array::~rows_array() {
-    delete Array;
+    delete[] Array;
 }
 

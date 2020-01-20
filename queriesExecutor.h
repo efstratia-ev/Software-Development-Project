@@ -47,6 +47,6 @@ class SequentialQueriesExecutor : public QueriesExecutor {
   SequentialQueriesExecutor() : QueriesExecutor() {}
   void runQuery(Query *query) {
     QueriesExecutor::prepareResults(query);
-    query->DoQuery(query->execute_filters());
+    if(query->DoQuery(query->execute_filters())) delete query;
   }
 };

@@ -65,6 +65,7 @@ class JobScheduler {
     }
     ~JobScheduler(){
         delete q;
+        delete[] threads;
     }
 };
 

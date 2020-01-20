@@ -52,7 +52,8 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             //TODO:maybe give threads the task of parsing the query?
             //If there is much complexity, we should definetely.
             auto sql = new SQL(line,tmpRels);
-            uint64_t *sums=new uint64_t[sql->get_results_counter()];
+            auto *sums=new uint64_t[sql->get_results_counter()];
+            for(int i=0; i<sql->get_results_counter(); i++) sums[i]=0;
             auto query = new Query(tmpRels,sql,sums,allParallelInsideQuery);
             qe->runQuery(query);
         }

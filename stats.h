@@ -29,6 +29,11 @@ class stats {
     void print() {
         cout << min << "," << max << "," << distinctValues << "," << totalValues << endl;
     }
+    void delete_bit_map(){
+        delete bm;
+    }
+    ~stats(){}
+
 };
 
 #endif

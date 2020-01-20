@@ -446,6 +446,7 @@ int *SQL::get_from_arrays() {
 }
 
 SQL::~SQL() {
+    delete[] joinOrder;
     delete[] query;
     delete[] from_arrays;
     delete where_predicates;
