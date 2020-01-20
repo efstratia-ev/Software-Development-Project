@@ -84,9 +84,9 @@ bool Query::DoQuery(bool filters) {
     assert(opts.join == opts.sort); //this must hold true for the time being (see query.h)
     auto allParallel = opts.join && opts.sort;
     if (allParallel) 
-        RunQuery(filters);
+        return RunQuery(filters);
     else {
-       RunQueryWithoutParallelism(filters);
+       return RunQueryWithoutParallelism(filters);
     }
 }
 
@@ -281,11 +281,8 @@ bool Query::RunQueryWithoutParallelism(bool filters) {
         delete predicate;
     }
     //joinPredicates(filter_results,sql,relations,max);
-    if (!filters) {
-        for(int i=0; i<max; i++) delete filter_results[i];
-        delete[] filter_results;
-        delete results;
-        return false;
+    if (!results) {
+        return true;
     }
     if (!results) {
         results = filter_results[0];
