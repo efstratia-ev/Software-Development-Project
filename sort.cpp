@@ -1,5 +1,6 @@
 #include <iostream>
 #include "sort.h"
+#include "select_options.h"
 
 using namespace std;
 
@@ -43,10 +44,10 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
 rows_array *sort(sem_t *semaphore,Query *Q,radix *r) {  //function that sort rows_arrays by quantum
     r->group();
     int count = 0;
-    for(int i=0; i<NUMJOBS; i++) {
+    for(int i=0; i<SORT_NUM_JOBS; i++) {
         //js->Schedule(new SortJob(semaphore, Q, r, N / NUMJOBS * i, N / NUMJOBS * (i + 1)));
-        js->Schedule(new SortJob(semaphore, Q, r, count, count+N/NUMJOBS));
-        count += N /NUMJOBS;
+        js->Schedule(new SortJob(semaphore, Q, r, count, count+N/SORT_NUM_JOBS));
+        count += N /SORT_NUM_JOBS;
     }
     return r->getR();
 }

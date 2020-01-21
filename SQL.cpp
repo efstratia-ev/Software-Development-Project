@@ -5,6 +5,7 @@
 #include <vector>
 #include <limits.h>
 #include"SQL.h"
+#include "select_options.h"
 
 
 SQL::SQL(char *line,Relations *rels) {

@@ -1,9 +1,15 @@
 #include "queriesExecutor.h"
+#include "select_options.h"
 
 QueriesExecutor::QueriesExecutor() {
     resultsList = new results_list();
     js = new JobScheduler();
-    js->Init(4);
+    if(NUM_THREADS) js->Init(NUM_THREADS);
+    else {
+        int threads=std::thread::hardware_concurrency();
+        if(threads) js->Init(threads);
+        else js->Init(4);
+    }
 }
 
 void QueriesExecutor::prepareResults(Query *query) {

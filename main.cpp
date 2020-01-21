@@ -12,6 +12,7 @@
 #include "job.h"
 #include "jobscheduler.h"
 #include "queriesExecutor.h"
+#include "select_options.h"
 //#include "SQL.h"
 
 // sed -i 's/,/ /g' filename
@@ -34,9 +35,7 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
     char *line = nullptr;
     size_t size = 0;
     //use this to control whether each query will run sort/join in parallel
-    struct ParallelismOpts allParallelInsideQuery = {true,true};
-    struct ParallelismOpts  noneParallelInsideQuery = {false,false};
-    struct ParallelismOpts  mergeParallelInsideQuery = {true,false};
+    struct ParallelismOpts options = {JOIN_PARALLELISM,SORT_PARALLELISM};
     while (true) {
         getline(&line, &size, stdin);
         line = strtok(line, "\n");
@@ -55,7 +54,7 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
             auto sql = new SQL(line,tmpRels);
             auto *sums=new uint64_t[sql->get_results_counter()];
             for(int i=0; i<sql->get_results_counter(); i++) sums[i]=0;
-            auto query = new Query(tmpRels,sql,sums,allParallelInsideQuery);
+            auto query = new Query(tmpRels,sql,sums,options);
             qe->runQuery(query);
         }
     }
@@ -73,7 +72,8 @@ int main(int argc, char *argv[]) {
     filename = argv[1];
 
     auto *relations = new Relations(filename);  //data
-    DoQueries(relations,new ParallelQueriesExecutor());
+    if(QUERY_PARALLELISM) DoQueries(relations,new ParallelQueriesExecutor());
+    else DoQueries(relations,new SequentialQueriesExecutor());
     relations->delete_map();
     delete relations;
     return 0;

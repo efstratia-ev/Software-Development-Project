@@ -10,12 +10,14 @@ enum jointype_t {create=0,update=1,update_filtered=2};
 //options for parallelism.
 //if any of these fields is set true, then we'll 
 //try to execute it in parallel.
+
 struct ParallelismOpts {
     //At the moment we support only both of them or none of them.
     //So they'll be both set true or both set false.
     bool join; 
     bool sort; 
 };
+
 
 class Query {
     Relations *relations;

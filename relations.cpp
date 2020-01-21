@@ -2,6 +2,7 @@
 #include <cstring>
 #include "relations.h"
 #include "Priority_Queue.h"
+#include "select_options.h"
 
 using namespace std;
 

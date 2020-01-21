@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 project(Project2019)
-#add_compile_options(-O3)
+add_compile_options(-O3)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -23,7 +23,7 @@ add_executable(Project2019
         queue.h queue.cpp
         job.cpp
         queriesExecutor.h
-        jobscheduler.h jobscheduler.cpp query.cpp query.h queriesExecutor.cpp stats.cpp)
+        jobscheduler.h jobscheduler.cpp query.cpp query.h queriesExecutor.cpp stats.cpp select_options.h)
 
 add_executable(test_radix
         radix.cpp

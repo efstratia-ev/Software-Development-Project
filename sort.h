@@ -6,7 +6,6 @@
 #include "list.h"
 #include "radix.h"
 #include "jobscheduler.h"
-#define NUMJOBS 2
 
 extern JobScheduler *js;
 

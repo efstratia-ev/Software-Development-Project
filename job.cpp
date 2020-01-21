@@ -1,7 +1,8 @@
 #include "job.h"
 #include "sort.h"
+#include "select_options.h"
 
-int QueryJob::Run() {
+void QueryJob::Run() {
     if(query->DoQuery(query->execute_filters())) delete query;
 }
 
@@ -23,7 +24,7 @@ SortJob::SortJob(sem_t *f, Query *q, radix *r, int o, int s) {
     Stack=new stack();
 }
 
-int SortJob::Run() {
+void SortJob::Run() {
     R->split(Stack,offset,size);
     radix *currentRadix;
     while(Stack->notEmpty()){
@@ -57,7 +58,7 @@ MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c
     this->R2=R2;
 }
 
-int MergeJob::Run() {
+void MergeJob::Run() {
     join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
 }
 
@@ -86,7 +87,7 @@ JoinJob::JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2
     this->next=NULL;
 }
 
-int JoinJob::Run() {
+void JoinJob::Run() {
     int curr=0;
     if(sorted){
         for(uint64_t x=offset1; x<size1; x++){
@@ -109,7 +110,7 @@ int JoinJob::Run() {
 }
 
 bool JoinJob::add(JoinJob *job) {
-    if(get_counter()>=MIN) return false;
+    if(get_counter()>=MIN_JOIN_GROUP_ITEMS) return false;
     job->next=next;
     next=job;
     return true;
@@ -140,7 +141,7 @@ PredicateJob::PredicateJob(Query *query, bool results_exist, rows_array *array1,
     this->results_exist=results_exist;
 }
 
-int PredicateJob::Run() {
+void PredicateJob::Run() {
     if(query->DoQuery(results_exist)) delete query;
 }
 

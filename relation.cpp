@@ -7,6 +7,7 @@
 #include "relation.h"
 #include "bitmap.h"
 #include "Priority_Queue.h"
+#include "select_options.h"
 
 using namespace std; 
 

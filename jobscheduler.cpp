@@ -77,7 +77,7 @@ void JobScheduler::Stop() {
     Destroy();
 }
 
-bool JobScheduler::Destroy() {
+void JobScheduler::Destroy() {
     for (int i =0; i < numThreads; i++) {
         threads[i].join();
     }
@@ -120,6 +120,7 @@ int JobScheduler::getQueueSize() {
     unique_lock<mutex> lk(queuMu);
     auto tmp = q->getSize();
     lk.unlock();
+    return tmp;
 }
 
 JobScheduler::~JobScheduler() {

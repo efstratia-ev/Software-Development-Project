@@ -21,7 +21,7 @@ class JobScheduler {
 public:
     JobScheduler();
     bool Init(int numThreads);
-    bool Destroy();
+    void Destroy();
     void Barrier();
     void Schedule(Job *job);
     void Schedule(Job *job,sem_t *sem,int val);

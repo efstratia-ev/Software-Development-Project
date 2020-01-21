@@ -1,5 +1,5 @@
-#ifndef STATS
-#define STATS
+#ifndef STATISTICS
+#define STATISTICS
 #include <cstdint>
 #include "bitmap.h"
 

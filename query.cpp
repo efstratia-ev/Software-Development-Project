@@ -2,6 +2,7 @@
 #include "query.h"
 #include "sort.h"
 #include "radix.h"
+#include "select_options.h"
 
 
 Query::Query(Relations *rels, SQL *s,uint64_t *sm,struct ParallelismOpts opts):sums(sm) {
@@ -167,9 +168,9 @@ bool Query::RunQuery(bool filters) {
         auto arr2 = sort(sem,this,
                 r2);
         if(array1<array2)
-            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2,r1,r2),sem,2*NUMJOBS);
+            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2,r1,r2),sem,2*SORT_NUM_JOBS);
         else
-            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1,r1,r2),sem,2*NUMJOBS);
+            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1,r1,r2),sem,2*SORT_NUM_JOBS);
         delete predicate;
         return false;
     }
