@@ -59,7 +59,8 @@ MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c
 }
 
 void MergeJob::Run() {
-    join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
+    if(JOIN_PARALLELISM) join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
+    else sequential_join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
 }
 
 bool MergeJob::add(JoinJob *job) {
@@ -103,7 +104,7 @@ void JoinJob::Run() {
             }
         }
     }
-    sem_post(sem);
+    if(sem) sem_post(sem);
     if(next){
         next->Run();
     }
@@ -116,6 +117,11 @@ bool JoinJob::add(JoinJob *job) {
     return true;
 }
 
+void JoinJob::add_next(JoinJob *job) {
+    job->next=next;
+    next=job;
+}
+
 JoinJob::~JoinJob() {
     delete next;
 }
@@ -123,6 +129,21 @@ JoinJob::~JoinJob() {
 uint64_t JoinJob::get_counter() {
     if(next) return next->get_counter()+(size1-offset1)*(size2-offset2);
     else return (size1-offset1)*(size2-offset2);
+}
+
+JoinJob::JoinJob(Query *query, rows_array *array1, rows_array *array2, bool sorted, uint64_t offset1, uint64_t size1,
+                 uint64_t offset2, uint64_t size2, uint64_t res_counter) {
+    this->sem= nullptr;
+    this->query=query;
+    this->array1=array1;
+    this->array2=array2;
+    this->sorted=sorted;
+    this->offset1=offset1;
+    this->size1=size1;
+    this->offset2=offset2;
+    this->size2=size2;
+    this->res_counter=res_counter;
+    this->next= nullptr;
 }
 
 /*

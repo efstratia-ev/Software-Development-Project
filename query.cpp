@@ -82,7 +82,8 @@ bool Query::execute_filters() {
 
 bool Query::DoQuery(bool filters) {
     auto allParallel = opts.join && opts.sort;
-    if (allParallel) 
+    auto noneParallel= opts.join || opts.sort;
+    if (allParallel || opts.sort)
         return RunQuery(filters);
     else if(opts.join){
         return RunMergeParallelQuery(filters);

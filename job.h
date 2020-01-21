@@ -80,10 +80,12 @@ class JoinJob:public Job{
     JoinJob *next;
 public:
     JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2, bool sorted, uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter);
+    JoinJob(Query *query, rows_array *array1, rows_array *array2, bool sorted,  uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter);
     void Run();
     bool add(JoinJob *job);
     ~JoinJob();
     uint64_t get_counter();
+    void add_next(JoinJob *job);
 };
 
 class PredicateJob:public Job{

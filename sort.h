@@ -10,6 +10,7 @@
 extern JobScheduler *js;
 
 void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2,Query *Q,bool sorted);
+void sequential_join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2,Query *Q,bool sorted);
 
 rows_array *sort(sem_t *semaphore, Query *Q, radix *r);
 

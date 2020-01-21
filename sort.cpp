@@ -41,6 +41,43 @@ void join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint
     delete sem;
 }
 
+
+void sequential_join(int arr1,int arr2,rows_array *rows_array1,rows_array *rows_array2,uint64_t *column1,uint64_t *column2,Query *Q,bool sorted) {  //does the final comparison between two sorted rows_arrays
+    JoinJob *joins= nullptr;
+    uint64_t i=0,j=0;
+    uint64_t count_results=0,count_jobs=0;
+    while(i<rows_array1->Size && j<rows_array2->Size){
+        if(column1[rows_array1->get_value(i)]>column2[rows_array2->get_value(j)]){
+            j+=rows_array2->countKeys(j,column2);
+            continue;
+        }
+        if(column1[rows_array1->get_value(i)]<column2[rows_array2->get_value(j)]){
+            i+=rows_array1->countKeys(i,column1);
+            continue;
+        }
+        uint64_t maxi=i+rows_array1->countKeys(i,column1),maxj=j+rows_array2->countKeys(j,column2);
+        if(joins) joins->add_next(new JoinJob(Q,rows_array1,rows_array2,sorted,i,maxi,j,maxj,count_results));
+        else joins=new JoinJob(Q,rows_array1,rows_array2,sorted,i,maxi,j,maxj,count_results);
+        count_jobs++;
+        count_results+=(maxi-i)*(maxj-j);
+        i=maxi;
+        j=maxj;
+    }
+    Q->add_joined_array(count_results,arr1,arr2);
+    if(sorted) {
+        rows_array1->Array= nullptr;
+        delete rows_array1;
+        rows_array1= nullptr;
+    }
+    if(joins) {
+        joins->Run();
+        js->Schedule(new PredicateJob(Q, true,rows_array1,rows_array2));
+        return;
+    }
+    js->Schedule(new PredicateJob(Q, false,rows_array1,rows_array2));
+}
+
+
 rows_array *sort(sem_t *semaphore,Query *Q,radix *r) {  //function that sort rows_arrays by quantum
     r->group();
     int count = 0;
