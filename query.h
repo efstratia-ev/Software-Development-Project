@@ -33,15 +33,14 @@ public:
     bool execute_filters();
     bool DoQuery(bool filters);
     bool RunQuery(bool filters);
+    bool RunMergeParallelQuery(bool filters);
     bool RunQueryWithoutParallelism(bool filters);
     void add_joined_array(uint64_t size,int array1,int array2);
     void update_array(list *res,uint64_t offset);
     void update_array_element(uint64_t num1,uint64_t num2,uint64_t i);
-    jointype_t get_type(){
-        return type;
-    }
-    SQL *getSQL() { return sql; }
-    uint64_t *getSums() { return sums; }
+    jointype_t get_type();
+    SQL *getSQL();
+    uint64_t *getSums();
 };
 
 

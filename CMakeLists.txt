@@ -6,7 +6,6 @@ find_package(Threads REQUIRED)
 
 set(CMAKE_CXX_STANDARD 14)
 link_libraries(cunit)
-
 include_directories(.)
 add_executable(Project2019
         SQLInfo.h SQLInfo.cpp
@@ -21,11 +20,10 @@ add_executable(Project2019
         results_list.cpp results_list.h
         #join_preds.h join_preds.cpp
         SQL.h SQL.cpp Priority_Queue.cpp Priority_Queue.h
-        queue.h queue.cpp 
-        do_query.cpp do_query.h
+        queue.h queue.cpp
         job.cpp
         queriesExecutor.h
-        jobscheduler.h jobscheduler.cpp query.cpp query.h)
+        jobscheduler.h jobscheduler.cpp query.cpp query.h queriesExecutor.cpp stats.cpp)
 
 add_executable(test_radix
         radix.cpp

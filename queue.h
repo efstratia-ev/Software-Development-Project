@@ -15,9 +15,7 @@ class qnode {
     qnode(Job *job);
     qnode(Job *job,sem_t *sem,int val);
     bool is_ready();
-    ~qnode(){
-        delete sem;
-    }
+    ~qnode();
 };
 
 class queue {
@@ -33,16 +31,9 @@ class queue {
     Job *pop();
     bool empty();
     //getters and print for debug only
-    int getSize() { return size; }
-    qnode *getHead() { return head; }
-    qnode *getTail() { return tail; }
-    void print() {
-        auto tmp = head;
-        while (tmp != nullptr) {
-            cout << tmp->job << endl;
-            tmp = tmp->next;
-        }
-    }
+    int getSize();
+    qnode *getHead();
+    qnode *getTail();
 };
 
 #endif

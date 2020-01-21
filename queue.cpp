@@ -89,6 +89,12 @@ void queue::push(queue *q) {
     delete q;
 }
 
+int queue::getSize() { return size; }
+
+qnode *queue::getHead() { return head; }
+
+qnode *queue::getTail() { return tail; }
+
 qnode::qnode(Job *job) {
     this->job = job;
     this->next = nullptr;
@@ -108,4 +114,8 @@ bool qnode::is_ready() {
     int value;
     sem_getvalue(sem,&value);
     return value==val;
+}
+
+qnode::~qnode() {
+    delete sem;
 }

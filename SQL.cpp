@@ -418,3 +418,5 @@ bool SQL::CheckConnection(int *indices){
     delete[] existance;
     return true;
 }
+
+int SQL::getNumInnerJoins() { return numInnerJoins; }

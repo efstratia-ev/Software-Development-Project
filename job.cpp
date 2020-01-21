@@ -9,6 +9,10 @@ QueryJob::QueryJob(Query *query) {
     this->query=query;
 }
 
+bool QueryJob::add(JoinJob *job) {
+    return false;
+}
+
 
 SortJob::SortJob(sem_t *f, Query *q, radix *r, int o, int s) {
     finished=f;
@@ -31,6 +35,14 @@ int SortJob::Run() {
     sem_post(finished);
 }
 
+bool SortJob::add(JoinJob *job) {
+    return false;
+}
+
+SortJob::~SortJob() {
+    delete Stack;
+}
+
 MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c1, uint64_t *c2, int id1,
                    int id2,radix *R1,radix *R2) {
     query=q;
@@ -47,6 +59,17 @@ MergeJob::MergeJob(Query *q, rows_array *a1, rows_array *a2, bool s, uint64_t *c
 
 int MergeJob::Run() {
     join(arrayID1,arrayID2,array1,array2,column1,column2,query,sorted);
+}
+
+bool MergeJob::add(JoinJob *job) {
+    return false;
+}
+
+MergeJob::~MergeJob() {
+    if(R1) R1->delete_R();
+    if(R2) R2->delete_R();
+    delete R1;
+    delete R2;
 }
 
 JoinJob::JoinJob(sem_t *sem,Query *query, rows_array *array1, rows_array *array2, bool sorted,  uint64_t offset1,uint64_t size1, uint64_t offset2,uint64_t size2,uint64_t res_counter) {
@@ -92,6 +115,15 @@ bool JoinJob::add(JoinJob *job) {
     return true;
 }
 
+JoinJob::~JoinJob() {
+    delete next;
+}
+
+uint64_t JoinJob::get_counter() {
+    if(next) return next->get_counter()+(size1-offset1)*(size2-offset2);
+    else return (size1-offset1)*(size2-offset2);
+}
+
 /*
 int JoinJob::Run() {
     list *resultlist=new list();
@@ -101,3 +133,22 @@ int JoinJob::Run() {
     query->update_array(resultlist,res_counter);
     sem_post(sem);
 }*/
+PredicateJob::PredicateJob(Query *query, bool results_exist, rows_array *array1, rows_array *array2) {
+    this->array1=array1;
+    this->array2=array2;
+    this->query=query;
+    this->results_exist=results_exist;
+}
+
+int PredicateJob::Run() {
+    if(query->DoQuery(results_exist)) delete query;
+}
+
+bool PredicateJob::add(JoinJob *job) {
+    return false;
+}
+
+PredicateJob::~PredicateJob() {
+    delete array1;
+    delete array2;
+}

@@ -82,3 +82,47 @@ bool JobScheduler::Destroy() {
         threads[i].join();
     }
 }
+
+void JobScheduler::Schedule(Job *job, sem_t *sem, int val) {
+    addActiveJobs();
+    unique_lock<mutex> lk(queuMu);
+    q->push(job,sem,val);
+    lk.unlock();
+    cv.notify_one();
+}
+
+void JobScheduler::Schedule(queue *Q) {
+    addActiveJobs(Q->getSize());
+    unique_lock<mutex> lk(queuMu);
+    q->push(Q);
+    lk.unlock();
+    cv.notify_one();
+}
+
+void JobScheduler::addActiveJobs(int jobs) {
+    unique_lock<mutex> lk(activeJobsMu);
+    activeJobs+=jobs;
+    lk.unlock();
+}
+
+int JobScheduler::getActiveJobs() {
+    unique_lock<mutex> lk(activeJobsMu);
+    auto tmp = activeJobs;
+    lk.unlock();
+    return tmp;
+}
+
+int JobScheduler::getNumThreads() {
+    return numThreads;
+}
+
+int JobScheduler::getQueueSize() {
+    unique_lock<mutex> lk(queuMu);
+    auto tmp = q->getSize();
+    lk.unlock();
+}
+
+JobScheduler::~JobScheduler() {
+    delete q;
+    delete[] threads;
+}

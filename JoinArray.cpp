@@ -492,3 +492,68 @@ void JoinArray::create_array(list *results,int id1,int id2) {
     }
     delete results;
 }
+
+void JoinArray::set_array(uint64_t i, uint64_t num1, uint64_t num2) {
+    Array[0][i]=num1;
+    Array[1][i]=num2;
+}
+
+void JoinArray::set_newArray(uint64_t i, uint64_t num1, uint64_t num2) {
+    for(uint64_t j=0; j<numRels; j++){
+        int temp=relationIDs[j];
+        new_array[temp][i]=Array[j][num1]; //keep from the old array the rows that are extracted from the list
+    }
+    new_array[n][i]=num2;   //in every row add the value of the new column (new relation added)
+}
+
+void JoinArray::set_newArray(uint64_t i, uint64_t num1, uint64_t num2, JoinArray *array2) {
+    for(uint64_t j=0; j<numRels; j++){
+        int temp=relationIDs[j];
+        new_array[temp][i]=Array[j][num1]; //keep from the old array the rows that are extracted from the list
+    }
+    new_array[n][i]=array2->Array[0][num2];   //in every row add the value of the new column (new relation added)
+}
+
+void JoinArray::MergeParallelJoin(int relID1,int colID1,int relID2,int colID2,Query *Q) {
+    setrel(relID1);
+    auto r1=new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1));
+    auto r2=new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2));
+    auto arr1 = sort(r1);
+    auto arr2 = sort(r2);
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,
+                              nullptr, nullptr));
+}
+
+void JoinArray::MergeParallelsortedJoin(int relID1,int colID1,int relID2,int colID2,Query *Q) {
+    setrel(relID1);
+    auto r=new radix(rels->get_relRows(relID2),rels->get_column(relID2,colID2));
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
+    auto arr2 = sort(r);
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,
+                              nullptr,
+                              nullptr));
+
+}
+
+void JoinArray::MergeParallelJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2,Query *Q) {
+    setrel(relID1);
+    auto r1=new sorted_radix(size,Array[relToBeJoined],rels->get_column(relID1,colID1));
+    auto r2=new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2));
+    auto arr1 = sort(r1);
+    array2->setrel(relID2);
+    auto arr2 = sort(r2);
+    js->Schedule(new MergeJob(Q,arr1,arr2,false,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,
+                              nullptr, nullptr));
+
+}
+
+void JoinArray::MergeParallelsortedJoin(int relID1,int colID1,JoinArray *array2,int relID2,int colID2,Query *Q) {
+    setrel(relID1);
+    auto r=new sorted_radix(array2->size,array2->Array[array2->relToBeJoined],rels->get_column(relID2,colID2));
+    auto arr1 = new rows_array(size,Array[relToBeJoined]);
+    array2->setrel(relID2);
+    auto arr2 = sort(r);
+    js->Schedule(new MergeJob(Q,arr1,arr2,true,rels->get_column(relID1,colID1),rels->get_column(relID2,colID2),relID1,relID2,
+                              nullptr,
+                              nullptr));
+}

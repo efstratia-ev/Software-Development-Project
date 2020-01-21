@@ -2,7 +2,6 @@
 #include "query.h"
 #include "sort.h"
 #include "radix.h"
-#include "do_query.h"
 
 
 Query::Query(Relations *rels, SQL *s,uint64_t *sm,struct ParallelismOpts opts):sums(sm) {
@@ -81,10 +80,12 @@ bool Query::execute_filters() {
 }
 
 bool Query::DoQuery(bool filters) {
-    assert(opts.join == opts.sort); //this must hold true for the time being (see query.h)
     auto allParallel = opts.join && opts.sort;
     if (allParallel) 
         return RunQuery(filters);
+    else if(opts.join){
+        return RunMergeParallelQuery(filters);
+    }
     else {
        return RunQueryWithoutParallelism(filters);
     }
@@ -353,3 +354,101 @@ Query::~Query() {
     delete[] filter_results;
     delete results;
 }
+
+bool Query::RunMergeParallelQuery(bool filters) {
+    Predicate *predicate = nullptr;
+    if(results) results->keep_new_results();
+    if(type==update_filtered){
+        delete filter_results[max-1];
+        max--;
+    }
+    type=create;
+    if (filters && (predicate = sql->getPredicate())) {  //joins between relation
+        if (predicate->is_filter()) {
+            results->compare(predicate->get_array(), predicate->get_column(), predicate->get_array2(),
+                             predicate->get_column2());
+            delete predicate;
+            return RunQuery(results->getSize()>0);
+        }
+        int array1 = predicate->get_array(), array2 = predicate->get_array2();
+        if (!results) {
+            int curr = isRelationFiltered(array1);
+            if (curr != -1) {
+                results = filter_results[curr];
+                filter_results[curr] = filter_results[max - 1];
+                max--;
+            }
+            else {
+                curr = isRelationFiltered(array2);
+                if (curr != -1) {
+                    results = filter_results[curr];
+                    filter_results[curr] = filter_results[max - 1];
+                    max--;
+                }
+            }
+        }
+        if (results && results->exists(array1)) {
+            int curr = isRelationFiltered(array2);
+            if (curr == -1) {
+                if (predicate->getSorted())
+                    results->MergeParallelsortedJoin(array1, predicate->get_column(), array2, predicate->get_column2(),this);
+                else results->MergeParallelJoin(array1, predicate->get_column(), array2, predicate->get_column2(),this);
+            }
+            else {
+                if (predicate->getSorted())
+                    results->MergeParallelsortedJoin(array1, predicate->get_column(), filter_results[curr], array2,
+                                        predicate->get_column2(),this);
+                else
+                    results->MergeParallelJoin(array1, predicate->get_column(), filter_results[curr], array2,
+                                  predicate->get_column2(),this);
+            }
+            delete predicate;
+            return false;
+        }
+        if (results && results->exists(array2)) {
+            int curr = isRelationFiltered(array1);
+            if (curr == -1) {
+                if (predicate->getSorted())
+                    results->MergeParallelsortedJoin(array2, predicate->get_column2(), array1, predicate->get_column(),this);
+                else results->MergeParallelJoin(array2, predicate->get_column2(), array1, predicate->get_column(),this);
+            } else {
+                if (predicate->getSorted())
+                    results->MergeParallelsortedJoin(array2, predicate->get_column2(), filter_results[curr], array1,
+                                        predicate->get_column(),this);
+                else
+                    results->MergeParallelJoin(array2, predicate->get_column2(), filter_results[curr], array1,
+                                  predicate->get_column(),this);
+            }
+            delete predicate;
+            return false;
+        }
+        auto r1=new radix(relations->get_relRows(array1), relations->get_column(array1, predicate->get_column()));
+        auto r2=new radix(relations->get_relRows(array2), relations->get_column(array2, predicate->get_column2()));
+        auto arr1 = sort(r1);
+        auto arr2 = sort(r2);
+        if(array1<array2)
+            js->Schedule(new MergeJob(this,arr1,arr2,true,relations->get_column(array1,predicate->get_column()),relations->get_column(array2,predicate->get_column2()),array1,array2,r1,r2));
+        else
+            js->Schedule(new MergeJob(this,arr2,arr1,true,relations->get_column(array2,predicate->get_column2()),relations->get_column(array1,predicate->get_column()),array2,array1,r1,r2));
+        delete predicate;
+        return false;
+    }
+    //joinPredicates(filter_results,sql,relations,max);
+    if (!results) {
+        return true;
+    }
+    int res_counter = sql->get_results_counter();
+    set *select = sql->get_select();
+    for (int i = 0; i < res_counter; i++) {
+        sums[i] = results->get_sum(select[i].getArray(), select[i].getColumn());
+    }
+    return true;
+}
+
+jointype_t Query::get_type() {
+    return type;
+}
+
+SQL *Query::getSQL() { return sql; }
+
+uint64_t *Query::getSums() { return sums; }

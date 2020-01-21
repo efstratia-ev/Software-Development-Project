@@ -3,7 +3,7 @@
 
 
 #include "SQLInfo.h"
-#define STATS true
+#define STATS false
 
 class Priority_Queue_Node{
     Predicate *predicate;
@@ -15,7 +15,6 @@ public:
     void setNext(Priority_Queue_Node *next);
     ~Priority_Queue_Node();
     void setPredicateNULL();
-
     void setPredicate(Predicate *predicate);
 };
 

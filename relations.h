@@ -15,7 +15,6 @@ public:
     explicit Relations(char *filename);
     Relations(Relation **rels,int sz);
     Relation *relation(int i);
-    Relation *relationRaw(int i) { return rels[i]; }
     int getSize();
     ~Relations();
     list *filter(int array,uint64_t column1,uint64_t column2);
@@ -31,13 +30,9 @@ public:
     void set_query_rels(int *from_arrays);
     uint64_t get_relRows(uint64_t rel);
     uint64_t *get_column(uint64_t rel,uint64_t col);
-    Relation **getRels() { return rels; }
-    int * getQueryRels(){
-        return query_rels;
-    }
-    void delete_map(){
-        for(int i=0; i<sz; i++) rels[i]->delete_map();
-    }
+    Relation **getRels();
+    int * getQueryRels();
+    void delete_map();
 };
 
 

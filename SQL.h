@@ -31,19 +31,13 @@ public:
     void SplitSelectResults(const string& select);
     void GetSelectResults(const string&,int);
     Predicate *getPredicate();
-    int get_from_arrays_size() { return from_arrays_sz; }
-    int getNumInnerJoins() { return numInnerJoins; }
+    int getNumInnerJoins();
     int get_filters_num();
     int get_results_counter();
     set *get_select();
     int *get_from_arrays();
-    void EvaluateMinCost();
     void  JoinsPermutations(int *indices,int size,uint64_t min);
     Relations *applyJoinStats(Relations *relsStats,Predicate * pr,uint64_t &cost );
-    void print(){
-        for(int i=0;i<numInnerJoins;i++) cout<<joinOrder[i] <<" ";
-        cout<<endl;
-    }
     bool CheckConnection(int *indices);
 
 

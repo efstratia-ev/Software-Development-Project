@@ -117,3 +117,24 @@ void Relation::delete_map() {
         for(int i=0; i<cols; i++) statistics[i]->delete_bit_map();
     munmap(data,fileSz);
 }
+
+stats *Relation::getStatsCopy(int col) {
+    auto st = statistics[col];
+    return new stats(st->getMin(),st->getMax(),st->getBitMap(),st->getTotalValues(),st->getDistinctValues());
+}
+
+stats **Relation::getStatsCopy() {
+    auto sts = new stats*[cols];
+    for (int i = 0; i < cols; i++) {
+        sts[i] = new stats(statistics[i]->getMin(),statistics[i]->getMax(),statistics[i]->getBitMap(),statistics[i]->getTotalValues(),statistics[i]->getDistinctValues());
+    }
+    return sts;
+}
+
+Relation::Relation() {}
+
+uint64_t *Relation::getData() { return data; }
+
+stats *Relation::getColStats(int i) { return statistics[i]; }
+
+void Relation::setStats(stats **sts) { statistics = sts; }

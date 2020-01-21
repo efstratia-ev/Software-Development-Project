@@ -321,33 +321,6 @@ SQLInfo.cpp.s:
 	$(MAKE) -f CMakeFiles/test_join.dir/build.make CMakeFiles/test_join.dir/SQLInfo.cpp.s
 .PHONY : SQLInfo.cpp.s
 
-do_query.o: do_query.cpp.o
-
-.PHONY : do_query.o
-
-# target to build an object file
-do_query.cpp.o:
-	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/do_query.cpp.o
-.PHONY : do_query.cpp.o
-
-do_query.i: do_query.cpp.i
-
-.PHONY : do_query.i
-
-# target to preprocess a source file
-do_query.cpp.i:
-	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/do_query.cpp.i
-.PHONY : do_query.cpp.i
-
-do_query.s: do_query.cpp.s
-
-.PHONY : do_query.s
-
-# target to generate assembly for a file
-do_query.cpp.s:
-	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/do_query.cpp.s
-.PHONY : do_query.cpp.s
-
 job.o: job.cpp.o
 
 .PHONY : job.o
@@ -491,6 +464,33 @@ main.s: main.cpp.s
 main.cpp.s:
 	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/main.cpp.s
 .PHONY : main.cpp.s
+
+queriesExecutor.o: queriesExecutor.cpp.o
+
+.PHONY : queriesExecutor.o
+
+# target to build an object file
+queriesExecutor.cpp.o:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/queriesExecutor.cpp.o
+.PHONY : queriesExecutor.cpp.o
+
+queriesExecutor.i: queriesExecutor.cpp.i
+
+.PHONY : queriesExecutor.i
+
+# target to preprocess a source file
+queriesExecutor.cpp.i:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/queriesExecutor.cpp.i
+.PHONY : queriesExecutor.cpp.i
+
+queriesExecutor.s: queriesExecutor.cpp.s
+
+.PHONY : queriesExecutor.s
+
+# target to generate assembly for a file
+queriesExecutor.cpp.s:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/queriesExecutor.cpp.s
+.PHONY : queriesExecutor.cpp.s
 
 query.o: query.cpp.o
 
@@ -777,6 +777,33 @@ stack.cpp.s:
 	$(MAKE) -f CMakeFiles/test_join.dir/build.make CMakeFiles/test_join.dir/stack.cpp.s
 .PHONY : stack.cpp.s
 
+stats.o: stats.cpp.o
+
+.PHONY : stats.o
+
+# target to build an object file
+stats.cpp.o:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/stats.cpp.o
+.PHONY : stats.cpp.o
+
+stats.i: stats.cpp.i
+
+.PHONY : stats.i
+
+# target to preprocess a source file
+stats.cpp.i:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/stats.cpp.i
+.PHONY : stats.cpp.i
+
+stats.s: stats.cpp.s
+
+.PHONY : stats.s
+
+# target to generate assembly for a file
+stats.cpp.s:
+	$(MAKE) -f CMakeFiles/Project2019.dir/build.make CMakeFiles/Project2019.dir/stats.cpp.s
+.PHONY : stats.cpp.s
+
 test_bitmap.o: test_bitmap.cpp.o
 
 .PHONY : test_bitmap.o
@@ -966,9 +993,6 @@ help:
 	@echo "... SQLInfo.o"
 	@echo "... SQLInfo.i"
 	@echo "... SQLInfo.s"
-	@echo "... do_query.o"
-	@echo "... do_query.i"
-	@echo "... do_query.s"
 	@echo "... job.o"
 	@echo "... job.i"
 	@echo "... job.s"
@@ -984,6 +1008,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... queriesExecutor.o"
+	@echo "... queriesExecutor.i"
+	@echo "... queriesExecutor.s"
 	@echo "... query.o"
 	@echo "... query.i"
 	@echo "... query.s"
@@ -1011,6 +1038,9 @@ help:
 	@echo "... stack.o"
 	@echo "... stack.i"
 	@echo "... stack.s"
+	@echo "... stats.o"
+	@echo "... stats.i"
+	@echo "... stats.s"
 	@echo "... test_bitmap.o"
 	@echo "... test_bitmap.i"
 	@echo "... test_bitmap.s"

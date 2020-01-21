@@ -149,3 +149,13 @@ uint64_t Relations::get_relRows(uint64_t rel) {
 uint64_t *Relations::get_column(uint64_t rel, uint64_t col) {
     return rels[query_rels[rel]]->get_col(col);
 }
+
+Relation **Relations::getRels() { return rels; }
+
+int *Relations::getQueryRels() {
+    return query_rels;
+}
+
+void Relations::delete_map() {
+    for(int i=0; i<sz; i++) rels[i]->delete_map();
+}

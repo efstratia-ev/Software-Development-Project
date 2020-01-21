@@ -36,6 +36,7 @@ void DoQueries(Relations *rels,QueriesExecutor *qe) {
     //use this to control whether each query will run sort/join in parallel
     struct ParallelismOpts allParallelInsideQuery = {true,true};
     struct ParallelismOpts  noneParallelInsideQuery = {false,false};
+    struct ParallelismOpts  mergeParallelInsideQuery = {true,false};
     while (true) {
         getline(&line, &size, stdin);
         line = strtok(line, "\n");
